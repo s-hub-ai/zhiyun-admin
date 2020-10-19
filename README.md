@@ -1,37 +1,29 @@
-# zhiyun-admin
+<p align="center"><a href="https://www.cool-admin.com" target="_blank" rel="noopener noreferrer"><img width="100" src="https://www.cool-admin.com/img/logo2.svg" alt="COOL-ADMIN"></a></p>
 
 #### 介绍
-支云项目管理后台
 
-#### 软件架构
-软件架构说明
+配置化编码，单表 CRUD 只需少量配置;写更少的代码，实现更多的功能;简洁、高效、可扩展、高度解耦
 
+#### 浏览器兼容性
 
-#### 安装教程
+支持所有符合 ES5 标准的浏览器(不支持 IE8 及以下版本）.
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+#### 文档
 
-#### 使用说明
+要查看[Live Examples](https://show.cool-admin.com)和文档，请访问[https://www.cool-admin.com/](https://www.cool-admin.com/).
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+### 使用
 
-#### 参与贡献
+1. yarn serve 开启服务
+2. yarn build 打包项目
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+### 版本信息
 
-
-#### 特技
-
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+- 0.0.8 解决 views/system/user/index.vue 新增BUG
+- 0.0.7 优化 cl-crud
+- 0.0.6 优化 icon-svg, 添加 cl-crud 代码片段
+- 0.0.5 优化 cl-editor-quill 图片上传功能
+- 0.0.4 优化 cl-upload, error-page。router.js 添加忽略地址
+- 0.0.3 优化 cl-upload, cl-upload-space
+- 0.0.2 优化 menu / user 页面
+- 0.0.1 初始化构建
