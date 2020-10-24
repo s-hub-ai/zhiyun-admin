@@ -338,7 +338,7 @@ export default {
 	}
 
 	&--default {
-		/deep/.el-upload {
+		::v-deep.el-upload {
 			display: flex;
 			align-items: center;
 			justify-content: center;
@@ -369,7 +369,7 @@ export default {
 	}
 
 	&--picture-card {
-		/deep/.el-upload {
+		::v-deep.el-upload {
 			.cl-upload__icon {
 				position: relative;
 				top: 4px;

@@ -67,7 +67,7 @@ export default {
 
 <style lang="scss" scoped>
 .app-route-nav {
-	/deep/.el-breadcrumb {
+	::v-deep.el-breadcrumb {
 		margin: 0 10px;
 
 		&__inner {

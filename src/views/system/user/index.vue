@@ -868,7 +868,7 @@ export default {
 			}
 		}
 
-		/deep/.el-tree-node__content {
+		::v-deep.el-tree-node__content {
 			height: 36px;
 		}
 

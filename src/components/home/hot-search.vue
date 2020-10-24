@@ -319,7 +319,7 @@ export default {
 	&__table {
 		padding: 10px;
 
-		/deep/.el-table {
+		::v-deep.el-table {
 			&__header {
 				th {
 					background-color: #fff !important;

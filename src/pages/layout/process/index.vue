@@ -158,7 +158,7 @@ export default {
 	.cl-scroll {
 		flex: 1;
 
-		/deep/.scroll-wrapper {
+		::v-deep.scroll-wrapper {
 			display: flex;
 		}
 	}

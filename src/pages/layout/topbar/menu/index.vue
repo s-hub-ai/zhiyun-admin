@@ -48,7 +48,7 @@ export default {
 
 <style lang="scss" scoped>
 .app-topbar-menu {
-	/deep/.el-menu {
+	::v-deep.el-menu {
 		height: 50px;
 		background: transparent;
 		border-bottom: 0;
@@ -72,7 +72,7 @@ export default {
 				background: rgba(255, 255, 255, 0.13);
 			}
 
-			/deep/.icon-svg {
+			::v-deep.icon-svg {
 				height: 18px;
 				width: 18px;
 				margin-right: 5px;

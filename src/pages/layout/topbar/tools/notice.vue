@@ -24,7 +24,7 @@ export default {
 		font-size: 20px;
 	}
 
-	/deep/.el-badge {
+	::v-deep.el-badge {
 		transform: scale(0.8);
 	}
 }

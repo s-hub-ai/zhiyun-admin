@@ -602,7 +602,7 @@ export default {
 		height: calc(100% - 70px);
 		overflow: hidden auto;
 
-		/deep/.cl-upload-space__file-item {
+		::v-deep.cl-upload-space__file-item {
 			display: flex;
 			align-items: center;
 			justify-content: center;

@@ -76,7 +76,7 @@ export default {
 		height: 100%;
 		width: 100%;
 
-		/deep/.image-slot {
+		::v-deep.image-slot {
 			display: flex;
 			justify-content: center;
 			align-items: center;
