@@ -45,3 +45,38 @@ export const zhiyunCardStatusDict = [{
  value: 1,
  text: '云卡用户'
 }]
+//积分使用事件类型
+export const pointsUseDetailTypeDict = [{
+ value: 1,
+ text: '商城购物'
+}, {
+ value: 2,
+ text: '活动打卡'
+}, {
+ value: 3,
+ text: '套票充值'
+}, {
+ value: 4,
+ text: '远征观赛'
+}, {
+ value: 5,
+ text: '商城购物'
+}, {
+ value: 6,
+ text: '兑换礼品'
+}]
+
+//商品类型
+export const goodsTypeDict = [{
+ value: 1,
+ text: '商城商品'
+}, {
+ value: 2,
+ text: '兑换礼品'
+}, {
+ value: 3,
+ text: '票务商品'
+}, {
+ value: 4,
+ text: '活动商品'
+}]

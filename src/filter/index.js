@@ -7,7 +7,13 @@ Vue.filter("default_avatar", function (url) {
 
 	return url;
 });
+Vue.filter("default", function (s) {
+	if (!s) {
+		return '-'
+	}
 
+	return s;
+});
 Vue.filter("default_name", function (name) {
 	if (!name) {
 		return "未命名";

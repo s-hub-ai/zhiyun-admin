@@ -2,8 +2,8 @@
 	<cl-crud @load="onLoad">
 		<el-row type="flex" align="middle">
 			<cl-refresh-btn></cl-refresh-btn>
-			<cl-flex1></cl-flex1>
 			<cl-search-key field="serachName" placeholder="请输入用户姓名、手机号、套票号"></cl-search-key>
+			<cl-flex1></cl-flex1>
 			<el-button size="mini" type="primary" @click="openForm">导出</el-button>
 		</el-row>
 
@@ -15,7 +15,11 @@
 				</template>
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
-					<el-link type="primary">详情</el-link>
+					<el-link type="primary" @click="$router.push({ path: 'UserDetails', query: { id: scope.row.id } })">详情</el-link>
+				</template>
+				<!-- 可用积分 -->
+				<template #column-availablePoints="{ scope }">
+					<el-link type="primary" @click="$router.push({ path: 'PointsUseDetails', query: { id: scope.row.id } })">{{scope.row.availablePoints|default}}</el-link>
 				</template>
 			</cl-table>
 		</el-row>
@@ -38,7 +42,7 @@ const userList = [
 		phoneNum: '131604922228',
 		ticketPackageUser: '基础套票',
 		price: 75.99,
-		salesRate: 52.2,
+		availablePoints: 52.2,
 		salesStatus: 1,
 		images: ['https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/1.jpg'],
 		children: [
@@ -48,7 +52,7 @@ const userList = [
 				process: 35.2,
 				endTime: '2019年09月05日',
 				price: 242.1,
-				salesRate: 72.1,
+				availablePoints: 72.1,
 				salesStatus: 1,
 				images: []
 			}

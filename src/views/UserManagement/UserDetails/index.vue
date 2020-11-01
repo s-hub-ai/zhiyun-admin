@@ -1,68 +1,199 @@
 <template>
 	<el-card class="box-card">
-		<div slot="header" class="clearfix">
-			<span>基础信息</span>
-			<el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
-		</div>
-		<el-form :inline="true" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+		<el-form :inline="true" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="form">
 			<!-- 基础信息 -->
-			<div style="max-width: 850px">
-				<el-form-item label="头像">
-					<el-avatar :size="45" src=""></el-avatar>
+			<div style="display: flex; justify-content: space-between; align-items: center">
+				<span>基础信息</span>
+				<el-button v-if="notEdit" @click="notEdit = false" size="medium" type="primary" style="margin-left: auto">编辑</el-button>
+				<el-button-group v-else>
+					<el-button size="medium" @click="notEdit = true">取消</el-button>
+					<el-button size="medium" type="primary">保存</el-button>
+				</el-button-group>
+			</div>
+			<el-divider></el-divider>
+			<div style="max-width: 900px">
+				<el-form-item class="form-item" label="头像:">
+					<el-avatar :size="50" src=""></el-avatar>
 				</el-form-item>
-				<el-form-item label="昵称" prop="nickName">
+				<el-form-item label="昵称:" prop="nickName">
 					<el-input v-model="ruleForm.nickName" placeholder="请输入用户昵称"></el-input>
 				</el-form-item>
-				<el-form-item label="手机号" prop="phoneNum">
+				<el-form-item label="手机号:" prop="phoneNum">
 					<el-input v-model="ruleForm.phoneNum" placeholder="请输入手机号"></el-input>
 				</el-form-item>
+				<el-form-item label="微信号:" prop="weChatAccount">
+					<el-input v-model="ruleForm.weChatAccount" placeholder="请输入微信账号"></el-input>
+				</el-form-item>
+				<el-form-item label="邮箱号:" prop="email">
+					<el-input v-model="ruleForm.email" placeholder="请输入邮箱"></el-input>
+				</el-form-item>
+				<el-form-item label="微博号:" prop="weiboAccount">
+					<el-input v-model="ruleForm.weiboAccount" placeholder="请输入微博账号"></el-input>
+				</el-form-item>
 			</div>
-
-			<el-form-item label="活动时间" required>
-				<el-col :span="11">
-					<el-form-item prop="date1">
-						<el-date-picker type="date" placeholder="选择日期" v-model="ruleForm.date1" style="width: 100%"></el-date-picker>
+			<!-- 套票信息 -->
+			<span class="title">套票信息</span>
+			<el-divider></el-divider>
+			<div style="max-width: 800px">
+				<el-form-item class="form-item" prop="ticketPackageNum" label="套票号:">
+					<el-input v-model="ruleForm.ticketPackageNum" placeholder="请输入套票号"></el-input>
+				</el-form-item>
+				<el-form-item class="form-item" prop="ticketPackageUser" label="套票类型:">
+					<el-select v-model="ruleForm.ticketPackageUser" placeholder="请选择套票类型">
+						<el-option v-for="item in ticketPackageUserDict" :key="item.value" :label="item.text" :value="item.value"> </el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item class="form-item" prop="fanClub" label="球迷会:">
+					<el-select v-model="ruleForm.fanClub" placeholder="请选择球迷会">
+						<el-option v-for="item in ticketPackageUserDict" :key="item.value" :label="item.text" :value="item.value"> </el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item class="form-item" prop="fanClubRegion" label="球迷会区域:">
+					<el-select v-model="ruleForm.fanClubRegion" placeholder="请选择球迷会区域">
+						<el-option v-for="item in ticketPackageUserDict" :key="item.value" :label="item.text" :value="item.value"> </el-option>
+					</el-select>
+				</el-form-item>
+			</div>
+			<!-- 实名信息 -->
+			<span class="title">实名信息</span>
+			<el-divider></el-divider>
+			<div style="max-width: 1200px">
+				<el-form-item class="form-item" prop="userName" label="姓名:">
+					<el-input v-model="ruleForm.userName" placeholder="请输入姓名"></el-input>
+				</el-form-item>
+				<el-form-item class="form-item" prop="userSex" label="性别:">
+					<el-select v-model="ruleForm.userSex" placeholder="请选择性别">
+						<el-option v-for="item in ticketPackageUserDict" :key="item.value" :label="item.text" :value="item.value"> </el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item class="form-item" prop="userBirthday" label="生日:">
+					<el-date-picker v-model="ruleForm.userBirthday" type="date" placeholder="请选择生日"> </el-date-picker>
+				</el-form-item>
+				<el-form-item class="form-item" prop="userCertificateType" label="证件类型:">
+					<el-select v-model="ruleForm.userCertificateType" placeholder="请选择证件类型">
+						<el-option v-for="item in ticketPackageUserDict" :key="item.value" :label="item.text" :value="item.value"> </el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item class="form-item" prop="userCertificateNum" label="证件号码:">
+					<el-input v-model="ruleForm.userCertificateNum" placeholder="请输入证件号码"></el-input>
+				</el-form-item>
+				<el-form-item class="form-item" prop="userCertificateValidity" label="有效期:">
+					<el-date-picker v-model="ruleForm.userCertificateValidity" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"> </el-date-picker>
+				</el-form-item>
+				<el-form-item class="form-item" prop="userCertificateAddress" label="身份证住址:">
+					<el-input style="width: 1000px" v-model="ruleForm.userCertificateAddress" placeholder="请输入姓身份证住址"></el-input>
+				</el-form-item>
+				<el-form-item class="form-item" label="附件信息:">
+					<span style="display: flex; align-items: center">
+						<cl-upload
+							:value="ruleForm.userCertificatePositiveImg"
+							:filePath="ruleForm.userCertificatePositiveImg"
+							class="avatar-uploader"
+							:size="[160, 252]"
+							icon="el-icon-plus"
+							text="身份证正面"
+							accept="*"
+							:on-success="userCertificatePositiveImgUploadSuccess"
+						></cl-upload>
+						<cl-upload
+							:value="ruleForm.userCertificateNegativeImg"
+							:filePath="ruleForm.userCertificateNegativeImg"
+							class="avatar-uploader"
+							:size="[160, 252]"
+							icon="el-icon-plus"
+							text="身份证背面"
+							accept="*"
+							:on-success="userCertificateNegativeImgUploadSuccess"
+						></cl-upload>
+						<cl-upload
+							:value="ruleForm.userCertificatePortraitImg"
+							:filePath="ruleForm.userCertificatePortraitImg"
+							class="avatar-uploader"
+							:size="[160, 252]"
+							icon="el-icon-plus"
+							text="人像"
+							accept="*"
+							:on-success="userCertificatePortraitImgUploadSuccess"
+						></cl-upload>
+					</span>
+				</el-form-item>
+			</div>
+			<!-- 积分信息 -->
+			<span class="title">积分信息</span>
+			<el-divider></el-divider>
+			<div style="max-width: 800px">
+				<el-form-item class="form-item" label="会员等级:">
+					<span>{{ruleForm.vipLevel|default}}</span>
+				</el-form-item>
+				<el-form-item class="form-item" label="累计积分:">
+					<span>{{ruleForm.accumulatedPoints|default}}</span>
+				</el-form-item>
+				<el-form-item class="form-item" label="积分排名:">
+					<span>{{ruleForm.accumulatedPoints|default}}</span>
+				</el-form-item>
+				<el-form-item class="form-item" label="可用积分:">
+					<span>{{ruleForm.availablePoints|default}}</span>
+				</el-form-item>
+			</div>
+			<!-- 支云卡信息 -->
+			<span class="title">支云卡信息</span>
+			<el-divider></el-divider>
+			<div style="max-width: 800px">
+				<el-form-item class="form-item" label="卡号:">
+					<span>{{ruleForm.zhiyunCardNum|default}}</span>
+				</el-form-item>
+				<!-- 				<el-form-item class="form-item" label="支云卡类型:">
+					<span>{{ruleForm.zhiyunCardType|default}}</span>
+				</el-form-item> -->
+				<el-form-item class="form-item" label="办卡时间:">
+					<span>{{ruleForm.zhiyunCardOpentime|default}}</span>
+				</el-form-item>
+			</div>
+			<!-- 常用购票人信息 -->
+			<span class="title">常用购票人信息</span>
+			<el-divider></el-divider>
+			<div style="max-width: 800px">
+				<block v-for="(item, index) in buyTicketsPeople" :key="index">
+					<el-form-item class="form-item" label="姓名:">
+						<span>{{item.userName|default}}</span>
 					</el-form-item>
-				</el-col>
-				<el-col class="line" :span="2">-</el-col>
-				<el-col :span="11">
-					<el-form-item prop="date2">
-						<el-time-picker placeholder="选择时间" v-model="ruleForm.date2" style="width: 100%"></el-time-picker>
+					<el-form-item class="form-item" label="证件类型:">
+						<span>{{item.userCertificateType|default}}</span>
 					</el-form-item>
-				</el-col>
-			</el-form-item>
-			<el-form-item label="即时配送" prop="delivery">
-				<el-switch v-model="ruleForm.delivery"></el-switch>
-			</el-form-item>
-			<el-form-item label="活动性质" prop="type">
-				<el-checkbox-group v-model="ruleForm.type">
-					<el-checkbox label="美食/餐厅线上活动" name="type"></el-checkbox>
-					<el-checkbox label="地推活动" name="type"></el-checkbox>
-					<el-checkbox label="线下主题活动" name="type"></el-checkbox>
-					<el-checkbox label="单纯品牌曝光" name="type"></el-checkbox>
-				</el-checkbox-group>
-			</el-form-item>
-			<el-form-item label="特殊资源" prop="resource">
-				<el-radio-group v-model="ruleForm.resource">
-					<el-radio label="线上品牌商赞助"></el-radio>
-					<el-radio label="线下场地免费"></el-radio>
-				</el-radio-group>
-			</el-form-item>
-			<el-form-item label="活动形式" prop="desc">
-				<el-input type="textarea" v-model="ruleForm.desc"></el-input>
-			</el-form-item>
-			<el-form-item>
-				<el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
-				<el-button @click="resetForm('ruleForm')">重置</el-button>
-			</el-form-item>
+					<el-form-item class="form-item" label="证件号码:">
+						<span>{{item.userCertificateNum|default}}</span>
+					</el-form-item>
+				</block>
+			</div>
+			<!-- 收货地址-->
+			<span class="title">收货地址</span>
+			<el-divider></el-divider>
+			<div style="max-width: 800px">
+				<block v-for="(item, index) in shippingAddress" :key="index">
+					<el-form-item class="form-item" label="收货人:">
+						<span>{{item.userName|default}}</span>
+					</el-form-item>
+					<el-form-item class="form-item" label="手机号:">
+						<span>{{item.userCertificateType|default}}</span>
+					</el-form-item>
+					<el-form-item class="form-item" label="收货地址:">
+						<span>{{item.userCertificateNum|default}}</span>
+					</el-form-item>
+				</block>
+			</div>
 		</el-form>
 	</el-card>
 </template>
 
 <script>
+import { ticketPackageUserDict, useCcertificationDict, vipLevelDict, zhiyunCardStatusDict } from '@/dict/index.js';
 export default {
 	data() {
 		return {
+			ticketPackageUserDict,
+			buyTicketsPeople: [],
+			shippingAddress: [],
+			notEdit: true,
 			ruleForm: {
 				name: '',
 				region: '',
@@ -86,8 +217,33 @@ export default {
 				desc: [{ required: true, message: '请填写活动形式', trigger: 'blur' }]
 			}
 		};
+	},
+	methods: {
+		//身份证正面上传回调
+		userCertificatePositiveImgUploadSuccess() {}, //身份证反面上传回调
+		userCertificateNegativeImgUploadSuccess() {}, //人像照上传回调
+		userCertificatePortraitImgUploadSuccess() {}
 	}
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.title {
+	display: block;
+	margin-top: 45px;
+}
+.avatar-uploader {
+	width: 350px;
+}
+.box-card {
+	overflow-y: auto;
+}
+.form {
+	::v-deep .el-input {
+		min-width: 260px;
+	}
+}
+.form-item {
+	min-width: 359px;
+}
+</style>

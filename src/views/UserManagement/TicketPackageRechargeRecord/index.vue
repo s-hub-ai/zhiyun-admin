@@ -1,26 +1,23 @@
 <template>
 	<cl-crud @load="onLoad">
 		<el-row type="flex" align="middle">
-			<cl-search-key field="serachName" placeholder="请输入用户姓名、手机号、套票号"></cl-search-key>
-			<cl-flex1></cl-flex1>
-			<el-button size="mini" type="primary" @click="$router.push({ path: 'AddMessage' })">新增消息</el-button>
+			<span style="padding-right: 10px">选择时间:</span>
+			<el-date-picker size="small" v-model="serach" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"> </el-date-picker>
+
+			<el-button size="small" style="margin-left: 10px" type="primary">查询</el-button>
 		</el-row>
 
 		<el-row>
-			<cl-table :columns="tableColumn">
-				<!-- 操作 -->
-				<template #column-op="{ scope }">
-					<el-button size="mini" type="text" @click="$router.push({ path: 'MessageDetail', query: { id: scope.row.id } })">查看详情</el-button>
-					<el-button size="mini" type="text" @click="$router.push({ path: 'EditMessage', query: { id: scope.row.id } })">编辑</el-button>
-					<el-button size="mini" type="text" @click="deleteFn(scope.row.id)">删除</el-button>
-				</template>
-			</cl-table>
+			<cl-table :columns="tableColumn"> </cl-table>
 		</el-row>
 
 		<el-row type="flex">
 			<cl-flex1></cl-flex1>
 			<cl-pagination></cl-pagination>
 		</el-row>
+
+		<!-- 自定义表单 -->
+		<cl-form ref="form"></cl-form>
 	</cl-crud>
 </template>
 
@@ -57,28 +54,23 @@ export default {
 					width: 50
 				},
 				{
-					label: '消息标题',
-					prop: 'messageTitle',
+					label: '订单编号',
+					prop: 'orderNum',
 					align: 'center'
 				},
 				{
-					label: '消息内容',
-					prop: 'messageContent',
+					label: '充值金额',
+					prop: 'rechargeMoney',
 					align: 'center'
 				},
 				{
-					label: '推送时间',
-					prop: 'pushTime',
+					label: '实付金额',
+					prop: 'paymentMoney',
 					align: 'center'
 				},
 				{
-					label: '推送方式',
-					prop: 'pushMethod',
-					align: 'center'
-				},
-				{
-					label: '操作',
-					prop: 'op',
+					label: '支付时间',
+					prop: 'paymentTime',
 					align: 'center'
 				}
 			]
@@ -86,25 +78,45 @@ export default {
 	},
 
 	methods: {
-		//删除
-		deleteFn(id) {
-			this.$confirm('此操作将删除该条消息推送, 是否继续?', '提示', {
-				confirmButtonText: '确定',
-				cancelButtonText: '取消',
-				type: 'warning'
-			})
-				.then(() => {
-					this.$message({
-						type: 'success',
-						message: '删除成功!'
-					});
-				})
-				.catch(() => {
-					this.$message({
-						type: 'info',
-						message: '已取消删除'
-					});
-				});
+		openForm() {
+			this.$refs['form'].open({
+				props: {
+					title: '自定义表单'
+				},
+				items: [
+					{
+						label: '姓名',
+						prop: 'name',
+						value: '神仙都没用',
+						component: {
+							name: 'el-input'
+						},
+						rules: {
+							required: true,
+							message: '姓名不能为空'
+						}
+					}
+				],
+				on: {
+					open(data, { close, submit, done }) {
+						console.log('cl-form 打开钩子', data);
+					},
+
+					close(action, done) {
+						console.log('cl-form 关闭钩子', action);
+						done();
+					},
+
+					submit: (data, { close, done, next }) => {
+						console.log('cl-form 提交钩子', data);
+
+						setTimeout(() => {
+							close();
+							this.$message.success('提交成功');
+						}, 1500);
+					}
+				}
+			});
 		},
 		onLoad({ ctx, app }) {
 			ctx

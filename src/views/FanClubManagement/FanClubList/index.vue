@@ -1,17 +1,16 @@
 <template>
 	<cl-crud @load="onLoad">
 		<el-row type="flex" align="middle">
-			<cl-search-key field="serachName" placeholder="请输入用户姓名、手机号、套票号"></cl-search-key>
+			<cl-search-key field="serachName" placeholder="请输入球迷会名称"></cl-search-key>
 			<cl-flex1></cl-flex1>
-			<el-button size="mini" type="primary" @click="$router.push({ path: 'AddMessage' })">新增消息</el-button>
+			<el-button size="mini" type="primary" @click="$router.push({ path: 'AddFanClub' })">新增球迷会</el-button>
 		</el-row>
 
 		<el-row>
 			<cl-table :columns="tableColumn">
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
-					<el-button size="mini" type="text" @click="$router.push({ path: 'MessageDetail', query: { id: scope.row.id } })">查看详情</el-button>
-					<el-button size="mini" type="text" @click="$router.push({ path: 'EditMessage', query: { id: scope.row.id } })">编辑</el-button>
+					<el-button size="mini" type="text" @click="$router.push({ path: 'EditFanClub', query: { id: scope.row.id } })">编辑</el-button>
 					<el-button size="mini" type="text" @click="deleteFn(scope.row.id)">删除</el-button>
 				</template>
 			</cl-table>
@@ -57,23 +56,35 @@ export default {
 					width: 50
 				},
 				{
-					label: '消息标题',
-					prop: 'messageTitle',
+					label: '球迷会名称',
+					prop: 'fanClubName',
 					align: 'center'
 				},
 				{
-					label: '消息内容',
-					prop: 'messageContent',
+					label: '区域',
+					prop: 'fanClubRegion',
 					align: 'center'
 				},
 				{
-					label: '推送时间',
-					prop: 'pushTime',
+					label: '负责人',
+					prop: ' personLiable',
 					align: 'center'
 				},
 				{
-					label: '推送方式',
-					prop: 'pushMethod',
+					label: '手机号',
+					prop: 'personLiablePhoneNum',
+					align: 'center'
+				},
+				{
+					label: '成员人数',
+					prop: 'peopleNum',
+					sortable: true,
+					align: 'center'
+				},
+				{
+					label: '积分排名',
+					prop: 'pointsRank',
+					sortable: true,
 					align: 'center'
 				},
 				{
@@ -88,7 +99,7 @@ export default {
 	methods: {
 		//删除
 		deleteFn(id) {
-			this.$confirm('此操作将删除该条消息推送, 是否继续?', '提示', {
+			this.$confirm('是否删除该球迷会?', '提示', {
 				confirmButtonText: '确定',
 				cancelButtonText: '取消',
 				type: 'warning'
