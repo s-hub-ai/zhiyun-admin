@@ -1,21 +1,21 @@
 <template>
-	<cl-crud @load="onLoad">
+	<cl-crud @load="onLoad" ref="crud">
 		<el-row type="flex" align="middle">
 			<cl-refresh-btn></cl-refresh-btn>
-			<cl-search-key field="serachName" placeholder="请输入用户姓名、手机号、套票号"></cl-search-key>
+			<cl-search-key placeholder="请输入用户姓名、手机号、套票号"></cl-search-key>
 			<cl-flex1></cl-flex1>
-			<el-button size="mini" type="primary" @click="openForm">导出</el-button>
+			<el-button size="mini" type="primary">导出</el-button>
 		</el-row>
 
 		<el-row>
 			<cl-table :columns="tableColumn">
 				<!-- 头像 -->
 				<template #column-avatar="{ scope }">
-					<cl-avatar shape="square" size="medium" :src="scope.row.headImg | default_avatar" :style="{ margin: 'auto' }"> </cl-avatar>
+					<cl-avatar shape="square" size="medium" :src="scope.row.avatar | default_avatar" :style="{ margin: 'auto' }"> </cl-avatar>
 				</template>
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
-					<el-link type="primary" @click="$router.push({ path: 'UserDetails', query: { id: scope.row.id } })">详情</el-link>
+					<el-link type="primary" @click="editDialog(scope.row.id)">详情</el-link>
 				</template>
 				<!-- 可用积分 -->
 				<template #column-availablePoints="{ scope }">
@@ -29,80 +29,39 @@
 			<cl-pagination></cl-pagination>
 		</el-row>
 
-		<!-- 自定义表单 -->
-		<cl-form ref="form"></cl-form>
+		<!-- 新增编辑弹出框 -->
+		<!-- 新增编辑弹出框 -->
+		<el-dialog :title="addDialogTitle" :visible.sync="addDialogShow" @close="addDialogClose" width="1200px">
+			<add-dialog ref="editDialog" :addDialogShow.sync="addDialogShow"></add-dialog>
+		</el-dialog>
 	</cl-crud>
 </template>
 
 <script>
-const userList = [
-	{
-		id: 1,
-		name: '刘一',
-		phoneNum: '131604922228',
-		ticketPackageUser: '基础套票',
-		price: 75.99,
-		availablePoints: 52.2,
-		salesStatus: 1,
-		images: ['https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/1.jpg'],
-		children: [
-			{
-				id: 6,
-				name: '刘一儿子',
-				process: 35.2,
-				endTime: '2019年09月05日',
-				price: 242.1,
-				availablePoints: 72.1,
-				salesStatus: 1,
-				images: []
-			}
-		]
-	},
-	{
-		id: 2,
-		name: '陈二',
-		process: 35.2,
-		endTime: '2019年09月05日',
-		price: 242.1,
-		salesRate: 72.1,
-		salesStatus: 1,
-		images: ['https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/2.jpg']
-	},
-	{
-		id: 3,
-		name: '张三',
-		process: 10.2,
-		endTime: '2019年09月12日',
-		price: 74.11,
-		salesRate: 23.9,
-		salesStatus: 0,
-		images: ['https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/3.jpg']
-	},
-	{
-		id: 4,
-		name: '李四',
-		process: 75.5,
-		endTime: '2019年09月13日',
-		price: 276.64,
-		salesRate: 47.2,
-		salesStatus: 0,
-		images: ['https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/4.jpg']
-	},
-	{
-		id: 5,
-		name: '王五',
-		process: 25.4,
-		endTime: '2019年09月18日',
-		price: 160.23,
-		salesRate: 28.3,
-		salesStatus: 1,
-		images: ['https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/5.jpg']
-	}
-];
 import { ticketPackageUserDict, useCcertificationDict, vipLevelDict, zhiyunCardStatusDict } from '@/dict/index.js';
+import addDialog from './detail';
 export default {
+	components: {
+		addDialog
+	},
+	computed: {
+		fanClubList() {
+			let list = this.$store.state.common.fanClub;
+			let arr = list.map((value, index, array) => {
+				let o = {
+					value: value.id,
+					text: value.fanClubName
+				};
+				return o;
+			});
+			return arr;
+		}
+	},
 	data() {
+		let _this = this;
 		return {
+			addDialogShow: false,
+			addDialogTitle: '',
 			tableColumn: [
 				{
 					type: 'index',
@@ -137,6 +96,15 @@ export default {
 					prop: 'ticketPackageUser',
 					filters: ticketPackageUserDict,
 					align: 'center',
+					formatter(row) {
+						let res;
+						ticketPackageUserDict.map((value) => {
+							if (row.ticketPackageUser == value.value) {
+								res = value.text;
+							}
+						});
+						return res;
+					},
 					width: 90
 				},
 				{
@@ -146,20 +114,48 @@ export default {
 				},
 				{
 					label: '球迷会',
-					prop: 'fanClub',
+					prop: 'fanClubId',
 					filters: [],
-					align: 'center'
+					align: 'center',
+					formatter(row) {
+						let regionName = '-';
+						_this.fanClubList.map((value) => {
+							if (row.fanClubId == value.value) {
+								regionName = value.text;
+							}
+						});
+						return regionName;
+					},
+					'filter-method': (value, row, column) => {
+						console.log(value);
+						console.log(row);
+						return row[column['property']] == value;
+					}
 				},
 				{
 					label: '实名状态',
-					prop: 'useCcertification',
+					prop: 'userCertification',
 					filters: useCcertificationDict,
 					align: 'center',
+					formatter(row) {
+						let res;
+						useCcertificationDict.map((value) => {
+							if (row.userCertification == value.value) {
+								res = value.text;
+							}
+						});
+						return res;
+					},
+					'filter-method': (value, row, column) => {
+						console.log(value);
+						console.log(row);
+						return row[column['property']] == value;
+					},
 					width: 90
 				},
 				{
 					label: '姓名',
-					prop: 'useName',
+					prop: 'userName',
 					align: 'center'
 				},
 				{ label: '可用积分', prop: 'availablePoints', align: 'center' },
@@ -170,7 +166,7 @@ export default {
 				},
 				{
 					label: '积分排名',
-					prop: 'pointsRank',
+					prop: 'pointsOrder',
 					align: 'center',
 					sortable: true,
 					width: 100
@@ -180,13 +176,41 @@ export default {
 					prop: 'vipLevel',
 					filters: vipLevelDict,
 					align: 'center',
-					width: 90
+					width: 90,
+					formatter(row) {
+						let res;
+						vipLevelDict.map((value) => {
+							if (row.vipLevel == value.value) {
+								res = value.text;
+							}
+						});
+						return res;
+					},
+					'filter-method': (value, row, column) => {
+						console.log(value);
+						console.log(row);
+						return row[column['property']] == value;
+					}
 				},
 				{
 					label: '支云卡状态',
 					prop: 'zhiyunCardStatus',
 					align: 'center',
 					filters: zhiyunCardStatusDict,
+					formatter(row) {
+						let res;
+						zhiyunCardStatusDict.map((value) => {
+							if (row.zhiyunCardStatus == value.value) {
+								res = value.text;
+							}
+						});
+						return res;
+					},
+					'filter-method': (value, row, column) => {
+						console.log(value);
+						console.log(row);
+						return row[column['property']] == value;
+					},
 					width: 100
 				},
 				{
@@ -201,92 +225,22 @@ export default {
 	},
 
 	methods: {
-		openForm() {
-			this.$refs['form'].open({
-				props: {
-					title: '自定义表单'
-				},
-				items: [
-					{
-						label: '姓名',
-						prop: 'name',
-						value: '神仙都没用',
-						component: {
-							name: 'el-input'
-						},
-						rules: {
-							required: true,
-							message: '姓名不能为空'
-						}
-					}
-				],
-				on: {
-					open(data, { close, submit, done }) {
-						console.log('cl-form 打开钩子', data);
-					},
-
-					close(action, done) {
-						console.log('cl-form 关闭钩子', action);
-						done();
-					},
-
-					submit: (data, { close, done, next }) => {
-						console.log('cl-form 提交钩子', data);
-
-						setTimeout(() => {
-							close();
-							this.$message.success('提交成功');
-						}, 1500);
-					}
-				}
+		onLoad({ ctx, app }) {
+			this.tableColumn[7].filters = this.fanClubList;
+			ctx.service(this.$service.app.user.info).done();
+			app.refresh();
+		},
+		//编辑
+		editDialog(id) {
+			this.addDialogTitle = '基础信息';
+			this.addDialogShow = true;
+			this.$nextTick(() => {
+				this.$refs.editDialog.getEditInfo(id);
 			});
 		},
-		onLoad({ ctx, app }) {
-			ctx
-				.service({
-					page: (p) => {
-						console.log('GET[page]', p);
-						return Promise.resolve({
-							list: userList,
-							pagination: {
-								page: p.page,
-								size: p.size,
-								total: 200
-							}
-						});
-					},
-					info: (d) => {
-						console.log('GET[info]', d);
-						return new Promise((resolve) => {
-							resolve({
-								name: 'icssoa',
-								price: 100
-							});
-						});
-					},
-					add: (d) => {
-						console.log('POST[add]', d);
-						return Promise.resolve();
-					},
-					delete: (d) => {
-						console.log('POST[delete]', d);
-						return Promise.resolve();
-					},
-					update: (d) => {
-						console.log('POST[update]', d);
-						return Promise.resolve();
-					}
-				})
-				.permission(() => {
-					return {
-						add: true,
-						update: true,
-						delete: true
-					};
-				})
-				.done();
-
-			app.refresh();
+		addDialogClose() {
+			this.$refs.editDialog.resetForm('ruleForm');
+			this.$refs['crud'].refresh();
 		}
 	}
 };

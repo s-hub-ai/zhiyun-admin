@@ -2,19 +2,23 @@
 	<cl-crud @load="onLoad">
 		<el-row type="flex" align="middle">
 			<cl-refresh-btn></cl-refresh-btn>
-			<cl-search-key field="serachName" placeholder="请输入用户姓名、手机号"></cl-search-key>
+			<cl-search-key placeholder="请输入用户姓名、手机号"></cl-search-key>
 			<cl-flex1></cl-flex1>
 			<el-button size="mini" type="primary" @click="openForm">导出</el-button>
 		</el-row>
 
 		<el-row>
 			<cl-table :columns="tableColumn">
+				<!-- 证件有效期 -->
+				<template #column-userCertificateValidity="{ scope }">
+					<span>{{ scope.row.userCertificateValidityStart }}至{{ scope.row.userCertificateValidityEnd }}</span>
+				</template>
 				<!-- 身份证图片 -->
 				<template #column-userCertificatePositiveImg="{ scope }">
 					<el-image
 						style="width: 79px; height: 50px"
 						:src="scope.row.userCertificatePositiveImg | default_avatar"
-						:preview-src-list="[scope.row.userCertificatePositive, scope.row.userCertificateNegativeImg, scope.row.userCertificatePortraitImg]"
+						:preview-src-list="[scope.row.userCertificatePositiveImg, scope.row.userCertificateNegativeImg, scope.row.userCertificatePortraitImg]"
 					>
 					</el-image>
 				</template>
@@ -22,7 +26,7 @@
 					<el-image
 						style="width: 79px; height: 50px"
 						:src="scope.row.userCertificatePositiveImg | default_avatar"
-						:preview-src-list="[scope.row.userCertificatePositive, scope.row.userCertificateNegativeImg, scope.row.userCertificatePortraitImg]"
+						:preview-src-list="[scope.row.userCertificatePositiveImg, scope.row.userCertificateNegativeImg, scope.row.userCertificatePortraitImg]"
 					>
 					</el-image>
 				</template>
@@ -30,7 +34,7 @@
 					<el-image
 						style="width: 79px; height: 50px"
 						:src="scope.row.userCertificatePortraitImg | default_avatar"
-						:preview-src-list="[scope.row.userCertificatePositive, scope.row.userCertificateNegativeImg, scope.row.userCertificatePortraitImg]"
+						:preview-src-list="[scope.row.userCertificatePositiveImg, scope.row.userCertificateNegativeImg, scope.row.userCertificatePortraitImg]"
 					>
 					</el-image>
 				</template>
@@ -48,50 +52,22 @@
 </template>
 
 <script>
-const userList = [
-	{
-		id: 2,
-		name: '陈二',
-		process: 35.2,
-		endTime: '2019年09月05日',
-		price: 242.1,
-		salesRate: 72.1,
-		salesStatus: 1,
-		userCertificatePortraitImg: 'https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/2.jpg'
-	},
-	{
-		id: 3,
-		name: '张三',
-		process: 10.2,
-		endTime: '2019年09月12日',
-		price: 74.11,
-		salesRate: 23.9,
-		salesStatus: 0,
-		userCertificatePortraitImg: 'https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/3.jpg'
-	},
-	{
-		id: 4,
-		name: '李四',
-		process: 75.5,
-		endTime: '2019年09月13日',
-		price: 276.64,
-		salesRate: 47.2,
-		salesStatus: 0,
-		userCertificatePortraitImg: 'https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/4.jpg'
-	},
-	{
-		id: 5,
-		name: '王五',
-		process: 25.4,
-		endTime: '2019年09月18日',
-		price: 160.23,
-		salesRate: 28.3,
-		salesStatus: 1,
-		userCertificatePortraitImg: 'https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/5.jpg'
-	}
-];
 export default {
+	computed: {
+		fanClubList() {
+			let list = this.$store.state.common.fanClub;
+			let arr = list.map((value, index, array) => {
+				let o = {
+					value: value.id,
+					text: value.fanClubName
+				};
+				return o;
+			});
+			return arr;
+		}
+	},
 	data() {
+		let _this = this;
 		return {
 			tableColumn: [
 				{
@@ -102,14 +78,28 @@ export default {
 				},
 				{
 					label: '姓名',
-					prop: 'useName',
+					prop: 'userName',
 					align: 'center'
 				},
 				{
 					label: '球迷会',
-					prop: 'fanClub',
+					prop: 'fanClubId',
 					filters: [],
-					align: 'center'
+					align: 'center',
+					formatter(row) {
+						let regionName = '-';
+						_this.fanClubList.map((value) => {
+							if (row.fanClubId == value.value) {
+								regionName = value.text;
+							}
+						});
+						return regionName;
+					},
+					'filter-method': (value, row, column) => {
+						console.log(value);
+						console.log(row);
+						return row[column['property']] == value;
+					}
 				},
 				{
 					label: '手机号',
@@ -130,7 +120,12 @@ export default {
 				{
 					label: '证件类型',
 					prop: 'userCertificateType',
-					align: 'center'
+					align: 'center',
+					formatter(row) {
+						if (row.userCertificateType == 1) {
+							return '身份证';
+						}
+					}
 				},
 				{
 					label: '证件号码',
@@ -211,51 +206,10 @@ export default {
 			});
 		},
 		onLoad({ ctx, app }) {
-			ctx
-				.service({
-					page: (p) => {
-						console.log('GET[page]', p);
-						return Promise.resolve({
-							list: userList,
-							pagination: {
-								page: p.page,
-								size: p.size,
-								total: 200
-							}
-						});
-					},
-					info: (d) => {
-						console.log('GET[info]', d);
-						return new Promise((resolve) => {
-							resolve({
-								name: 'icssoa',
-								price: 100
-							});
-						});
-					},
-					add: (d) => {
-						console.log('POST[add]', d);
-						return Promise.resolve();
-					},
-					delete: (d) => {
-						console.log('POST[delete]', d);
-						return Promise.resolve();
-					},
-					update: (d) => {
-						console.log('POST[update]', d);
-						return Promise.resolve();
-					}
-				})
-				.permission(() => {
-					return {
-						add: true,
-						update: true,
-						delete: true
-					};
-				})
-				.done();
-
-			app.refresh();
+			this.tableColumn[2].filters = this.fanClubList;
+			console.log(this.fanClubList);
+			ctx.service(this.$service.app.user.info).done();
+			app.refresh({ userCertification: 1 });
 		}
 	}
 };

@@ -3,7 +3,7 @@
 		<el-row type="flex" align="middle">
 			<cl-search-key field="serachName" placeholder="请输入用户姓名、手机号、套票号"></cl-search-key>
 			<cl-flex1></cl-flex1>
-			<el-button size="mini" type="primary" @click="$router.push({ path: 'AddMessage' })">新增消息</el-button>
+			<el-button size="mini" type="primary" @click="addDialogShow = true">新增消息</el-button>
 		</el-row>
 
 		<el-row>
@@ -21,6 +21,11 @@
 			<cl-flex1></cl-flex1>
 			<cl-pagination></cl-pagination>
 		</el-row>
+
+		<!-- 新增编辑弹出框 -->
+		<el-dialog title="新增消息" :visible.sync="addDialogShow" width="800px">
+			<add-dialog></add-dialog>
+		</el-dialog>
 	</cl-crud>
 </template>
 
@@ -45,9 +50,14 @@ const userList = [
 		images: ['https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/2.jpg']
 	}
 ];
+import addDialog from './AddMessage';
 export default {
+	components: {
+		addDialog
+	},
 	data() {
 		return {
+			addDialogShow: false,
 			serach: '',
 			tableColumn: [
 				{

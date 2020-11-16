@@ -21,3 +21,18 @@ Vue.filter("default_name", function (name) {
 
 	return name;
 });
+
+Vue.filter("format_spec", value => {
+	if (value) {
+		let arr = [];
+		let spec = eval("(" + value + ")");;
+
+		for (let i in spec) {
+			arr.push(spec[i]);
+		}
+
+		return arr.join(",");
+	} else {
+		return "默认规格";
+	}
+});

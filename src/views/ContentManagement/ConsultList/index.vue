@@ -1,8 +1,8 @@
 <template>
-	<cl-crud @load="onLoad">
+	<cl-crud @load="onLoad" ref="crud">
 		<el-row type="flex" align="middle">
 			<cl-flex1></cl-flex1>
-			<el-button size="mini" type="primary" @click="$router.push({ path: 'AddConsult' })">新增</el-button>
+			<el-button size="mini" type="primary" @click="(addDialogTitle = '新增咨询'), (addDialogShow = true)">新增</el-button>
 		</el-row>
 
 		<el-row>
@@ -11,9 +11,23 @@
 				<template #column-qrCode="{ scope }">
 					<el-image style="width: 100px; height: 100px" :src="scope.row.qrCode" :preview-src-list="[scope.row.qrCode]"> </el-image>
 				</template>
+				<!-- 状态-->
+				<template #column-enableStatus="{ scope }">
+					<el-switch
+						size="large"
+						active-text="启用"
+						inactive-text="停用"
+						v-model="scope.row.enableStatus"
+						:active-value="1"
+						:inactive-value="0"
+						active-color="#13ce66"
+						inactive-color="#ff4949"
+						@change="updateTableRow(scope.row)"
+					></el-switch>
+				</template>
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
-					<el-button size="mini" type="text" @click="$router.push({ path: 'EditConsult', query: { id: scope.row.id } })">编辑</el-button>
+					<el-button size="mini" type="text" @click="editDialog(scope.row.id)">编辑</el-button>
 					<el-button size="mini" type="text" @click="deleteFn(scope.row.id)">删除</el-button>
 				</template>
 			</cl-table>
@@ -23,33 +37,24 @@
 			<cl-flex1></cl-flex1>
 			<cl-pagination></cl-pagination>
 		</el-row>
+
+		<!-- 新增编辑弹出框 -->
+		<el-dialog :title="addDialogTitle" :visible.sync="addDialogShow" @close="addDialogClose" width="800px">
+			<add-dialog ref="editDialog" :addDialogShow.sync="addDialogShow"></add-dialog>
+		</el-dialog>
 	</cl-crud>
 </template>
 
 <script>
-const userList = [
-	{
-		id: 1,
-		status: 35.2,
-		useDate: '2019年09月05日',
-		useNum: 242.1,
-		type: 72.1,
-		qrCode: 'https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/1.jpg'
-	},
-	{
-		id: 2,
-		name: '陈二',
-		status: 35.2,
-		useDate: '2019年09月05日',
-		useNum: 242.1,
-		type: 72.1,
-		salesStatus: 1,
-		images: ['https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/2.jpg']
-	}
-];
+import addDialog from './AddConsult';
 export default {
+	components: {
+		addDialog
+	},
 	data() {
 		return {
+			addDialogShow: false,
+			addDialogTitle: '',
 			serach: '',
 			tableColumn: [
 				{
@@ -70,7 +75,7 @@ export default {
 				},
 				{
 					label: '状态',
-					prop: 'startStatus',
+					prop: 'enableStatus',
 					align: 'center'
 				},
 				{
@@ -83,18 +88,40 @@ export default {
 	},
 
 	methods: {
+		//
+		async updateTableRow(params) {
+			try {
+				await this.$service.app.consult.update(params);
+			} catch (error) {
+				this.$message.error(error);
+			}
+		},
+		//编辑
+		editDialog(id) {
+			this.addDialogTitle = '编辑咨询信息';
+			this.addDialogShow = true;
+			this.$nextTick(() => {
+				this.$refs.editDialog.getEditInfo(id);
+			});
+		},
 		//删除
 		deleteFn(id) {
-			this.$confirm('是否删除该球迷会?', '提示', {
+			this.$confirm('是否删除该条咨询?', '提示', {
 				confirmButtonText: '确定',
 				cancelButtonText: '取消',
 				type: 'warning'
 			})
-				.then(() => {
-					this.$message({
-						type: 'success',
-						message: '删除成功!'
-					});
+				.then(async () => {
+					try {
+						await this.$service.app.consult.delete({ ids: id });
+						await this.addDialogClose();
+						this.$message({
+							type: 'success',
+							message: '删除成功!'
+						});
+					} catch (error) {
+						this.$message.error(error);
+					}
 				})
 				.catch(() => {
 					this.$message({
@@ -104,51 +131,12 @@ export default {
 				});
 		},
 		onLoad({ ctx, app }) {
-			ctx
-				.service({
-					page: (p) => {
-						console.log('GET[page]', p);
-						return Promise.resolve({
-							list: userList,
-							pagination: {
-								page: p.page,
-								size: p.size,
-								total: 200
-							}
-						});
-					},
-					info: (d) => {
-						console.log('GET[info]', d);
-						return new Promise((resolve) => {
-							resolve({
-								name: 'icssoa',
-								price: 100
-							});
-						});
-					},
-					add: (d) => {
-						console.log('POST[add]', d);
-						return Promise.resolve();
-					},
-					delete: (d) => {
-						console.log('POST[delete]', d);
-						return Promise.resolve();
-					},
-					update: (d) => {
-						console.log('POST[update]', d);
-						return Promise.resolve();
-					}
-				})
-				.permission(() => {
-					return {
-						add: true,
-						update: true,
-						delete: true
-					};
-				})
-				.done();
-
+			ctx.service(this.$service.app.consult).done();
 			app.refresh();
+		},
+		addDialogClose() {
+			this.$refs.editDialog.resetForm('ruleForm');
+			this.$refs['crud'].refresh();
 		}
 	}
 };

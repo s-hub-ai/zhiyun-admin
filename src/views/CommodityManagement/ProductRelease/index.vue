@@ -2,18 +2,18 @@
 	<el-card class="box-card">
 		<!-- 		<span>商品信息</span>
 		<el-divider></el-divider> -->
-		<el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+		<el-tabs v-model="activeName" type="card">
 			<el-tab-pane label="商城商品" name="1">
-				<mall-form></mall-form>
+				<mall-form v-if="activeName == 1"></mall-form>
 			</el-tab-pane>
 			<el-tab-pane label="积分商品" name="2">
-				<integral-form></integral-form>
+				<integral-form v-if="activeName == 2"></integral-form>
 			</el-tab-pane>
 			<el-tab-pane label="票务商品" name="3">
-				<ticket-form></ticket-form>
+				<ticket-form v-if="activeName == 3"></ticket-form>
 			</el-tab-pane>
 			<el-tab-pane label="付费活动" name="4">
-				<pay-form></pay-form>
+				<pay-form v-if="activeName == 4"></pay-form>
 			</el-tab-pane>
 		</el-tabs>
 	</el-card>
@@ -34,11 +34,15 @@ export default {
 	},
 	data() {
 		return {
-			activeName: '1'
+			activeName: '2'
 		};
 	},
 	methods: {}
 };
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.box-card {
+	overflow-y: auto;
+}
+</style>

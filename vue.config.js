@@ -33,7 +33,7 @@ module.exports = {
 
 		proxy: {
 			"/dev": {
-				target: "http://127.0.0.1:7003",
+				target: "http://test2.junxing-tech.net:9007",
 				changeOrigin: true,
 				pathRewrite: {
 					"^/dev": ""

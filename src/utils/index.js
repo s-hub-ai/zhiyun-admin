@@ -13,6 +13,13 @@ export function calcDescartes(array) {
 	});
 }
 
+export function getSpec(d) {
+	return _.keys(d)
+		.filter((e) => e.includes("spec_"))
+		.map((e) => d[e])
+		.join();
+}
+
 export function deepMerge(a, b) {
 	let k;
 	for (k in b) {

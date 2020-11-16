@@ -1,4 +1,8 @@
-import { BaseService, Service, Permission } from "@/cool";
+import {
+	BaseService,
+	Service,
+	Permission
+} from "@/cool";
 
 @Service("sys/user")
 export default class extends BaseService {

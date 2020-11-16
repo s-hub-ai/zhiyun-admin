@@ -45,7 +45,6 @@ import { pointsUseDetailTypeDict } from '@/dict/index.js';
 export default {
 	data() {
 		return {
-
 			serach: '',
 			tableProps: { 'show-summary': true },
 			tableColumn: [
@@ -120,51 +119,10 @@ export default {
 			});
 		},
 		onLoad({ ctx, app }) {
-			ctx
-				.service({
-					page: (p) => {
-						console.log('GET[page]', p);
-						return Promise.resolve({
-							list: userList,
-							pagination: {
-								page: p.page,
-								size: p.size,
-								total: 200
-							}
-						});
-					},
-					info: (d) => {
-						console.log('GET[info]', d);
-						return new Promise((resolve) => {
-							resolve({
-								name: 'icssoa',
-								price: 100
-							});
-						});
-					},
-					add: (d) => {
-						console.log('POST[add]', d);
-						return Promise.resolve();
-					},
-					delete: (d) => {
-						console.log('POST[delete]', d);
-						return Promise.resolve();
-					},
-					update: (d) => {
-						console.log('POST[update]', d);
-						return Promise.resolve();
-					}
-				})
-				.permission(() => {
-					return {
-						add: true,
-						update: true,
-						delete: true
-					};
-				})
-				.done();
-
-			app.refresh();
+			ctx.service(this.$service.app.scope).done();
+			app.refresh({
+				userId: this.$route.query.userId
+			});
 		}
 	}
 };

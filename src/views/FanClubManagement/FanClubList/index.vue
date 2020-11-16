@@ -1,16 +1,20 @@
 <template>
-	<cl-crud @load="onLoad">
+	<cl-crud @load="onLoad" ref="crud">
 		<el-row type="flex" align="middle">
-			<cl-search-key field="serachName" placeholder="请输入球迷会名称"></cl-search-key>
+			<cl-search-key placeholder="请输入球迷会名称"></cl-search-key>
 			<cl-flex1></cl-flex1>
-			<el-button size="mini" type="primary" @click="$router.push({ path: 'AddFanClub' })">新增球迷会</el-button>
+			<el-button size="mini" type="primary" @click="(addDialogTitle = '新增球迷会'), (addDialogShow = true)">新增球迷会</el-button>
 		</el-row>
 
 		<el-row>
 			<cl-table :columns="tableColumn">
+				<!-- 成员人数 -->
+				<template #column-peopleNum="{ scope }">
+					<span>{{ scope.row.userList.length }}</span>
+				</template>
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
-					<el-button size="mini" type="text" @click="$router.push({ path: 'EditFanClub', query: { id: scope.row.id } })">编辑</el-button>
+					<el-button size="mini" type="text" @click="editDialog(scope.row.id)">编辑</el-button>
 					<el-button size="mini" type="text" @click="deleteFn(scope.row.id)">删除</el-button>
 				</template>
 			</cl-table>
@@ -20,34 +24,30 @@
 			<cl-flex1></cl-flex1>
 			<cl-pagination></cl-pagination>
 		</el-row>
+
+		<!-- 新增编辑弹出框 -->
+		<el-dialog :title="addDialogTitle" :visible.sync="addDialogShow" @close="addDialogClose" width="400px">
+			<add-dialog ref="editDialog" :addDialogShow.sync="addDialogShow"></add-dialog>
+		</el-dialog>
 	</cl-crud>
 </template>
 
 <script>
-const userList = [
-	{
-		id: 1,
-		status: 35.2,
-		useDate: '2019年09月05日',
-		useNum: 242.1,
-		type: 72.1,
-		images: ['https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/1.jpg']
-	},
-	{
-		id: 2,
-		name: '陈二',
-		status: 35.2,
-		useDate: '2019年09月05日',
-		useNum: 242.1,
-		type: 72.1,
-		salesStatus: 1,
-		images: ['https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/2.jpg']
-	}
-];
+import addDialog from './AddFanClub';
 export default {
+	components: {
+		addDialog
+	},
+	computed: {
+		fanClubRegionList() {
+			return this.$store.state.common.fanClubRegion;
+		}
+	},
 	data() {
+		let _this = this;
 		return {
-			serach: '',
+			addDialogShow: false,
+			addDialogTitle: '',
 			tableColumn: [
 				{
 					type: 'index',
@@ -63,16 +63,25 @@ export default {
 				{
 					label: '区域',
 					prop: 'fanClubRegion',
-					align: 'center'
+					align: 'center',
+					formatter(row) {
+						let regionName = '-';
+						_this.fanClubRegionList.map((value) => {
+							if (row.fanClubRegion == value.id) {
+								regionName = value.regionName;
+							}
+						});
+						return regionName;
+					}
 				},
 				{
 					label: '负责人',
-					prop: ' personLiable',
+					prop: 'personLiable',
 					align: 'center'
 				},
 				{
 					label: '手机号',
-					prop: 'personLiablePhoneNum',
+					prop: 'phoneNum',
 					align: 'center'
 				},
 				{
@@ -83,7 +92,7 @@ export default {
 				},
 				{
 					label: '积分排名',
-					prop: 'pointsRank',
+					prop: 'pointsOrder',
 					sortable: true,
 					align: 'center'
 				},
@@ -97,6 +106,14 @@ export default {
 	},
 
 	methods: {
+		//编辑
+		editDialog(id) {
+			this.addDialogTitle = '编辑球迷会';
+			this.addDialogShow = true;
+			this.$nextTick(() => {
+				this.$refs.editDialog.getEditInfo(id);
+			});
+		},
 		//删除
 		deleteFn(id) {
 			this.$confirm('是否删除该球迷会?', '提示', {
@@ -104,11 +121,17 @@ export default {
 				cancelButtonText: '取消',
 				type: 'warning'
 			})
-				.then(() => {
-					this.$message({
-						type: 'success',
-						message: '删除成功!'
-					});
+				.then(async () => {
+					try {
+						await this.$service.app.fanClub.delete({ ids: id });
+						await this.addDialogClose();
+						this.$message({
+							type: 'success',
+							message: '删除成功!'
+						});
+					} catch (error) {
+						this.$message.error(error);
+					}
 				})
 				.catch(() => {
 					this.$message({
@@ -118,51 +141,12 @@ export default {
 				});
 		},
 		onLoad({ ctx, app }) {
-			ctx
-				.service({
-					page: (p) => {
-						console.log('GET[page]', p);
-						return Promise.resolve({
-							list: userList,
-							pagination: {
-								page: p.page,
-								size: p.size,
-								total: 200
-							}
-						});
-					},
-					info: (d) => {
-						console.log('GET[info]', d);
-						return new Promise((resolve) => {
-							resolve({
-								name: 'icssoa',
-								price: 100
-							});
-						});
-					},
-					add: (d) => {
-						console.log('POST[add]', d);
-						return Promise.resolve();
-					},
-					delete: (d) => {
-						console.log('POST[delete]', d);
-						return Promise.resolve();
-					},
-					update: (d) => {
-						console.log('POST[update]', d);
-						return Promise.resolve();
-					}
-				})
-				.permission(() => {
-					return {
-						add: true,
-						update: true,
-						delete: true
-					};
-				})
-				.done();
-
+			ctx.service(this.$service.app.fanClub).done();
 			app.refresh();
+		},
+		addDialogClose() {
+			this.$refs.editDialog.resetForm('ruleForm');
+			this.$refs['crud'].refresh();
 		}
 	}
 };

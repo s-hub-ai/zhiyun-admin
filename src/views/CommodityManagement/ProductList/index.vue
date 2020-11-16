@@ -1,7 +1,7 @@
 <template>
-	<cl-crud @load="onLoad">
+	<cl-crud @load="onLoad" ref="crud">
 		<el-row type="flex" align="middle">
-			<cl-search-key field="serachName" placeholder="请输入商品名称"></cl-search-key>
+			<cl-search-key placeholder="请输入商品名称"></cl-search-key>
 			<cl-flex1></cl-flex1>
 			<el-button type="text" size="mini" icon="el-icon-setting" @click="$router.push({ path: 'DeliveryCharge' })">运费设置</el-button>
 			<el-button size="mini" type="primary" @click="$router.push({ path: 'ProductRelease' })">发布商品</el-button>
@@ -11,28 +11,38 @@
 			<cl-table :columns="tableColumn">
 				<!-- 商品封面 -->
 				<template #column-commodityCover="{ scope }">
-					<el-image style="width: 100px; height: 100px" :src="scope.row.commodityCover" :preview-src-list="srcList"> </el-image>
+					<el-image style="width: 100px; height: 100px" :src="scope.row.commodityCover" :preview-src-list="[scope.row.commodityCover]"> </el-image>
 				</template>
 				<!-- 自定义销量 -->
 				<template #column-fakeSalesVolume="{ scope }">
-					<el-input-number style="width: 100px" :value="scope.row.fakeSalesVolume" size="mini" controls-position="right" :min="0"></el-input-number>
+					<el-input-number style="width: 100px" v-model="scope.row.fakeSalesVolume" @change="updateFakeSaleVolume(scope.row)" size="mini" controls-position="right" :min="0"></el-input-number>
 				</template>
 				<!-- 销量展示 -->
 				<template #column-salesVolumeShow="{ scope }">
-					<el-switch :value="scope.row.salesVolumeShow" active-text="自定义" inactive-text="真实"> </el-switch>
+					<el-switch v-model="scope.row.salesVolumeShow" @change="updateShowSaleVolume(scope.row)" :active-value="1" :inactive-value="0" active-text="自定义" inactive-text="真实"> </el-switch>
 				</template>
 				<!-- 状态 -->
 				<template #column-commodityStatus="{ scope }">
-					<el-switch :value="scope.row.commodityStatus" active-color="#13ce66" inactive-color="#ff4949" active-text="上架" inactive-text="下架"> </el-switch>
+					<el-switch
+						v-model="scope.row.commodityStatus"
+						@change="updateStatus(scope.row)"
+						:active-value="1"
+						:inactive-value="0"
+						active-color="#13ce66"
+						inactive-color="#ff4949"
+						active-text="上架"
+						inactive-text="下架"
+					>
+					</el-switch>
 				</template>
 				<!-- 排序 -->
 				<template #column-commodityOrder="{ scope }">
-					<el-input-number style="width: 100px" size="mini" :value="scope.row.commodityOrder" :min="1"></el-input-number>
+					<el-input-number style="width: 100px" size="mini" v-model="scope.row.commodityOrder" @change="updateCommodityOrder(scope.row)" :min="1"></el-input-number>
 				</template>
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
 					<el-button type="text">编辑</el-button>
-					<el-button type="text">删除</el-button>
+					<el-button type="text" @click="deleteFn(scope.row)">删除</el-button>
 				</template>
 			</cl-table>
 		</el-row>
@@ -48,70 +58,6 @@
 </template>
 
 <script>
-const userList = [
-	{
-		id: 1,
-		name: '刘一',
-		phoneNum: '131604922228',
-		ticketPackageUser: '基础套票',
-		price: 75.99,
-		availablePoints: 52.2,
-		salesStatus: 1,
-		images: ['https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/1.jpg'],
-		children: [
-			{
-				id: 6,
-				name: '刘一儿子',
-				process: 35.2,
-				endTime: '2019年09月05日',
-				price: 242.1,
-				availablePoints: 72.1,
-				salesStatus: 1,
-				images: []
-			}
-		]
-	},
-	{
-		id: 2,
-		name: '陈二',
-		process: 35.2,
-		endTime: '2019年09月05日',
-		price: 242.1,
-		salesRate: 72.1,
-		salesStatus: 1,
-		images: ['https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/2.jpg']
-	},
-	{
-		id: 3,
-		name: '张三',
-		process: 10.2,
-		endTime: '2019年09月12日',
-		price: 74.11,
-		salesRate: 23.9,
-		salesStatus: 0,
-		images: ['https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/3.jpg']
-	},
-	{
-		id: 4,
-		name: '李四',
-		process: 75.5,
-		endTime: '2019年09月13日',
-		price: 276.64,
-		salesRate: 47.2,
-		salesStatus: 0,
-		images: ['https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/4.jpg']
-	},
-	{
-		id: 5,
-		name: '王五',
-		process: 25.4,
-		endTime: '2019年09月18日',
-		price: 160.23,
-		salesRate: 28.3,
-		salesStatus: 1,
-		images: ['https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/5.jpg']
-	}
-];
 import { goodsTypeDict } from '@/dict/index.js';
 export default {
 	data() {
@@ -138,6 +84,22 @@ export default {
 					label: '商品类型',
 					prop: 'goodsType',
 					filters: goodsTypeDict,
+					'filter-method': (value, row, column) => {
+						if (value != -1) {
+							return row[column['property']] === value;
+						} else {
+							return row[column['property']];
+						}
+					},
+					formatter(row) {
+						let name = '-';
+						goodsTypeDict.map((value) => {
+							if (row.goodsType == value.value) {
+								name = value.text;
+							}
+						});
+						return name;
+					},
 					align: 'center',
 					width: 105
 				},
@@ -167,6 +129,9 @@ export default {
 						{ value: 0, text: '下架' },
 						{ value: 1, text: '上架' }
 					],
+					'filter-method': (value, row, column) => {
+						return row[column['property']] === value;
+					},
 					align: 'center',
 					width: 140
 				},
@@ -189,92 +154,106 @@ export default {
 	},
 
 	methods: {
-		openForm() {
-			this.$refs['form'].open({
-				props: {
-					title: '自定义表单'
-				},
-				items: [
-					{
-						label: '姓名',
-						prop: 'name',
-						value: '神仙都没用',
-						component: {
-							name: 'el-input'
-						},
-						rules: {
-							required: true,
-							message: '姓名不能为空'
+		//删除商品
+		deleteFn(params) {
+			this.$confirm('此操作将永久删除该商品, 是否继续?', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			})
+				.then(async () => {
+					try {
+						let { id, goodsType } = params;
+						goodsType = Number(goodsType);
+						if (goodsType == 0) {
+							await this.$service.app.commodity.shopping.delete({ ids: id });
+						} else if (goodsType == 2) {
+							await this.$service.app.commodity.score.delete({ ids: id });
 						}
+						this.$message({
+							message: '删除成功',
+							type: 'success'
+						});
+						this.$refs['crud'].refresh();
+					} catch (error) {
+						this.$message.error(error);
 					}
-				],
-				on: {
-					open(data, { close, submit, done }) {
-						console.log('cl-form 打开钩子', data);
-					},
+				})
+				.catch(() => {
+					this.$message({
+						type: 'info',
+						message: '已取消删除'
+					});
+				});
+		},
+		//编辑手动销量
+		async updateShowSaleVolume(params) {
+			console.log(params);
+			try {
+				let { id, goodsType, salesVolumeShow } = params;
+				console.log(id);
+				await this.$service.app.commodity.common.updateShowSaleVolume({ id, goodsType, salesVolumeShow });
+				this.$message({
+					message: '修改成功',
+					type: 'success'
+				});
+			} catch (error) {
+				this.$message.error(error);
+			}
+		},
+		//编辑上架状态
+		async updateStatus(params) {
+			console.log(params);
+			try {
+				let { id, goodsType, commodityStatus } = params;
+				console.log(id);
+				await this.$service.app.commodity.common.updateStatus({ id, goodsType, commodityStatus });
+				this.$message({
+					message: '修改成功',
+					type: 'success'
+				});
+			} catch (error) {
+				this.$message.error(error);
+			}
+		},
+		//编辑手动销量
 
-					close(action, done) {
-						console.log('cl-form 关闭钩子', action);
-						done();
-					},
-
-					submit: (data, { close, done, next }) => {
-						console.log('cl-form 提交钩子', data);
-
-						setTimeout(() => {
-							close();
-							this.$message.success('提交成功');
-						}, 1500);
-					}
-				}
-			});
+		async updateFakeSaleVolume(params) {
+			console.log(params);
+			try {
+				let { id, goodsType, fakeSaleVolume } = params;
+				console.log(id);
+				await this.$service.app.commodity.common.updateFakeSaleVolume({ id, goodsType, fakeSaleVolume });
+				this.$message({
+					message: '修改成功',
+					type: 'success'
+				});
+			} catch (error) {
+				this.$message.error(error);
+			}
+		},
+		//编辑排序
+		async updateCommodityOrder(params) {
+			console.log(params);
+			try {
+				let { id, goodsType, commodityOrder } = params;
+				console.log(id);
+				await this.$service.app.commodity.common.updateCommodityOrder({ id, goodsType, commodityOrder });
+				this.$message({
+					message: '修改成功',
+					type: 'success'
+				});
+			} catch (error) {
+				this.$message.error(error);
+			}
 		},
 		onLoad({ ctx, app }) {
-			ctx
-				.service({
-					page: (p) => {
-						console.log('GET[page]', p);
-						return Promise.resolve({
-							list: userList,
-							pagination: {
-								page: p.page,
-								size: p.size,
-								total: 200
-							}
-						});
-					},
-					info: (d) => {
-						console.log('GET[info]', d);
-						return new Promise((resolve) => {
-							resolve({
-								name: 'icssoa',
-								price: 100
-							});
-						});
-					},
-					add: (d) => {
-						console.log('POST[add]', d);
-						return Promise.resolve();
-					},
-					delete: (d) => {
-						console.log('POST[delete]', d);
-						return Promise.resolve();
-					},
-					update: (d) => {
-						console.log('POST[update]', d);
-						return Promise.resolve();
-					}
-				})
-				.permission(() => {
-					return {
-						add: true,
-						update: true,
-						delete: true
-					};
-				})
-				.done();
-
-			app.refresh();
+			ctx.service(this.$service.app.commodity.common).done();
+			app.refresh({
+				goodsType: -1,
+				prop: 'createTime',
+				order: 'desc'
+			});
 		}
 	}
 };
