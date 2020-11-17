@@ -3,7 +3,7 @@
 		<el-row type="flex" align="middle">
 			<cl-search-key placeholder="请输入商品名称"></cl-search-key>
 			<cl-flex1></cl-flex1>
-			<el-button type="text" size="mini" icon="el-icon-setting" @click="$router.push({ path: 'DeliveryCharge' })">运费设置</el-button>
+			<el-button type="text" size="mini" icon="el-icon-setting" @click="$router.push({ path: 'DeliveryCharge' })">全局设置</el-button>
 			<el-button size="mini" type="primary" @click="$router.push({ path: 'ProductRelease' })">发布商品</el-button>
 		</el-row>
 
