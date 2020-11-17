@@ -1,5 +1,5 @@
 <template>
-	<cl-crud @load="onLoad">
+	<cl-crud @load="onLoad" ref="crud">
 		<el-row type="flex" align="middle">
 			<cl-flex1></cl-flex1>
 			<cl-search-key></cl-search-key>
@@ -22,8 +22,8 @@
 				</template>
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
-					<el-button type="text" v-if="scope.row.orderStatus == 1" @click="deliveDialogShow = true">发货</el-button>
-					<el-button type="text" v-if="scope.row.orderStatus == 2">物流</el-button>
+					<el-button type="text" v-if="scope.row.orderStatus == 1" @click="(deliveryForm.orderId = scope.row.id), (deliveDialogShow = true)">发货</el-button>
+					<el-button type="text" v-if="scope.row.orderStatus == 2" @click="(deliveryForm.orderId = scope.row.id), getLogistics()">物流</el-button>
 					<el-button type="text" v-if="scope.row.orderStatus == 4" @click="drawbackAuditShow = true">退款审核</el-button>
 					<el-button type="text" @click="(detailDialogShow = true), getEditInfo(scope.row.id)">详情</el-button>
 				</template>
@@ -36,20 +36,19 @@
 		</el-row>
 		<!-- 发货弹出框 -->
 		<el-dialog title="商品发货" :visible.sync="deliveDialogShow" width="400px">
-			<el-form :model="deliveDialogForm" label-width="90px">
-				<el-form-item label="选择快递" required>
-					<el-select v-model="deliveDialogForm.region" placeholder="请选择" style="width: 100%">
-						<el-option label="区域一" value="shanghai"></el-option>
-						<el-option label="区域二" value="beijing"></el-option>
-					</el-select>
-				</el-form-item>
+			<el-form :model="deliveryForm" label-width="90px">
 				<el-form-item label="快递单号" required>
-					<el-input v-model="deliveDialogForm.name"></el-input>
+					<el-input v-model="deliveryForm.deliverySN" @blur="getDelivery"></el-input>
+				</el-form-item>
+				<el-form-item label="选择快递" required>
+					<el-select v-model="deliveryForm.deliveryCompany" placeholder="请选择" style="width: 100%">
+						<el-option v-for="(item, index) in deliveryList" :key="index" :label="item.name" :value="item.type"></el-option>
+					</el-select>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="deliveDialogShow = false">取 消</el-button>
-				<el-button type="primary" @click="deliveDialogShow = false">确 定</el-button>
+				<el-button type="primary" @click="delivergoods">确 定</el-button>
 			</div>
 		</el-dialog>
 		<!-- 退款审核弹出框 -->
@@ -193,7 +192,6 @@ export default {
 			drawbackAuditD: {},
 			detail: {},
 			deliveDialogShow: false,
-			deliveDialogForm: {},
 			//
 			tableColumn: [
 				{
@@ -282,7 +280,9 @@ export default {
 					prop: 'op',
 					align: 'center'
 				}
-			]
+			],
+			deliveryForm: { deliveryCompany: '', deliverySN: '', orderId: '' },
+			deliveryList: []
 		};
 	},
 
@@ -290,6 +290,32 @@ export default {
 		onLoad({ ctx, app }) {
 			ctx.service(this.$service.app.order).done();
 			app.refresh();
+		},
+		//获取物流
+		async getLogistics() {
+			try {
+				await this.$service.app.order.delivery({ orderId: this.deliveryForm.orderId });
+			} catch (error) {
+				this.$message.error(error);
+			}
+		},
+		//发货
+		async delivergoods() {
+			try {
+				await this.$service.system.delivery.add({ ...this.deliveryForm });
+				this.$refs['crud'].refresh();
+			} catch (error) {
+				this.$message.error(error);
+			}
+		},
+		//输入快递单号
+		async getDelivery() {
+			try {
+				let res = await this.$service.system.delivery.listby({ deliverySN: this.deliveryForm.deliverySN });
+				this.deliveryList = res;
+			} catch (error) {
+				this.$message.error(error);
+			}
 		},
 		//获取详情
 		async getEditInfo(id) {

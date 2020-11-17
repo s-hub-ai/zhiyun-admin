@@ -16,6 +16,9 @@
 			<el-form-item class="form-item" label="手机号" prop="phoneNum">
 				<el-input type="text" v-model="ruleForm.phoneNum" placeholder="请输入负责人手机号" maxlength="11"></el-input>
 			</el-form-item>
+			<el-form-item label="球迷会封面" prop="fanClubCover">
+				<cl-upload multiple :limit="5" :value="ruleForm.fanClubCover" class="avatar-uploader" :size="[150, 150]" icon="el-icon-plus" accept="*" :on-success="fanClubCoverUploadSuccess"></cl-upload>
+			</el-form-item>
 			<el-form-item style="text-align: center">
 				<el-button type="primary" @click="submitForm('ruleForm')">确定</el-button>
 				<el-button @click="resetForm('ruleForm')">重置</el-button>
@@ -37,13 +40,15 @@ export default {
 				fanClubName: '',
 				fanClubRegion: '',
 				personLiable: '',
-				phoneNum: ''
+				phoneNum: '',
+				fanClubCover: ''
 			},
 			rules: {
 				fanClubName: [{ required: true, message: '请输入球迷会名称', trigger: 'blur' }],
 				fanClubRegion: [{ required: true, message: '请选择区域', trigger: 'change' }],
 				personLiable: [{ required: true, message: '请填写负责人', trigger: 'blur' }],
-				phoneNum: [{ required: true, message: '请填写负责人手机号', trigger: 'blur' }]
+				phoneNum: [{ required: true, message: '请填写负责人手机号', trigger: 'blur' }],
+				fanClubCover: [{ required: true, message: '请上传球迷会封面', trigger: 'blur' }]
 			}
 		};
 	},
@@ -57,6 +62,11 @@ export default {
 				this.$message.error(error);
 			}
 		},
+		fanClubCoverUploadSuccess(res) {
+			if (res) {
+				this.ruleForm.fanClubCover = res;
+			}
+		},
 		//
 		submitForm(formName) {
 			this.$refs[formName].validate(async (valid) => {
@@ -66,7 +76,7 @@ export default {
 							...this.ruleForm
 						};
 						await this.$service.app.fanClub.add(params);
-				
+
 						this.$emit('update:addDialogShow', false);
 					} catch (error) {
 						this.$message.error(error);

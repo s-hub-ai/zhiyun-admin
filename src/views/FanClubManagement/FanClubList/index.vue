@@ -8,6 +8,10 @@
 
 		<el-row>
 			<cl-table :columns="tableColumn">
+				<!-- 封面 -->
+				<template #column-fanClubCover="{ scope }">
+					<el-image style="width: 100px; height: 100px" :src="scope.row.fanClubCover" :preview-src-list="scope.row.fanClubCover"> </el-image>
+				</template>
 				<!-- 成员人数 -->
 				<template #column-peopleNum="{ scope }">
 					<span>{{ scope.row.userList.length }}</span>
@@ -54,6 +58,11 @@ export default {
 					label: '编号',
 					align: 'center',
 					width: 50
+				},
+				{
+					label: '球迷会封面',
+					prop: 'fanClubCover',
+					align: 'center'
 				},
 				{
 					label: '球迷会名称',

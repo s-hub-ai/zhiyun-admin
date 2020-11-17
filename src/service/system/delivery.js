@@ -4,14 +4,14 @@ import {
  Permission
 } from "@/cool";
 
-@Service("app/order")
+@Service("sys/delivery")
 export default class extends BaseService {
- @Permission("delivery")
- delivery(data) {
+
+ @Permission("listby")
+ listby(params) {
   return this.request({
-   url: "/delivery",
-   method: "POST",
-   data
+   url: "/listby",
+   params
   });
  }
 }
