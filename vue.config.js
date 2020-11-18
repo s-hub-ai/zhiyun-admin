@@ -33,16 +33,16 @@ module.exports = {
 
 		proxy: {
 			"/dev": {
-				//target: "https://zytest.junxing-tech.com",
-				target: "http://127.0.0.1:9007",
+				target: "https://paytest.ryyes.com",
+				//target: "http://127.0.0.1:9007",
 				changeOrigin: true,
 				pathRewrite: {
-					"^/dev": ""
+					"^/dev": "/api"
 				}
 			},
 
 			"/pro": {
-				target: "https://show.cool-admin.com",
+				target: "https://test2.junxing-tech.net:9008",
 				changeOrigin: true,
 				pathRewrite: {
 					"^/pro": "/api"

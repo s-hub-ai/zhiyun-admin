@@ -51,6 +51,15 @@
 				<el-button type="primary" @click="delivergoods">确 定</el-button>
 			</div>
 		</el-dialog>
+
+		<el-dialog title="物流信息" :visible.sync="dialogLogistics">
+			<el-timeline>
+				<el-timeline-item v-for="(item, index) in logistics.list" :key="index" :timestamp="item.date">
+					{{ item.status }}
+				</el-timeline-item>
+			</el-timeline>
+		</el-dialog>
+
 		<!-- 退款审核弹出框 -->
 		<el-dialog title="退款审核" :visible.sync="drawbackAuditShow" width="500px">
 			<el-form>
@@ -186,6 +195,7 @@ export default {
 	},
 	data() {
 		return {
+			dialogLogistics: false,
 			detailDialogShow: false,
 			drawbackAuditShow: false,
 			drawbackVerify: 1,
@@ -201,6 +211,7 @@ export default {
 				},
 				{
 					label: '订单类型',
+					width: 110,
 					align: 'center',
 					filters: orderTypeDict,
 					prop: 'orderType',
@@ -250,10 +261,12 @@ export default {
 				{
 					label: '下单时间',
 					prop: 'orderTime',
+					width: 90,
 					align: 'center'
 				},
 				{
 					label: '订单状态',
+					width: 110,
 					filters: orderStatusDict,
 					prop: 'orderStatus',
 					align: 'center',
@@ -277,12 +290,14 @@ export default {
 				{
 					label: '操作',
 					width: 200,
+					fixed: 'right',
 					prop: 'op',
 					align: 'center'
 				}
 			],
 			deliveryForm: { deliveryCompany: '', deliverySN: '', orderId: '' },
-			deliveryList: []
+			deliveryList: [],
+			logistics: []
 		};
 	},
 
@@ -294,7 +309,8 @@ export default {
 		//获取物流
 		async getLogistics() {
 			try {
-				await this.$service.app.order.delivery({ orderId: this.deliveryForm.orderId });
+				this.logistics = await this.$service.app.order.delivery({ orderId: this.deliveryForm.orderId });
+				this.dialogLogistics = true;
 			} catch (error) {
 				this.$message.error(error);
 			}
@@ -302,7 +318,7 @@ export default {
 		//发货
 		async delivergoods() {
 			try {
-				await this.$service.system.delivery.add({ ...this.deliveryForm });
+				await this.$service.system.deliveryCharge.add({ ...this.deliveryForm });
 				this.$refs['crud'].refresh();
 			} catch (error) {
 				this.$message.error(error);
@@ -311,7 +327,7 @@ export default {
 		//输入快递单号
 		async getDelivery() {
 			try {
-				let res = await this.$service.system.delivery.listby({ deliverySN: this.deliveryForm.deliverySN });
+				let res = await this.$service.system.deliveryCharge.listby({ deliverySN: this.deliveryForm.deliverySN });
 				this.deliveryList = res;
 			} catch (error) {
 				this.$message.error(error);
