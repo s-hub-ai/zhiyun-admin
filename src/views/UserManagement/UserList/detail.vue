@@ -5,7 +5,7 @@
 			<el-button v-if="notEdit" @click="notEdit = false" size="medium" type="primary" :disabled="false" style="margin-left: auto">编辑</el-button>
 			<el-button-group v-else style="margin-left: auto">
 				<el-button size="medium" @click="notEdit = true">取消</el-button>
-				<el-button size="medium" type="primary">保存</el-button>
+				<el-button size="medium" @click="submitForm('ruleForm')" type="primary">保存</el-button>
 			</el-button-group>
 		</div>
 		<el-form :inline="true" :model="ruleForm" :rules="rules" ref="ruleForm" :disabled="notEdit" label-width="100px" class="form">
@@ -262,8 +262,8 @@ export default {
 						let params = {
 							...this.ruleForm
 						};
-						await this.$service.app.consult.add(params);
-
+						await this.$service.app.user.info.update(params);
+						
 						this.$emit('update:addDialogShow', false);
 					} catch (error) {
 						this.$message.error(error);

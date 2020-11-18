@@ -41,7 +41,9 @@
 				</template>
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
-					<el-button type="text">编辑</el-button>
+					<el-button type="text" 
+					@click="editing = scope.row;$refs.editDialog.editDialog=true;"
+					@cacnel="editing=null">编辑</el-button>
 					<el-button type="text" @click="deleteFn(scope.row)">删除</el-button>
 				</template>
 			</cl-table>
@@ -54,12 +56,18 @@
 
 		<!-- 自定义表单 -->
 		<cl-form ref="form"></cl-form>
+
+		<!-- 编辑商品dialog -->
+		<ProductEdit :item="editing"  ref="editDialog"/>
 	</cl-crud>
 </template>
 
 <script>
 import { goodsTypeDict } from '@/dict/index.js';
 export default {
+	components:{
+		ProductEdit:()=>import('./ProductEdit')
+	},
 	data() {
 		return {
 			tableColumn: [
@@ -149,7 +157,8 @@ export default {
 					fixed: 'right',
 					width: 120
 				}
-			]
+			],
+			editing:null
 		};
 	},
 
