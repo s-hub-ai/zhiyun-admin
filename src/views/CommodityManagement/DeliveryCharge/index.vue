@@ -55,8 +55,10 @@
 	 
 		<el-row type="flex" align="middle">
 			<h4>运费设置</h4>
-			<cl-flex1></cl-flex1>
+			<el-button small @click="dialog=true">新增</el-button>	
+			<cl-refresh-btn></cl-refresh-btn>	
 		</el-row>
+	
 		<el-form>
 			<el-form-item label="配送方式：">
 				<el-checkbox-group v-model="deliveryMethod">
@@ -73,15 +75,33 @@
 				}"
 				:columns="tableColumn"
 			>
-			<template #column-deleveryChargeValue="{ scope }">
-				<span v-if="editing!=scope.row">{{scope.row.deleveryChargeValue}}</span>
+			<template #column-deliveryMethod="{ scope }">
+				<span >{{['快递','自提'][scope.row.deliveryMethod] }}</span>
+			</template>
+			<template #column-deliveryChargeValue="{ scope }">
+				<span v-if="editing!=scope.row">{{scope.row.deliveryChargeValue}}</span>
 				<span v-else>
-					<el-input type="number" v-model="scope.row.deleveryChargeValue"></el-input>
+					<el-input type="number" v-model="scope.row.deliveryChargeValue"></el-input>
+				</span>
+			</template>
+			<template #column-deliveryRegionName="{ scope }">
+				<span v-if="editing!=scope.row">{{scope.row.deliveryRegionName}}</span>
+				<span v-else>
+					<el-input v-model="scope.row.deliveryRegionName"></el-input>
+				</span>
+			</template>
+			<template #column-deliveryRegion="{ scope }">
+				<span v-if="editing!=scope.row">{{scope.row.deliveryRegion}}</span>
+				<span v-else>
+					<el-input v-model="scope.row.deliveryRegion"></el-input>
 				</span>
 			</template>
 			<template #column-op="{ scope }">
 				<el-button type="text" v-if="editing!=scope.row" @click="editing = scope.row">修改</el-button>
-				<el-button type="text" v-else @click="update(scope.row)">确认</el-button>
+				<template v-else> 
+					<el-button type="text" @click="update(scope.row)">确认</el-button>
+					<el-button type="text" @click="editing=''">取消</el-button>					 
+				</template>
 			</template>
 			</cl-table>
 		</el-row>
@@ -90,6 +110,29 @@
 			<el-button @click="updateGlobalConfig">确定</el-button>
 			<cl-flex1></cl-flex1>
 		</el-row>
+		 
+		<cl-dialog :visible.sync="dialog">
+			<el-form label-width="100px">
+				<el-form-item label="配送方式" >
+					<el-select v-model="ruleForm.deliveryMethod" >
+						<el-option v-for="item in [
+						{text:'自提',value:'1'},
+						{text:'快递',value:'0'}
+						]" :key="item.value" :label="item.text" :value="item.value"> </el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="配送名称" >
+					<el-input v-model="ruleForm.deliveryRegionName"></el-input>
+				</el-form-item>
+				<el-form-item label="配送地," >
+					<el-input v-model="ruleForm.deliveryRegion"></el-input>
+				</el-form-item>
+				<el-form-item label="运费" >
+					<el-input v-model="ruleForm.deliveryChargeValue"></el-input>
+				</el-form-item>
+				<el-button @click="add">确定</el-button>
+			</el-form>
+		</cl-dialog>
 	</cl-crud>
 </template>
 
@@ -98,6 +141,7 @@ export default {
 	name:'deliverCharge',
 	data() {
 		return {
+			dialog:false,
 			globalConfig:{
 				scoreCostRatio:"",
 				scoreRewardRatio:"",
@@ -106,10 +150,21 @@ export default {
 			},
 			deliveryMethod:[],
 			editing:'',
+			ruleForm:{
+				deliveryRegionName:"",
+				deliveryMethod:"0",
+				deliveryRegion:"",
+				deliveryChargeValue:0,
+			},
 			tableColumn: [
 				{
 					label: '配送方式',
 					prop: 'deliveryMethod',
+					align: 'center'
+				},
+				{
+					label: '配送名',
+					prop: 'deliveryRegionName',
 					align: 'center'
 				},
 				{
@@ -119,7 +174,7 @@ export default {
 				},
 				{
 					label: '运费(元)',
-					prop: 'deleveryChargeValue',
+					prop: 'deliveryChargeValue',
 					align: 'center'
 				},
 				{
@@ -128,7 +183,8 @@ export default {
 					prop: 'op',
 					align: 'center'
 				}
-			]
+			],
+ 
 		};
 	},
 	created(){
@@ -169,24 +225,30 @@ export default {
 				this.$message.error(error);
 			}
 		},
-		update(v){
-			console.log(v);
+	    async add(){
+			let res = await this.$service.app.commodity.delivery.add({
+				...this.ruleForm
+			});
+			this.dialog = false;
+		},
+	    async update(v){
+			console.log(v)
+			let res = await this.$service.app.commodity.delivery.update({
+				...v
+			});
 			this.editing = ""
 		},
 		onLoad({ ctx, app }) {
 			const _this = this
 			ctx
-				// .service(this.$service.app.commodity.delivery)
 				.service({
 					page:async ()=>{
-						return Promise.resolve([
-							{deliveryMethod:35,deliveryRegion:"江浙沪",deleveryChargeValue:'6'},
-							{deliveryMethod:35,deliveryRegion:"其他地区",deleveryChargeValue:'20'}
-						])
-					}
+						return 	await this.$service.app.commodity.delivery.list();
+					},
 				})
 				.done();
-			app.refresh()
+			app.refresh();
+			
 		}
 	}
 };

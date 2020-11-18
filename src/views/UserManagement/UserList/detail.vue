@@ -42,8 +42,8 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item class="form-item" prop="fanClubId" label="球迷会:">
-					<el-select v-model="ruleForm.fanClub" placeholder="请选择球迷会">
-						<el-option v-for="item in fanClubList" :key="item.id" :label="item.fanClubName" :value="item.value"> </el-option>
+					<el-select v-model="ruleForm.fanClubId" placeholder="请选择球迷会">
+						<el-option v-for="item in fanClubList" :key="item.id" :label="item.fanClubName" :value="String(item.value)"> </el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item class="form-item" prop="fanClubRegion" label="球迷会区域:">
@@ -61,7 +61,7 @@
 				</el-form-item>
 				<el-form-item class="form-item" prop="userSex" label="性别:">
 					<el-select v-model="ruleForm.userSex" placeholder="请选择性别">
-						<el-option v-for="item in ticketPackageUserDict" :key="item.value" :label="item.text" :value="item.value"> </el-option>
+						<el-option v-for="item in [{value:'0',text:'男'},{value:'1',text:'女'},]" :key="item.value" :label="item.text" :value="item.value"> </el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item class="form-item" prop="userBirthday" label="生日:">
@@ -69,7 +69,7 @@
 				</el-form-item>
 				<el-form-item class="form-item" prop="userCertificateType" label="证件类型:">
 					<el-select v-model="ruleForm.userCertificateType" placeholder="请选择证件类型">
-						<el-option v-for="item in ticketPackageUserDict" :key="item.value" :label="item.text" :value="item.value"> </el-option>
+						<el-option v-for="item in [{value:'0',text:'身份证'}]" :key="item.value" :label="item.text" :value="item.value"> </el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item class="form-item" prop="userCertificateNum" label="证件号码:">

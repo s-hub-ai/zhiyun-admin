@@ -33,7 +33,7 @@
 					></cl-upload>
 				</el-form-item>
 
-				<el-form-item label="是否促销" required>
+				<el-form-item label="是否促销" required v-if="item.goodsType==0">
 					<el-radio-group v-model="ruleForm.salePromotionShow">
 						<el-radio :label="0">否</el-radio>
 						<el-radio :label="1">是</el-radio>

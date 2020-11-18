@@ -4,7 +4,7 @@ import {
     Permission
    } from "@/cool";
 
-@Service("app/delivery")
+@Service("app/deliveryCharge")
 export default class extends BaseService {
     @Permission("checkDeliverList")
     checkList(data){
