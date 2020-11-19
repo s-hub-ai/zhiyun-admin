@@ -1,7 +1,7 @@
 <template>
     <cl-dialog :visible.sync="editDialog" title="编辑商品" :props="{width:'75%'}">
 			<el-form :model="ruleForm" :rules="rules" ref="ruleForm"   >
-				<el-form-item label="商品分类" required>
+				<el-form-item label="商品分类"  v-if="item.goodsType!=2">
 					<el-select v-model="ruleForm.commodityTypeId" placeholder="请选择">
 						<el-option v-for="item in commodityTypeList" :key="item.id" :label="item.commodityTypeName" :value="item.id"></el-option>
 					</el-select>
@@ -65,24 +65,24 @@
 					<GoodsSpecSelect ref="GoodsSpecSelect" v-if="ruleForm.specData"  :data="ruleForm.specData"></GoodsSpecSelect>
 				</el-form-item>
 
-				<el-form-item label="积分奖励">
+				<el-form-item label="积分奖励"  v-if="item.goodsType!=2">
 					<el-radio-group v-model="ruleForm.scopeRewardShow">
 						<el-radio :label="0">否</el-radio>
 						<el-radio :label="1">是</el-radio>
 					</el-radio-group>
 				</el-form-item>
-				<el-form-item v-if="ruleForm.scopeRewardShow == 1" label="奖励积分">
+				<el-form-item v-if="ruleForm.scopeRewardShow == 1 && item.goodsType!=2" label="奖励积分">
 					每消费100元得 <el-input-number v-model="ruleForm.scopeReward" controls-position="right" :min="0"></el-input-number> 积分</el-form-item
 				>
-
+<!-- 
 				<el-form-item label="配送方式">
 					<el-radio-group v-model="ruleForm.deliveryMethod">
 						<el-radio :label="0">普通快递</el-radio>
 						<el-radio :label="1">到店自提</el-radio>
 					</el-radio-group>
-				</el-form-item>
+				</el-form-item> -->
 
-				<el-form-item label="是否包邮" v-if="ruleForm.deliveryMethod == 0">
+				<el-form-item label="是否包邮" v-if="ruleForm.deliveryMethod == 0 && item.goodsType!=2">
 					<el-radio-group v-model="ruleForm.freeShippingMethod">
 						<el-radio :label="0">否</el-radio>
 						<el-radio :label="1">是</el-radio>
@@ -349,7 +349,7 @@ export default {
 			}
 			console.log(this.ruleForm.commodityBannerImg);
 		},
-		submitForm(formName) {
+	 	async submitForm(formName) {
 			this.$refs[formName].validate(async (valid) => {
 				const { type, spec } = this.$refs['GoodsSpecSelect'].validate();
 				this.ruleForm.specificationType = type;
@@ -362,7 +362,7 @@ export default {
 					console.log(JSON.stringify(params));
                     let { goodsType , id } = this.item;
                     let methods = ['shopping','ticket','score','event'];
-                    let res =  this.$service.app.commodity?.[methods[goodsType]].update({
+                    let res = await this.$service.app.commodity?.[methods[goodsType]].update({
                         id,
                         ...this.ruleForm
                     })

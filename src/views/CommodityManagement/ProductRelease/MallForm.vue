@@ -32,7 +32,7 @@
 			</el-radio-group>
 		</el-form-item>
 
-		<el-form-item v-if="ruleForm.salePromotionShow == 1" label="促销方式" required>
+		<!-- <el-form-item v-if="ruleForm.salePromotionShow == 1" label="促销方式" required>
 			<el-checkbox-group v-model="ruleForm.salePromotionMethod" @change="salePromotionMethodChange">
 				<el-checkbox :label="1">价格优惠</el-checkbox>
 				<el-checkbox :label="2">积分抵扣</el-checkbox>
@@ -50,7 +50,7 @@
 				@change="salePromotionTimeChange"
 			>
 			</el-date-picker>
-		</el-form-item>
+		</el-form-item> -->
 
 		<!-- 添加规格 -->
 		<el-form-item label="规格" prop="specification">
@@ -67,12 +67,12 @@
 			每消费100元得 <el-input-number v-model="ruleForm.scopeReward" controls-position="right" :min="0"> </el-input-number> 积分</el-form-item
 		>
 
-		<el-form-item label="配送方式">
+		<!-- <el-form-item label="配送方式">
 			<el-radio-group v-model="ruleForm.deliveryMethod">
 				<el-radio :label="0">普通快递</el-radio>
 				<el-radio :label="1">到店自提</el-radio>
 			</el-radio-group>
-		</el-form-item>
+		</el-form-item> -->
 
 		<el-form-item label="是否包邮" v-if="ruleForm.deliveryMethod == 0">
 			<el-radio-group v-model="ruleForm.freeShippingMethod">

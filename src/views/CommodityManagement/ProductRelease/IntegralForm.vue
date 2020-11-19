@@ -29,19 +29,19 @@
 			<goods-spec-select ref="goods-spec-select" :type="ruleForm.specType"></goods-spec-select>
 		</el-form-item>
 
-		<el-form-item label="配送方式">
+		<!-- <el-form-item label="配送方式">
 			<el-radio-group v-model="ruleForm.deliveryMethod">
 				<el-radio :label="0">普通快递</el-radio>
 				<el-radio :label="1">到店自提</el-radio>
 			</el-radio-group>
-		</el-form-item>
+		</el-form-item> -->
 
-		<el-form-item label="是否包邮" v-if="ruleForm.deliveryMethod == 0">
+		<!-- <el-form-item label="是否包邮" v-if="ruleForm.deliveryMethod == 0">
 			<el-radio-group v-model="ruleForm.freeShippingMethod">
 				<el-radio :label="0">否</el-radio>
 				<el-radio :label="1">是</el-radio>
 			</el-radio-group>
-		</el-form-item>
+		</el-form-item> -->
 
 		<el-form-item label="商品详情" prop="desc">
 			<cl-editor-quill height="300" v-model="ruleForm.detailImage"></cl-editor-quill>
