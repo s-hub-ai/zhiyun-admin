@@ -58,7 +58,7 @@
 		<cl-form ref="form"></cl-form>
 
 		<!-- 编辑商品dialog -->
-		<ProductEdit :item="editing"  ref="editDialog"/>
+		<ProductEdit :item="editing" @update="refresh"  ref="editDialog"/>
 	</cl-crud>
 </template>
 
@@ -255,6 +255,13 @@ export default {
 			} catch (error) {
 				this.$message.error(error);
 			}
+		},
+		refresh(){
+			this.$refs.crud.refresh({
+				goodsType: -1,
+				prop: 'createTime',
+				order: 'desc'
+			})
 		},
 		onLoad({ ctx, app }) {
 			ctx.service(this.$service.app.commodity.common).done();
