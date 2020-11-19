@@ -220,7 +220,7 @@ export default {
 		vipLevelFormatter(s) {
 			console.log(s);
 			let res;
-			vipLevelDict.forEach((value, index, array) => {
+			vipLevelDict?.forEach((value, index, array) => {
 				if (s == value.value) {
 					res = value.text;
 					return;
@@ -240,11 +240,11 @@ export default {
 				let fanClubRegion = await this.$service.app.fanClubRegion.info({ id: res.fanClubId });
 				let addresseeList = await this.$service.app.user.address.page({ page: 1, size: 999, userId: res.id });
 				console.log(addresseeList);
-				addresseeList.list.map((v) => {
+				this.addresseeList = addresseeList.list.map((v) => {
 					v.province = JSON.parse(v.province);
 					v.city = JSON.parse(v.city);
 					v.country = JSON.parse(v.country);
-					this.addresseeList.push(v);
+					return v
 				});
 				res.fanClubRegion = fanClubRegion.id;
 				res.userCertificateValidity = [new Date(res.userCertificateValidityStart), new Date(res.userCertificateValidityEnd)];

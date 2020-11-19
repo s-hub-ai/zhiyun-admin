@@ -25,13 +25,19 @@ Vue.filter("default_name", function (name) {
 Vue.filter("format_spec", value => {
 	if (value) {
 		let arr = [];
-		let spec = eval("(" + value + ")");;
-
-		for (let i in spec) {
-			arr.push(spec[i]);
+		let spec = value;
+		try{
+			spec = eval("(" + value + ")");
+			
+			for (let i in spec) {
+				arr.push(spec[i]);
+			}
+			spec = arr.join(',')
+		}catch(e){
+			console.log(e)
 		}
 
-		return arr.join(",");
+		return spec
 	} else {
 		return "默认规格";
 	}
