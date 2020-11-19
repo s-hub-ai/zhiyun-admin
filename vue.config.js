@@ -42,7 +42,7 @@ module.exports = {
 			},
 
 			"/pro": {
-				target: "https://test2.junxing-tech.net:9008",
+				target: "https://mb.ntzycm.cn",
 				changeOrigin: true,
 				pathRewrite: {
 					"^/pro": "/api"
