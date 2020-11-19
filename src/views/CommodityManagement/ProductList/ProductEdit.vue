@@ -159,7 +159,7 @@ const specColumn = [
 			name: 'el-input-number',
 			props: {
 				step: 1,
-				min: 100,
+				min: 1,
 				max: 1000000,
 				precision: 0
 			}
@@ -219,6 +219,63 @@ const specColumnOnsale = [
 				min: 0.01,
 				max: 1000000,
 				precision: 2
+			}
+		}
+	},
+	{
+		label: '库存',
+		prop: 'stock',
+		value: 100,
+		width: 150,
+		component: {
+			name: 'el-input-number',
+			props: {
+				step: 1,
+				min: 1,
+				max: 1000000,
+				precision: 0
+			}
+		}
+	}
+];
+const specColumnScore = [
+	{
+		label: '图片',
+		prop: 'pic',
+		width: 80,
+		value: '',
+		component: {
+			name: 'cl-upload',
+			props: {
+				size: 46,
+				text: ''
+			}
+		}
+	},
+	{
+		label: '名称',
+		prop: 'name',
+		value: '',
+		width: 150,
+		component: {
+			name: 'el-input',
+			props: {
+				placeholder: '请输入名称'
+			}
+		}
+	},
+	{
+		label: '积分消耗',
+		prop: 'scoreCost',
+		value: 0,
+		width: 150,
+		component: {
+			name: 'el-input-number',
+			props: {
+				step: 1,
+				min: 0,
+				max: 1000000,
+				precision: 0
 			}
 		}
 	},
@@ -294,11 +351,11 @@ export default {
 				this.ruleForm.salePromotionMethod = 0;
 				this.salePromotionMethod = 0;
 				//this.$store.dispatch('setDefaultcolumn', specColumn);
-				this.$store.dispatch('setDefaultcolumn', specColumn);
+				this.$store.dispatch('setDefaultcolumn', this.item.goodsType==2?specColumnScore:specColumn);
 			}else{
 				this.ruleForm.salePromotionMethod = 1;
 				this.salePromotionMethod = 0;
-				this.$store.dispatch('setDefaultcolumn', specColumnOnsale);
+				this.$store.dispatch('setDefaultcolumn', this.item.goodsType==2?specColumnScore:specColumnOnsale );
 			}
         },
         editDialog(v){
@@ -324,7 +381,8 @@ export default {
 		} */
 	},
 	created() {
-		this.$store.dispatch('setDefaultcolumn', specColumn);
+
+		this.$store.dispatch('setDefaultcolumn', this.item.goodsType==2?specColumnScore:specColumn);
 		this.getCommodityTypeList();
 	},
 	methods: {

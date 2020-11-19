@@ -220,7 +220,7 @@ export default {
 		vipLevelFormatter(s) {
 			console.log(s);
 			let res;
-			vipLevelDict.forEach((value, index, array) => {
+			vipLevelDict?.forEach((value, index, array) => {
 				if (s == value.value) {
 					res = value.text;
 					return;

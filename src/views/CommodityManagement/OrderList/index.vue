@@ -185,7 +185,7 @@ export default {
 	computed: {
 		orderType() {
 			let res;
-			orderTypeDict.map((value, index, array) => {
+			orderTypeDict?.map((value, index, array) => {
 				if (value.value == this.detail.orderType) {
 					res = value.text;
 				}
@@ -279,7 +279,7 @@ export default {
 					},
 					formatter(row) {
 						let name = '-';
-						orderStatusDict.map((value) => {
+						orderStatusDict?.map((value) => {
 							if (row.orderStatus == value.value) {
 								name = value.text;
 							}

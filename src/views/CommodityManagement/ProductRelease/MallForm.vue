@@ -152,7 +152,7 @@ const specColumn = [
 			name: 'el-input-number',
 			props: {
 				step: 1,
-				min: 100,
+				min: 1,
 				max: 1000000,
 				precision: 0
 			}
@@ -224,7 +224,7 @@ const specColumnOnsale = [
 			name: 'el-input-number',
 			props: {
 				step: 1,
-				min: 100,
+				min: 1,
 				max: 1000000,
 				precision: 0
 			}
