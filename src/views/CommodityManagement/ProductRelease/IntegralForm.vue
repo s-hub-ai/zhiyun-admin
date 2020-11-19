@@ -114,7 +114,7 @@ const specColumn = [
 			name: 'el-input-number',
 			props: {
 				step: 1,
-				min: 100,
+				min: 0,
 				max: 1000000,
 				precision: 0
 			}

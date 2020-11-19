@@ -58,14 +58,14 @@
 		</el-form-item>
 
 		<el-form-item label="积分奖励">
-			<el-radio-group v-model="ruleForm.scopeRewardShow">
+			<el-radio-group v-model="ruleForm.scopeReward">
 				<el-radio :label="0">否</el-radio>
 				<el-radio :label="1">是</el-radio>
 			</el-radio-group>
 		</el-form-item>
-		<el-form-item v-if="ruleForm.scopeRewardShow == 1" label="奖励积分">
+		<!-- <el-form-item v-if="ruleForm.scopeRewardShow == 1" label="奖励积分">
 			每消费100元得 <el-input-number v-model="ruleForm.scopeReward" controls-position="right" :min="0"></el-input-number> 积分</el-form-item
-		>
+		> -->
 
 		<!-- <el-form-item label="配送方式">
 			<el-radio-group v-model="ruleForm.deliveryMethod">
@@ -152,7 +152,7 @@ const specColumn = [
 			name: 'el-input-number',
 			props: {
 				step: 1,
-				min: 1,
+				min: 0,
 				max: 1000000,
 				precision: 0
 			}
@@ -224,7 +224,7 @@ const specColumnOnsale = [
 			name: 'el-input-number',
 			props: {
 				step: 1,
-				min: 1,
+				min: 0,
 				max: 1000000,
 				precision: 0
 			}
