@@ -3,8 +3,9 @@
 export default [
 	{
 		path: "/",
-		name: "数据统计",
-		component: () => import("@/Home.vue")
+		redirect:'/UserList'
+		// name: "数据统计",
+		// component: () => import("@/Home.vue")
 	},
 	{
 		path: "/my/info",
