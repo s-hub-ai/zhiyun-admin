@@ -1,83 +1,102 @@
 <template>
-	<cl-crud @load="onLoad">
-		<el-row type="flex" align="middle">
+	<cl-crud @load="onLoad" ref="crud">
+		<!-- <el-row type="flex" align="middle">
 			<span style="padding-right: 10px">选择时间:</span>
 			<el-date-picker size="small" v-model="serach" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"> </el-date-picker>
 			<cl-flex1></cl-flex1>
-		</el-row>
+		</el-row> -->
 
 		<el-row>
-			<cl-table :props="tableProps" :columns="tableColumn"> </cl-table>
+			<cl-refresh-btn></cl-refresh-btn>
+			<el-button size="mini" @click="visible=true">增加积分</el-button>
+		</el-row>
+		<el-row>
+			<cl-table  :columns="tableColumn">
+				<template #column-score="{ scope }">
+					<span :class="scope.row.scoreType?'text-green-400':'text-red-500'">
+						{{` ${scope.row.scoreType?'+':'-'}${scope.row.score}`}}
+					</span>
+				</template>
+			</cl-table>
 		</el-row>
 
 		<el-row type="flex">
 			<cl-flex1></cl-flex1>
 			<cl-pagination></cl-pagination>
 		</el-row>
-
+		<cl-dialog title="增加积分" :visible.sync="visible">
+			<el-form label-width="100px">
+				<el-form-item label-width="输入积分">
+					<el-input-number :min="0" :max="999999" v-model="addScore"></el-input-number>
+				</el-form-item>
+				<el-button @click="submitAdd">确定添加</el-button>
+			</el-form>
+		</cl-dialog>
 		<!-- 自定义表单 -->
 		<cl-form ref="form"></cl-form>
 	</cl-crud>
 </template>
 
 <script>
-const userList = [
-	{
-		id: 1,
-		status: 35.2,
-		useDate: '2019年09月05日',
-		useNum: 242.1,
-		type: 72.1,
-		images: ['https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/1.jpg']
-	},
-	{
-		id: 2,
-		name: '陈二',
-		status: 35.2,
-		useDate: '2019年09月05日',
-		useNum: 242.1,
-		type: 72.1,
-		salesStatus: 1,
-		images: ['https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/2.jpg']
-	}
-];
 import { pointsUseDetailTypeDict } from '@/dict/index.js';
 export default {
 	data() {
 		return {
+			visible:false,
 			serach: '',
-			tableProps: { 'show-summary': true },
+			addScore:0,
+			// tableProps: { 'show-summary': true },
 			tableColumn: [
 				{
 					label: '时间',
-					prop: 'useDate',
+					prop: 'createTime',
 					align: 'center'
 				},
 				{
 					label: '获取/使用',
-					prop: 'fanClub',
-					filters: [
-						{ value: 1, text: '获取' },
-						{ value: 2, text: '使用' }
-					],
-					align: 'center'
+					prop: 'scoreType',
+					// filters: [
+					// 	{ value: 1, text: '获取' },
+					// 	{ value: 2, text: '使用' }
+					// ],
+					align: 'center',
+					formatter(row) {
+						return [ '使用','获取'][row.scoreType]
+					},
 				},
 				{
 					label: '积分数量',
-					prop: 'useNum',
-					align: 'center'
+					prop: 'score',
+					align: 'center',
 				},
 				{
 					label: '事件类型',
 					filters: pointsUseDetailTypeDict,
-					prop: 'type',
-					align: 'center'
+					prop: 'scoreSource',
+					align: 'center',
+					formatter(row) {
+						let res;
+						pointsUseDetailTypeDict?.map(el => {
+							if (row.scoreSource == el.value) {
+								res = el.text;
+							}
+						});
+						return res || '其他';
+					},
 				}
 			]
 		};
 	},
 
 	methods: {
+		async submitAdd(){
+			await this.$service.app.user.info.updateScore({
+				userId: this.$route.query.id,
+				score:this.addScore
+			})
+			this.visible = false
+			this.$refs.crud.refresh()
+		},
 		openForm() {
 			this.$refs['form'].open({
 				props: {
@@ -119,9 +138,9 @@ export default {
 			});
 		},
 		onLoad({ ctx, app }) {
-			ctx.service(this.$service.app.scope).done();
+			ctx.service(this.$service.app.score).done();
 			app.refresh({
-				userId: this.$route.query.userId
+				userId: this.$route.query.id
 			});
 		}
 	}

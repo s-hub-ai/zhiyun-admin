@@ -18,15 +18,15 @@
 					<el-image
 						style="width: 79px; height: 50px"
 						:src="scope.row.userCertificatePositiveImg | default_avatar"
-						:preview-src-list="[scope.row.userCertificatePositiveImg, scope.row.userCertificateNegativeImg, scope.row.userCertificatePortraitImg]"
+						:preview-src-list="[scope.row.userCertificatePositiveImg]"
 					>
 					</el-image>
 				</template>
 				<template #column-userCertificateNegativeImg="{ scope }">
 					<el-image
 						style="width: 79px; height: 50px"
-						:src="scope.row.userCertificatePositiveImg | default_avatar"
-						:preview-src-list="[scope.row.userCertificatePositiveImg, scope.row.userCertificateNegativeImg, scope.row.userCertificatePortraitImg]"
+						:src="scope.row.userCertificateNegativeImg | default_avatar"
+						:preview-src-list="[scope.row.userCertificateNegativeImg ]"
 					>
 					</el-image>
 				</template>
@@ -34,7 +34,7 @@
 					<el-image
 						style="width: 79px; height: 50px"
 						:src="scope.row.userCertificatePortraitImg | default_avatar"
-						:preview-src-list="[scope.row.userCertificatePositiveImg, scope.row.userCertificateNegativeImg, scope.row.userCertificatePortraitImg]"
+						:preview-src-list="[ scope.row.userCertificatePortraitImg]"
 					>
 					</el-image>
 				</template>
@@ -143,13 +143,13 @@ export default {
 					align: 'center'
 				},
 				{
-					label: '身份证(正)',
+					label: '身份证(反)',
 					prop: 'userCertificatePositiveImg',
 					align: 'center',
 					width: 100
 				},
 				{
-					label: '身份证(反)',
+					label: '身份证(正)',
 					prop: 'userCertificateNegativeImg',
 					align: 'center',
 					width: 100

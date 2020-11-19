@@ -1,9 +1,18 @@
 import {
  BaseService,
- Service
+ Service,
+ Permission
 } from "@/cool";
 @Service("app/user/info")
 export default class extends BaseService {
+    @Permission("updateScore")
+    updateScore(data){
+        return this.request({
+            url: "/updateScore",
+            method: "POST",
+            data
+        })
+    }
  personal() {
   return this.request({
    url: "/personal"
