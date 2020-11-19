@@ -159,6 +159,78 @@ const specColumn = [
 		}
 	}
 ];
+const specColumnOnsale = [
+	{
+		label: '图片',
+		prop: 'pic',
+		width: 80,
+		value: '',
+		component: {
+			name: 'cl-upload',
+			props: {
+				size: 46,
+				text: ''
+			}
+		}
+	},
+	{
+		label: '名称',
+		prop: 'name',
+		value: '',
+		width: 150,
+		component: {
+			name: 'el-input',
+			props: {
+				placeholder: '请输入名称'
+			}
+		}
+	},
+	{
+		label: '售价',
+		prop: 'price',
+		value: 0.01,
+		width: 150,
+		component: {
+			name: 'el-input-number',
+			props: {
+				step: 1,
+				min: 0.01,
+				max: 1000000,
+				precision: 2
+			}
+		}
+	},
+	{
+		label: '促销价',
+		prop: 'salePromotionPrice',
+		value: 0.01,
+		width: 150,
+		component: {
+			name: 'el-input-number',
+			props: {
+				step: 1,
+				min: 0.01,
+				max: 1000000,
+				precision: 2
+			}
+		}
+	},
+	{
+		label: '库存',
+		prop: 'stock',
+		value: 100,
+		width: 150,
+		component: {
+			name: 'el-input-number',
+			props: {
+				step: 1,
+				min: 100,
+				max: 1000000,
+				precision: 0
+			}
+		}
+	}
+];
 export default {
 	components: {
 		GoodsSpecSelect
@@ -207,9 +279,15 @@ export default {
 		'ruleForm.salePromotionShow': function (val, oldval) {
 			console.log(val);
 			if (!val) {
-				this.ruleForm.salePromotionMethod = [];
+				this.ruleForm.salePromotionMethod = 0;
 				this.salePromotionMethod = 0;
-				//this.$store.dispatch('setDefaultcolumn', specColumn);
+				
+				this.$store.dispatch('setDefaultcolumn', specColumn);
+			}else{
+				this.ruleForm.salePromotionMethod = 1;
+				this.salePromotionMethod = 1;
+				this.$store.dispatch('setDefaultcolumn', specColumnOnsale);
+
 			}
 		}
 		/* 		'ruleForm.deliveryMethod': function (val, oldval) {
