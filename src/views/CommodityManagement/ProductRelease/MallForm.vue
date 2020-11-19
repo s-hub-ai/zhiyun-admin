@@ -261,12 +261,48 @@ export default {
 				scopeReward: 0
 			},
 			rules: {
-				commodityName: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
-				commodityCover: [{ required: true, message: '请上传商品封面', trigger: 'blur' }],
-				commodityBannerImg: [{ required: true, message: '请上传商品主图', trigger: 'blur' }],
-				detailImage: [{ required: true, message: '请编辑商品详情', trigger: 'blur' }],
-				commodityOrderg: [{ required: true, message: '请填写商品排序', trigger: 'blur' }],
-				commodityStatus: [{ required: true, message: '', trigger: 'blur' }]
+				commodityName: [
+					{
+						required: true,
+						message: '请输入商品名称',
+						trigger: 'blur'
+					}
+				],
+				commodityCover: [
+					{
+						required: true,
+						message: '请上传商品封面',
+						trigger: 'blur'
+					}
+				],
+				commodityBannerImg: [
+					{
+						required: true,
+						message: '请上传商品主图',
+						trigger: 'blur'
+					}
+				],
+				detailImage: [
+					{
+						required: true,
+						message: '请编辑商品详情',
+						trigger: 'blur'
+					}
+				],
+				commodityOrderg: [
+					{
+						required: true,
+						message: '请填写商品排序',
+						trigger: 'blur'
+					}
+				],
+				commodityStatus: [
+					{
+						required: true,
+						message: '',
+						trigger: 'blur'
+					}
+				]
 				//specification: [{ required: true, message: '请填写规格', trigger: 'blur' }]
 			}
 		};
@@ -281,29 +317,28 @@ export default {
 			if (!val) {
 				this.ruleForm.salePromotionMethod = 0;
 				this.salePromotionMethod = 0;
-				
+
 				this.$store.dispatch('setDefaultcolumn', specColumn);
-			}else{
+			} else {
 				this.ruleForm.salePromotionMethod = 1;
 				this.salePromotionMethod = 1;
 				this.$store.dispatch('setDefaultcolumn', specColumnOnsale);
-
 			}
 		}
 		/* 		'ruleForm.deliveryMethod': function (val, oldval) {
-			console.log(val);
-			val.map((value, index, array) => {
-				if (val.length < 1) {
-					this.ruleForm.freeShippingMethodShow = false;
-					return;
-				}
-				if (val.indexOf(1) > -1) {
-					this.ruleForm.freeShippingMethodShow = true;
-				} else {
-					this.ruleForm.freeShippingMethodShow = false;
-				}
-			});
-		} */
+				console.log(val);
+				val.map((value, index, array) => {
+					if (val.length < 1) {
+						this.ruleForm.freeShippingMethodShow = false;
+						return;
+					}
+					if (val.indexOf(1) > -1) {
+						this.ruleForm.freeShippingMethodShow = true;
+					} else {
+						this.ruleForm.freeShippingMethodShow = false;
+					}
+				});
+			} */
 	},
 	created() {
 		this.$store.dispatch('setDefaultcolumn', specColumn);

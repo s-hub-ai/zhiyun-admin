@@ -11,7 +11,8 @@
 				<template #column-skus="{ scope }">
 					<div v-for="item in scope.row.skus" :key="item.id">
 						<div>商品名称:{{ item.commodityName }}</div>
-						<div>规格:{{ item.skuString | format_spec }}</div>
+						<div>规格:{{ item.skuString }}</div>
+						<!-- 	<div>规格:{{ item.skuString | format_spec }}</div> -->
 						<div>数量:{{ item.commodityVolume }}</div>
 					</div>
 				</template>
@@ -38,7 +39,7 @@
 		<el-dialog title="商品发货" :visible.sync="deliveDialogShow" width="400px">
 			<el-form :model="deliveryForm" label-width="90px">
 				<el-form-item label="快递单号" required>
-					<el-input v-model="deliveryForm.deliverySN" @blur="getDelivery"></el-input>
+					<el-input v-model="deliveryForm.deliverySN" @blur="getDelivery()"></el-input>
 				</el-form-item>
 				<el-form-item label="选择快递" required>
 					<el-select v-model="deliveryForm.deliveryCompany" placeholder="请选择" style="width: 100%">
@@ -308,8 +309,9 @@ export default {
 		},
 		//获取物流
 		async getLogistics() {
+			let _this = this;
 			try {
-				this.logistics = await this.$service.app.order.delivery({ orderId: this.deliveryForm.orderId });
+				this.logistics = await _this.$service.app.order.delivery({ orderId: this.deliveryForm.orderId });
 				this.dialogLogistics = true;
 			} catch (error) {
 				this.$message.error(error);
@@ -318,8 +320,9 @@ export default {
 		//发货
 		async delivergoods() {
 			try {
-				await this.$service.system.deliveryCharge.add({ ...this.deliveryForm });
+				await this.$service.system.delivery.add({ ...this.deliveryForm });
 				this.$refs['crud'].refresh();
+				this.deliveDialogShow = false;
 			} catch (error) {
 				this.$message.error(error);
 			}
@@ -327,7 +330,7 @@ export default {
 		//输入快递单号
 		async getDelivery() {
 			try {
-				let res = await this.$service.system.deliveryCharge.listby({ deliverySN: this.deliveryForm.deliverySN });
+				let res = await this.$service.system.delivery.listby({ deliverySN: this.deliveryForm.deliverySN });
 				this.deliveryList = res;
 			} catch (error) {
 				this.$message.error(error);
