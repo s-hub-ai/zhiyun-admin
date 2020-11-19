@@ -25,14 +25,14 @@
 			></cl-upload>
 		</el-form-item>
 
-		<!-- <el-form-item label="是否促销" required>
+		<el-form-item label="是否促销" required>
 			<el-radio-group v-model="ruleForm.salePromotionShow">
 				<el-radio :label="0">否</el-radio>
 				<el-radio :label="1">是</el-radio>
 			</el-radio-group>
 		</el-form-item>
 
-		<el-form-item v-if="ruleForm.salePromotionShow == 1" label="促销方式" required>
+		<!-- <el-form-item v-if="ruleForm.salePromotionShow == 1" label="促销方式" required>
 			<el-checkbox-group v-model="ruleForm.salePromotionMethod" @change="salePromotionMethodChange">
 				<el-checkbox :label="1">价格优惠</el-checkbox>
 				<el-checkbox :label="2">积分抵扣</el-checkbox>
@@ -249,7 +249,7 @@ export default {
 			this.ruleForm.salePromotionMethod.forEach((value, index, array) => {
 				salePromotionMethod = salePromotionMethod + value;
 				console.log(value);
-				if (value == 0) {
+				if (value == 1) {
 					arr.push({
 						label: '促销价格',
 						prop: 'salePromotionPrice',
@@ -266,7 +266,7 @@ export default {
 						}
 					});
 				}
-				if (value == 1) {
+				if (value == 2) {
 					arr.push({
 						label: '积分抵扣',
 						prop: 'scoreCost',

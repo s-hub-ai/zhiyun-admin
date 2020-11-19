@@ -47,7 +47,7 @@ export default {
 	computed: {
 		fanClubList() {
 			let list = this.$store.state.common.fanClub;
-			let arr = list.map((value, index, array) => {
+			let arr = list?.map((value, index, array) => {
 				let o = {
 					value: value.id,
 					text: value.fanClubName
@@ -98,7 +98,7 @@ export default {
 					align: 'center',
 					formatter(row) {
 						let res;
-						ticketPackageUserDict.map((value) => {
+						ticketPackageUserDict?.map((value) => {
 							if (row.ticketPackageUser == value.value) {
 								res = value.text;
 							}
@@ -119,7 +119,7 @@ export default {
 					align: 'center',
 					formatter(row) {
 						let regionName = '-';
-						_this.fanClubList.map((value) => {
+						_this.fanClubList?.map((value) => {
 							if (row.fanClubId == value.value) {
 								regionName = value.text;
 							}
@@ -139,7 +139,7 @@ export default {
 					align: 'center',
 					formatter(row) {
 						let res;
-						useCcertificationDict.map((value) => {
+						useCcertificationDict?.map((value) => {
 							if (row.userCertification == value.value) {
 								res = value.text;
 							}
@@ -179,7 +179,7 @@ export default {
 					width: 90,
 					formatter(row) {
 						let res;
-						vipLevelDict.map((value) => {
+						vipLevelDict?.map((value) => {
 							if (row.vipLevel == value.value) {
 								res = value.text;
 							}
@@ -199,7 +199,7 @@ export default {
 					filters: zhiyunCardStatusDict,
 					formatter(row) {
 						let res;
-						zhiyunCardStatusDict.map((value) => {
+						zhiyunCardStatusDict?.map((value) => {
 							if (row.zhiyunCardStatus == value.value) {
 								res = value.text;
 							}
