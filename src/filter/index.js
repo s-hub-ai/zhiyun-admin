@@ -33,11 +33,13 @@ Vue.filter("format_spec", value => {
 				arr.push(spec[i]);
 			}
 			spec = arr.join(',')
+			
+			return spec
 		}catch(e){
 			console.log(e)
+			return spec
 		}
 
-		return spec
 	} else {
 		return "默认规格";
 	}

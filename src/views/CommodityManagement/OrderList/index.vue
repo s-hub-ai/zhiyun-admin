@@ -11,8 +11,7 @@
 				<template #column-skus="{ scope }">
 					<div v-for="item in scope.row.skus" :key="item.id">
 						<div>商品名称:{{ item.commodityName }}</div>
-						<div>规格:{{ item.skuString }}</div>
-						<!-- 	<div>规格:{{ item.skuString | format_spec }}</div> -->
+						<div>规格:{{ item.skuString | format_spec }}</div>
 						<div>数量:{{ item.commodityVolume }}</div>
 					</div>
 				</template>
