@@ -1,6 +1,6 @@
 <template>
     <cl-dialog :visible.sync="editDialog" title="编辑商品" :props="{width:'75%'}">
-			<el-form :model="ruleForm" :rules="rules" ref="ruleForm"   >
+			<el-form v-if="!!item" :model="ruleForm" :rules="rules" ref="ruleForm"   >
 				<el-form-item label="商品分类"  v-if="item.goodsType!=2">
 					<el-select v-model="ruleForm.commodityTypeId" placeholder="请选择">
 						<el-option v-for="item in commodityTypeList" :key="item.id" :label="item.commodityTypeName" :value="item.id"></el-option>
@@ -297,7 +297,9 @@ const specColumnScore = [
 ];
 export default {
     name:'productEdit',
-    props:['item'],
+    props:{'item':{
+		default:{}
+	}},
     components: {
 		GoodsSpecSelect
     },
@@ -382,7 +384,7 @@ export default {
 	},
 	created() {
 
-		this.$store.dispatch('setDefaultcolumn', this.item.goodsType==2?specColumnScore:specColumn);
+		this.$store.dispatch('setDefaultcolumn', this.item?.goodsType==2?specColumnScore:specColumn);
 		this.getCommodityTypeList();
 	},
 	methods: {

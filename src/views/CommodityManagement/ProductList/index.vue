@@ -102,7 +102,7 @@ export default {
 					formatter(row) {
 						let name = '-';
 						goodsTypeDict.map((value) => {
-							if (row.goodsType == value.value) {
+							if (row?.goodsType == value.value) {
 								name = value.text;
 							}
 						});
