@@ -66,7 +66,7 @@
 				</el-form-item>
 
 				<el-form-item label="积分奖励"  v-if="item.goodsType!=2">
-					<el-radio-group v-model="ruleForm.scopeReward">
+					<el-radio-group v-model="ruleForm.isScoreReward">
 						<el-radio :label="0">否</el-radio>
 						<el-radio :label="1">是</el-radio>
 					</el-radio-group>
@@ -328,7 +328,8 @@ export default {
 				detailImage: '',
 				commodityStatus: 1,
 				scopeRewardShow: 0,
-				scopeReward: 0
+				scopeReward: 0,
+				isScoreReward:0
 			},
 			rules: {
 				commodityName: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
