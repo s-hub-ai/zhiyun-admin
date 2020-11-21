@@ -66,7 +66,7 @@
 				</el-form-item>
 
 				<el-form-item label="积分奖励"  v-if="item.goodsType!=2">
-					<el-radio-group v-model="ruleForm.scopeReward">
+					<el-radio-group v-model="ruleForm.isScoreReward">
 						<el-radio :label="0">否</el-radio>
 						<el-radio :label="1">是</el-radio>
 					</el-radio-group>
@@ -83,7 +83,7 @@
 				</el-form-item> -->
 
 				<el-form-item label="是否包邮" v-if="ruleForm.deliveryMethod == 0 && item.goodsType!=2">
-					<el-radio-group v-model="ruleForm.freeShippingMethod">
+					<el-radio-group v-model="ruleForm.isFreeShipping">
 						<el-radio :label="0">否</el-radio>
 						<el-radio :label="1">是</el-radio>
 					</el-radio-group>
@@ -314,7 +314,7 @@ export default {
 				salePromotionShow: 0, //是否促销
 				salePromotionMethod: [], //促销类型
 				deliveryMethod: 0,
-				freeShippingMethod: 0,
+				isFreeShipping: 0,
 				commodityTypeId: '',
 				commodityName: '',
 				commodityCover: '',
@@ -328,7 +328,8 @@ export default {
 				detailImage: '',
 				commodityStatus: 1,
 				scopeRewardShow: 0,
-				scopeReward: 0
+				scopeReward: 0,
+				isScoreReward:0
 			},
 			rules: {
 				commodityName: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
@@ -371,13 +372,13 @@ export default {
 			console.log(val);
 			val.map((value, index, array) => {
 				if (val.length < 1) {
-					this.ruleForm.freeShippingMethodShow = false;
+					this.ruleForm.isFeeShippingShow = false;
 					return;
 				}
 				if (val.indexOf(1) > -1) {
-					this.ruleForm.freeShippingMethodShow = true;
+					this.ruleForm.isFeeShippingShow = true;
 				} else {
-					this.ruleForm.freeShippingMethodShow = false;
+					this.ruleForm.isFeeShippingShow = false;
 				}
 			});
 		} */
