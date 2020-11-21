@@ -1,15 +1,48 @@
 <template>
 	<cl-crud @load="onLoad" ref="crud">
 		<el-row type="flex" align="middle">
+			<el-form :inline="true" :model="tableFlters" size="mini" class="demo-form-inline">
+				<el-form-item
+					label="订单类型
+				"
+				>
+					<el-select v-model="tableFlters.orderType" placeholder="请选择" @change="$refs['crud'].refresh({ ...tableFlters })">
+						<el-option v-for="(item, index) in orderTypeDict" :key="index" :label="item.text" :value="item.value"></el-option>
+					</el-select>
+				</el-form-item>
+
+				<el-form-item
+					label="订单状态
+				"
+				>
+					<el-select v-model="tableFlters.orderStatus" placeholder="请选择" @change="$refs['crud'].refresh({ ...tableFlters })">
+						<el-option v-for="(item, index) in orderStatusDict" :key="index" :label="item.text" :value="item.value"></el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="下单时间">
+					<el-date-picker
+						v-model="orderTime"
+						:default-time="['00:00:00', '24:00:00']"
+						type="datetimerange"
+						range-separator="至"
+						start-placeholder="开始日期"
+						end-placeholder="结束日期"
+						value-format="yyyy-MM-dd HH:mm:ss"
+						@change="orderTimeChange"
+					>
+					</el-date-picker>
+				</el-form-item>
+			</el-form>
 			<cl-flex1></cl-flex1>
-			<cl-search-key></cl-search-key>
+			<cl-search-key placeholder="请输入订单编号或收件人手机号"></cl-search-key>
 		</el-row>
 
 		<el-row>
 			<cl-table :columns="tableColumn">
 				<!-- 商品信息 -->
 				<template #column-skus="{ scope }">
-					<div v-for="item in scope.row.skus" :key="item.id">
+					<div v-for="(item, index) in scope.row.skus" :key="item.id">
+						<el-divider v-if="index != 0" style="margin: 4px 0"></el-divider>
 						<div>商品名称:{{ item.commodityName }}</div>
 						<div>规格:{{ item.skuString | format_spec }}</div>
 						<div>数量:{{ item.commodityVolume }}</div>
@@ -24,7 +57,7 @@
 				<template #column-op="{ scope }">
 					<el-button type="text" v-if="scope.row.orderStatus == 1" @click="(deliveryForm.orderId = scope.row.id), (deliveDialogShow = true)">发货</el-button>
 					<el-button type="text" v-if="scope.row.orderStatus == 2" @click="(deliveryForm.orderId = scope.row.id), getLogistics()">物流</el-button>
-					<el-button type="text" v-if="scope.row.orderStatus == 4" @click="drawbackAuditShow = true">退款审核</el-button>
+					<el-button type="text" v-if="scope.row.orderStatus == 4" @click="(drawbackAuditShow = true), getEditInfo(scope.row.id)">退款审核</el-button>
 					<el-button type="text" @click="(detailDialogShow = true), getEditInfo(scope.row.id)">详情</el-button>
 				</template>
 			</cl-table>
@@ -64,16 +97,16 @@
 		<el-dialog title="退款审核" :visible.sync="drawbackAuditShow" width="500px">
 			<el-form>
 				<el-form-item label="退款原因:">
-					<span>{{ drawbackAuditD.drawbackReason }}</span>
+					<span>{{ detail.drawbackReason }}</span>
 				</el-form-item>
 				<el-form-item label="申请时间:">
-					<span>{{ drawbackAuditD.applyTime }}</span>
+					<span>{{ detail.applyTime }}</span>
 				</el-form-item>
 				<el-form-item label="退款件数:">
-					<span>{{ drawbackAuditD.applyTime }}</span>
+					<span>{{ detail.applyTime }}</span>
 				</el-form-item>
 				<el-form-item label="退款金额:">
-					<span>{{ drawbackAuditD.drawbackAmount }}</span>
+					<span>{{ detail.drawbackAmount }}</span>
 				</el-form-item>
 				<el-form-item label="退款审核">
 					<el-radio-group v-model="drawbackVerify">
@@ -83,8 +116,8 @@
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
-				<el-button @click="dialogFormVisible = false">取 消</el-button>
-				<el-button type="primary" @click="dialogFormVisible = false">确 定</el-button>
+				<el-button @click="drawbackAuditShow = false">取 消</el-button>
+				<el-button type="primary" @click="(dialogFormVisible = false), drawbackAudit()">确 定</el-button>
 			</div>
 		</el-dialog>
 		<!-- 详情弹出框 -->
@@ -194,7 +227,10 @@ export default {
 		}
 	},
 	data() {
+		let _this = this;
 		return {
+			orderTypeDict,
+			orderStatusDict,
 			dialogLogistics: false,
 			detailDialogShow: false,
 			drawbackAuditShow: false,
@@ -202,6 +238,13 @@ export default {
 			drawbackAuditD: {},
 			detail: {},
 			deliveDialogShow: false,
+			orderTime: [],
+			tableFlters: {
+				startTime: '',
+				endTime: '',
+				orderType: -1,
+				orderStatus: -1
+			},
 			//
 			tableColumn: [
 				{
@@ -213,16 +256,7 @@ export default {
 					label: '订单类型',
 					width: 110,
 					align: 'center',
-					filters: orderTypeDict,
 					prop: 'orderType',
-					'filter-method': (value, row, column) => {
-						console.log(value, row);
-						if (value != -1) {
-							return row.orderType == value;
-						} else {
-							return row;
-						}
-					},
 					formatter(row) {
 						let name = '-';
 						orderTypeDict.map((value) => {
@@ -241,7 +275,7 @@ export default {
 				{
 					label: '商品信息',
 					prop: 'skus',
-					align: 'center'
+					align: 'left'
 				},
 				{
 					label: '价格￥',
@@ -267,16 +301,8 @@ export default {
 				{
 					label: '订单状态',
 					width: 110,
-					filters: orderStatusDict,
 					prop: 'orderStatus',
 					align: 'center',
-					'filter-method': (value, row, column) => {
-						if (value == -1) {
-							return row;
-						} else {
-							return row.orderStatus == value;
-						}
-					},
 					formatter(row) {
 						let name = '-';
 						orderStatusDict?.map((value) => {
@@ -304,7 +330,59 @@ export default {
 	methods: {
 		onLoad({ ctx, app }) {
 			ctx.service(this.$service.app.order).done();
-			app.refresh();
+			app.refresh({ ...this.tableFlters });
+		},
+		//退款审核确定
+		async drawbackAudit() {
+			if (this.drawbackVerify == 1) {
+				this.$confirm('确定同意这笔订单的退款申请?', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
+				})
+					.then(async () => {
+						try {
+							await this.$service.app.order.offerRefund({ id: this.detail.id });
+							this.$message({
+								type: 'success',
+								message: '退款成功!'
+							});
+							this.$refs['crud'].refresh();
+						} catch (error) {
+							this.$message.error(error);
+						}
+					})
+					.catch((e) => {
+						this.$message({
+							type: 'info',
+							message: e
+						});
+					});
+			} else {
+				this.$confirm('确定拒绝这笔订单的退款申请?', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
+				}).then(async () => {
+					try {
+						await this.$service.app.order.refuseRefund({ id: this.detail.id });
+						this.$message({
+							type: 'success',
+							message: '已拒绝!'
+						});
+						this.$refs['crud'].refresh();
+					} catch (error) {
+						this.$message.error(error);
+					}
+				});
+			}
+		},
+		//下单日期选择
+		orderTimeChange(e) {
+			console.log(e);
+			this.tableFlters.startTime = e[0];
+			this.tableFlters.endTime = e[1];
+			this.$refs['crud'].refresh({ ...this.tableFlters });
 		},
 		//获取物流
 		async getLogistics() {
@@ -347,3 +425,11 @@ export default {
 	}
 };
 </script>
+<style lang="scss" scoped>
+::v-deep .el-divider--horizontal {
+	margin: 5px 0;
+}
+::v-deep .el-form-item {
+	margin: 0 10px;
+}
+</style>

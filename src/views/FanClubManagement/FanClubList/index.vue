@@ -155,6 +155,7 @@ export default {
 		},
 		addDialogClose() {
 			this.$refs.editDialog.resetForm('ruleForm');
+			this.$refs.editDialog.ruleForm = {};
 			this.$refs['crud'].refresh();
 		}
 	}

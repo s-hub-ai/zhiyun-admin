@@ -14,4 +14,21 @@ export default class extends BaseService {
    data
   });
  }
+ @Permission("offerRefund")
+ offerRefund(data) {
+  return this.request({
+   url: "/offerRefund",
+   method: "POST",
+   data
+  });
+ }
+
+ @Permission("refuseRefund")
+ refuseRefund(data) {
+  return this.request({
+   url: "/refuseRefund",
+   method: "POST",
+   data
+  });
+ }
 }

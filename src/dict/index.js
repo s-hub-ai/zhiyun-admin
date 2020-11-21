@@ -110,8 +110,13 @@ export const orderStatusDict = [{
     type: "success"
   },
   {
-    label: "已退款",
+    text: "已退款",
     value: 5,
+    type: "danger"
+  },
+  {
+    text: "订单关闭",
+    value: 6,
     type: "danger"
   }
 ];
@@ -131,18 +136,18 @@ export const couponTypeDict = [{
 }]
 //用户会员等级
 export const vipLevelDict = [{
-	value: 0,
-	text: '非会员'
+  value: 0,
+  text: '非会员'
 }, {
-	value: 1,
-	text: "白银"
+  value: 1,
+  text: "白银"
 }, {
-	value: 2,
-	text: "白金"
+  value: 2,
+  text: "白金"
 }, {
-	value: 3,
-	text: '钻石'
+  value: 3,
+  text: '钻石'
 }, {
-	value: 4,
-	text: '黑金'
+  value: 4,
+  text: '黑金'
 }]
