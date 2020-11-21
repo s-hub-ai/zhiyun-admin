@@ -75,7 +75,7 @@
 		</el-form-item> -->
 
 		<el-form-item label="是否包邮" v-if="ruleForm.deliveryMethod == 0">
-			<el-radio-group v-model="ruleForm.isFeeShipping">
+			<el-radio-group v-model="ruleForm.isFreeShipping">
 				<el-radio :label="0">否</el-radio>
 				<el-radio :label="1">是</el-radio>
 			</el-radio-group>
@@ -244,7 +244,7 @@ export default {
 				salePromotionShow: 0, //是否促销
 				salePromotionMethod: [], //促销类型
 				deliveryMethod: 0,
-				isFeeShipping: 0,
+				isFreeShipping: 0,
 				commodityTypeId: '',
 				commodityName: '',
 				commodityCover: '',
