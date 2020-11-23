@@ -31,4 +31,14 @@ export default class extends BaseService {
    data
   });
  }
+
+
+ @Permission("orderComplete")
+ orderComplete(data) {
+  return this.request({
+   url: "/orderComplete",
+   method: "POST",
+   data
+  });
+ }
 }

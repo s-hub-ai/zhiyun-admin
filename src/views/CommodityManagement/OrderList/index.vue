@@ -56,8 +56,10 @@
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
 					<el-button type="text" v-if="scope.row.orderStatus == 1" @click="(deliveryForm.orderId = scope.row.id), (deliveDialogShow = true)">发货</el-button>
+					<el-button v-if="scope.row.orderStatus == 7" type="text" @click="orderComplete(scope.row.id)">出库</el-button>
+
 					<el-button type="text" v-if="scope.row.orderStatus == 2" @click="(deliveryForm.orderId = scope.row.id), getLogistics()">物流</el-button>
-					<el-button type="text" v-if="scope.row.orderStatus == 4" @click="(drawbackAuditShow = true), getEditInfo(scope.row.id)">退款审核</el-button>
+					<el-button type="text" v-if="scope.row.orderStatus == 4" @click="(deliveryForm.orderId = scope.row.id), (drawbackAuditShow = true), getEditInfo(scope.row.id)">退款审核</el-button>
 					<el-button type="text" @click="(detailDialogShow = true), getEditInfo(scope.row.id)">详情</el-button>
 				</template>
 			</cl-table>
@@ -332,6 +334,32 @@ export default {
 			ctx.service(this.$service.app.order).done();
 			app.refresh({ ...this.tableFlters });
 		},
+		//商品出库
+		orderComplete(id) {
+			try {
+				this.$confirm('确定该商品已出库?', '提示', {
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
+				})
+					.then(async () => {
+						await this.$service.app.order.orderComplete({ orderId: id });
+						this.$refs['crud'].refresh();
+						this.$message({
+							type: 'success',
+							message: '出库成功！'
+						});
+					})
+					.catch(() => {
+						this.$message({
+							type: 'info',
+							message: '已取消'
+						});
+					});
+			} catch (e) {
+				this.$message.error(e);
+			}
+		},
 		//退款审核确定
 		async drawbackAudit() {
 			if (this.drawbackVerify == 1) {
@@ -342,12 +370,13 @@ export default {
 				})
 					.then(async () => {
 						try {
-							await this.$service.app.order.offerRefund({ id: this.detail.id });
+							await this.$service.app.order.offerRefund({ id: this.deliveryForm.orderId });
 							this.$message({
 								type: 'success',
 								message: '退款成功!'
 							});
 							this.$refs['crud'].refresh();
+							this.drawbackAuditShow = false;
 						} catch (error) {
 							this.$message.error(error);
 						}
@@ -365,12 +394,13 @@ export default {
 					type: 'warning'
 				}).then(async () => {
 					try {
-						await this.$service.app.order.refuseRefund({ id: this.detail.id });
+						await this.$service.app.order.refuseRefund({ id: this.deliveryForm.orderId });
 						this.$message({
 							type: 'success',
 							message: '已拒绝!'
 						});
 						this.$refs['crud'].refresh();
+						this.drawbackAuditShow = false;
 					} catch (error) {
 						this.$message.error(error);
 					}
@@ -390,6 +420,10 @@ export default {
 			try {
 				this.logistics = await _this.$service.app.order.delivery({ orderId: this.deliveryForm.orderId });
 				this.dialogLogistics = true;
+				this.$message({
+					type: 'success',
+					message: '发货！'
+				});
 			} catch (error) {
 				this.$message.error(error);
 			}
