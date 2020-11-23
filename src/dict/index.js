@@ -133,6 +133,10 @@ export const orderStatusDict = [{
     text: "订单关闭",
     value: 6,
     type: "danger"
+  }, {
+    text: "待提货",
+    value: 7,
+    type: "danger"
   }
 ];
 //卡券类型
