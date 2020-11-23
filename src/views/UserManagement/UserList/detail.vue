@@ -43,7 +43,7 @@
 				</el-form-item>
 				<el-form-item class="form-item" prop="fanClubId" label="球迷会:">
 					<el-select v-model="ruleForm.fanClubId" placeholder="请选择球迷会">
-						<el-option v-for="item in fanClubList" :key="item.id" :label="item.fanClubName" :value="String(item.value)"> </el-option>
+						<el-option v-for="item in fanClubList" :key="item.id" :label="item.fanClubName" :value="item.id"> </el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item class="form-item" prop="fanClubRegion" label="球迷会区域:">
@@ -61,7 +61,16 @@
 				</el-form-item>
 				<el-form-item class="form-item" prop="userSex" label="性别:">
 					<el-select v-model="ruleForm.userSex" placeholder="请选择性别">
-						<el-option v-for="item in [{value:'0',text:'男'},{value:'1',text:'女'},]" :key="item.value" :label="item.text" :value="item.value"> </el-option>
+						<el-option
+							v-for="item in [
+								{ value: '0', text: '男' },
+								{ value: '1', text: '女' }
+							]"
+							:key="item.value"
+							:label="item.text"
+							:value="item.value"
+						>
+						</el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item class="form-item" prop="userBirthday" label="生日:">
@@ -69,7 +78,7 @@
 				</el-form-item>
 				<el-form-item class="form-item" prop="userCertificateType" label="证件类型:">
 					<el-select v-model="ruleForm.userCertificateType" placeholder="请选择证件类型">
-						<el-option v-for="item in [{value:'0',text:'身份证'}]" :key="item.value" :label="item.text" :value="item.value"> </el-option>
+						<el-option v-for="item in [{ value: 1, text: '身份证' }]" :key="item.value" :label="item.text" :value="item.value"> </el-option>
 					</el-select>
 				</el-form-item>
 				<el-form-item class="form-item" prop="userCertificateNum" label="证件号码:">
@@ -209,9 +218,7 @@ export default {
 				region: [{ required: true, message: '请选择活动区域', trigger: 'change' }],
 				date1: [{ type: 'date', required: true, message: '请选择日期', trigger: 'change' }],
 				date2: [{ type: 'date', required: true, message: '请选择时间', trigger: 'change' }],
-				type: [{ type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }],
-				resource: [{ required: true, message: '请选择活动资源', trigger: 'change' }],
-				desc: [{ required: true, message: '请填写活动形式', trigger: 'blur' }]
+				type: [{ type: 'array', required: true, message: '请至少选择一个活动性质', trigger: 'change' }]
 			}
 		};
 	},
@@ -237,16 +244,24 @@ export default {
 			try {
 				this.id = id;
 				let res = await this.$service.app.user.info.info({ id });
-				let fanClubRegion = await this.$service.app.fanClubRegion.info({ id: res.fanClubId });
+				let fanClubRegionId;
+				this.fanClubList.map((value, index, array) => {
+					console.log(value);
+					if (res.fanClubId == value.id) {
+						fanClubRegionId = value.fanClubRegion;
+					}
+				});
+				console.log(fanClubRegionId);
+				//let fanClubRegion = await this.$service.app.fanClubRegion.info({ id: fanClubRegionId });
 				let addresseeList = await this.$service.app.user.address.page({ page: 1, size: 999, userId: res.id });
 				console.log(addresseeList);
 				this.addresseeList = addresseeList.list.map((v) => {
 					v.province = JSON.parse(v.province);
 					v.city = JSON.parse(v.city);
 					v.country = JSON.parse(v.country);
-					return v
+					return v;
 				});
-				res.fanClubRegion = fanClubRegion.id;
+				res.fanClubRegion = String(fanClubRegionId); //fanClubRegion.id;
 				res.userCertificateValidity = [new Date(res.userCertificateValidityStart), new Date(res.userCertificateValidityEnd)];
 				this.ruleForm = res;
 				console.log(this.ruleForm);
@@ -263,7 +278,7 @@ export default {
 							...this.ruleForm
 						};
 						await this.$service.app.user.info.update(params);
-						
+
 						this.$emit('update:addDialogShow', false);
 					} catch (error) {
 						this.$message.error(error);
