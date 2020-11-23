@@ -151,7 +151,10 @@ export default {
 		},
 		onLoad({ ctx, app }) {
 			ctx.service(this.$service.app.fanClub).done();
-			app.refresh();
+			app.refresh({
+				// prop:'sort',
+				order:'createTime'
+			});
 		},
 		addDialogClose() {
 			this.$refs.editDialog.resetForm('ruleForm');
