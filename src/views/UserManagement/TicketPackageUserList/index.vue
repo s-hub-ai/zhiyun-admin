@@ -8,7 +8,7 @@
 		</el-row>
 
 		<el-row>
-			<cl-table :columns="tableColumn">
+			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
 					<el-link type="primary" @click="$router.push({ path: 'TicketPackageRechargeRecord', query: { id: scope.row.id } })">充值记录</el-link>
@@ -27,48 +27,6 @@
 </template>
 
 <script>
-const userList = [
-	{
-		id: 2,
-		name: '陈二',
-		process: 35.2,
-		endTime: '2019年09月05日',
-		price: 242.1,
-		salesRate: 72.1,
-		salesStatus: 1,
-		userCertificatePortraitImg: 'https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/2.jpg'
-	},
-	{
-		id: 3,
-		name: '张三',
-		process: 10.2,
-		endTime: '2019年09月12日',
-		price: 74.11,
-		salesRate: 23.9,
-		salesStatus: 0,
-		userCertificatePortraitImg: 'https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/3.jpg'
-	},
-	{
-		id: 4,
-		name: '李四',
-		process: 75.5,
-		endTime: '2019年09月13日',
-		price: 276.64,
-		salesRate: 47.2,
-		salesStatus: 0,
-		userCertificatePortraitImg: 'https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/4.jpg'
-	},
-	{
-		id: 5,
-		name: '王五',
-		process: 25.4,
-		endTime: '2019年09月18日',
-		price: 160.23,
-		salesRate: 28.3,
-		salesStatus: 1,
-		userCertificatePortraitImg: 'https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/5.jpg'
-	}
-];
 import { ticketPackageUserDict } from '@/dict/index.js';
 export default {
 	data() {

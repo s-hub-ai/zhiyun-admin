@@ -11,7 +11,7 @@
 			<el-button size="mini" @click="visible=true">增加积分</el-button>
 		</el-row>
 		<el-row>
-			<cl-table  :columns="tableColumn">
+			<cl-table  :columns="tableColumn" :props="{ height: '70vh' }">
 				<template #column-score="{ scope }">
 					<span :class="scope.row.scoreType?'text-green-400':'text-red-500'">
 						{{` ${scope.row.scoreType?'+':'-'}${scope.row.score}`}}

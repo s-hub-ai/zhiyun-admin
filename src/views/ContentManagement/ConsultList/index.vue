@@ -6,7 +6,7 @@
 		</el-row>
 
 		<el-row>
-			<cl-table :columns="tableColumn">
+			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
 				<!-- 二维码 -->
 				<template #column-qrCode="{ scope }">
 					<el-image style="width: 100px; height: 100px" :src="scope.row.qrCode" :preview-src-list="[scope.row.qrCode]"> </el-image>

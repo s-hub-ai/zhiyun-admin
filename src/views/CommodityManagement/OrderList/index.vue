@@ -38,7 +38,7 @@
 		</el-row>
 
 		<el-row>
-			<cl-table :columns="tableColumn">
+			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
 				<!-- 商品信息 -->
 				<template #column-skus="{ scope }">
 					<div v-for="(item, index) in scope.row.skus" :key="item.id">
@@ -56,10 +56,10 @@
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
 					<el-button type="text" v-if="scope.row.orderStatus == 1" @click="(deliveryForm.orderId = scope.row.id), (deliveDialogShow = true)">发货</el-button>
-					<el-button v-if="scope.row.orderStatus == 7" type="text" @click="orderComplete(scope.row.id)">出库</el-button>
+					<el-button v-if="scope.row.orderStatus == 7" type="text" @click="orderComplete(scope.row.id)">出库 </el-button>
 
 					<el-button type="text" v-if="scope.row.orderStatus == 2" @click="(deliveryForm.orderId = scope.row.id), getLogistics()">物流</el-button>
-					<el-button type="text" v-if="scope.row.orderStatus == 4" @click="(deliveryForm.orderId = scope.row.id), (drawbackAuditShow = true), getEditInfo(scope.row.id)">退款审核</el-button>
+					<el-button type="text" v-if="scope.row.orderStatus == 4" @click="(deliveryForm.orderId = scope.row.id), (drawbackAuditShow = true), getEditInfo(scope.row.id)"> 退款审核</el-button>
 					<el-button type="text" @click="(detailDialogShow = true), getEditInfo(scope.row.id)">详情</el-button>
 				</template>
 			</cl-table>
@@ -145,8 +145,8 @@
 					<el-form-item class="form-item" label="手机号:">
 						<span>{{ detail.addresseePhoneNum|default }}</span>
 					</el-form-item>
-					<el-form-item class="form-item" label="收件地址:">
-						<span>{{ detail.addresseeAddress|default }}</span>
+					<el-form-item class="form-item" label="收件地址:" v-if="detail.addresseeAddress">
+						<span>{{ detail.province.label + detail.city.label + detail.country.label }}{{ detail.addresseeAddress|default }}</span>
 					</el-form-item>
 				</div>
 				<h3 style="margin-top: 45px">商品信息</h3>
@@ -323,7 +323,11 @@ export default {
 					align: 'center'
 				}
 			],
-			deliveryForm: { deliveryCompany: '', deliverySN: '', orderId: '' },
+			deliveryForm: {
+				deliveryCompany: '',
+				deliverySN: '',
+				orderId: ''
+			},
 			deliveryList: [],
 			logistics: []
 		};
@@ -332,7 +336,9 @@ export default {
 	methods: {
 		onLoad({ ctx, app }) {
 			ctx.service(this.$service.app.order).done();
-			app.refresh({ ...this.tableFlters });
+			app.refresh({
+				...this.tableFlters
+			});
 		},
 		//商品出库
 		orderComplete(id) {
@@ -343,7 +349,9 @@ export default {
 					type: 'warning'
 				})
 					.then(async () => {
-						await this.$service.app.order.orderComplete({ orderId: id });
+						await this.$service.app.order.orderComplete({
+							orderId: id
+						});
 						this.$refs['crud'].refresh();
 						this.$message({
 							type: 'success',
@@ -370,7 +378,9 @@ export default {
 				})
 					.then(async () => {
 						try {
-							await this.$service.app.order.offerRefund({ id: this.deliveryForm.orderId });
+							await this.$service.app.order.offerRefund({
+								id: this.deliveryForm.orderId
+							});
 							this.$message({
 								type: 'success',
 								message: '退款成功!'
@@ -394,7 +404,9 @@ export default {
 					type: 'warning'
 				}).then(async () => {
 					try {
-						await this.$service.app.order.refuseRefund({ id: this.deliveryForm.orderId });
+						await this.$service.app.order.refuseRefund({
+							id: this.deliveryForm.orderId
+						});
 						this.$message({
 							type: 'success',
 							message: '已拒绝!'
@@ -412,13 +424,17 @@ export default {
 			console.log(e);
 			this.tableFlters.startTime = e[0];
 			this.tableFlters.endTime = e[1];
-			this.$refs['crud'].refresh({ ...this.tableFlters });
+			this.$refs['crud'].refresh({
+				...this.tableFlters
+			});
 		},
 		//获取物流
 		async getLogistics() {
 			let _this = this;
 			try {
-				this.logistics = await _this.$service.app.order.delivery({ orderId: this.deliveryForm.orderId });
+				this.logistics = await _this.$service.app.order.delivery({
+					orderId: this.deliveryForm.orderId
+				});
 				this.dialogLogistics = true;
 				this.$message({
 					type: 'success',
@@ -431,7 +447,9 @@ export default {
 		//发货
 		async delivergoods() {
 			try {
-				await this.$service.system.delivery.add({ ...this.deliveryForm });
+				await this.$service.system.delivery.add({
+					...this.deliveryForm
+				});
 				this.$refs['crud'].refresh();
 				this.deliveDialogShow = false;
 			} catch (error) {
@@ -441,7 +459,9 @@ export default {
 		//输入快递单号
 		async getDelivery() {
 			try {
-				let res = await this.$service.system.delivery.listby({ deliverySN: this.deliveryForm.deliverySN });
+				let res = await this.$service.system.delivery.listby({
+					deliverySN: this.deliveryForm.deliverySN
+				});
 				this.deliveryList = res;
 			} catch (error) {
 				this.$message.error(error);
@@ -450,7 +470,12 @@ export default {
 		//获取详情
 		async getEditInfo(id) {
 			try {
-				let res = await this.$service.app.order.info({ id });
+				let res = await this.$service.app.order.info({
+					id
+				});
+				res.province = JSON.parse(res.addresseeProvince);
+				res.city = JSON.parse(res.addresseeCity);
+				res.country = JSON.parse(res.addresseeCountry);
 				this.detail = res;
 			} catch (error) {
 				this.$message.error(error);
@@ -463,6 +488,7 @@ export default {
 ::v-deep .el-divider--horizontal {
 	margin: 5px 0;
 }
+
 ::v-deep .el-form-item {
 	margin: 0 10px;
 }

@@ -7,7 +7,7 @@
 		</el-row>
 
 		<el-row>
-			<cl-table :columns="tableColumn">
+			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
 					<el-button size="mini" type="text" @click="$router.push({ path: 'MessageDetail', query: { id: scope.row.id } })">查看详情</el-button>

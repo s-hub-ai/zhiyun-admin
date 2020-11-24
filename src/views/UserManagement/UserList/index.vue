@@ -1,14 +1,53 @@
 <template>
 	<cl-crud @load="onLoad" ref="crud">
 		<el-row type="flex" align="middle">
-			<cl-refresh-btn></cl-refresh-btn>
+			<el-form class="table-flters-form" :inline="true" :model="tableFlters" size="mini">
+				<el-form-item
+					label="套票类型
+				"
+				>
+					<el-select v-model="tableFlters.ticketPackageUser" placeholder="请选择" @change="$refs['crud'].refresh({ ...tableFlters })">
+						<el-option label="全部" value=""></el-option>
+						<el-option v-for="(item, index) in ticketPackageUserDict" :key="index" :label="item.text" :value="item.value"></el-option>
+					</el-select>
+				</el-form-item>
+
+				<el-form-item
+					label="球迷会
+				"
+				>
+					<el-select v-model="tableFlters.fanClubId" placeholder="请选择" @change="$refs['crud'].refresh({ ...tableFlters })">
+						<el-option label="全部" value=""></el-option>
+						<el-option v-for="(item, index) in fanClubList" :key="index" :label="item.text" :value="item.value"></el-option>
+					</el-select>
+				</el-form-item>
+
+				<el-form-item
+					label="实名状态
+				"
+				>
+					<el-select v-model="tableFlters.userCertification" placeholder="请选择" @change="$refs['crud'].refresh({ ...tableFlters })">
+						<el-option label="全部" value=""></el-option>
+						<el-option v-for="(item, index) in useCcertificationDict" :key="index" :label="item.text" :value="item.value"></el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item
+					label="会员等级
+				"
+				>
+					<el-select v-model="tableFlters.vipLevel" placeholder="请选择" @change="$refs['crud'].refresh({ ...tableFlters })">
+						<el-option label="全部" value=""></el-option>
+						<el-option v-for="(item, index) in vipLevelDict" :key="index" :label="item.text" :value="item.value"></el-option>
+					</el-select>
+				</el-form-item>
+			</el-form>
 			<cl-search-key placeholder="请输入用户姓名、手机号、套票号"></cl-search-key>
 			<cl-flex1></cl-flex1>
-			<el-button size="mini" type="primary">导出</el-button>
+			<!-- 		<el-button size="mini" type="primary">导出</el-button> -->
 		</el-row>
 
 		<el-row>
-			<cl-table :columns="tableColumn">
+			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
 				<!-- 头像 -->
 				<template #column-avatar="{ scope }">
 					<cl-avatar shape="square" size="medium" :src="scope.row.avatar | default_avatar" :style="{ margin: 'auto' }"> </cl-avatar>
@@ -60,6 +99,10 @@ export default {
 	data() {
 		let _this = this;
 		return {
+			ticketPackageUserDict,
+			useCcertificationDict,
+			vipLevelDict,
+			tableFlters: { page: 1 }, //ticketPackageUser: -1, fanClubId: -1, userCertification: -1, vipLevel: -1 },
 			addDialogShow: false,
 			addDialogTitle: '',
 			tableColumn: [
@@ -94,7 +137,6 @@ export default {
 				{
 					label: '套票类型',
 					prop: 'ticketPackageUser',
-					filters: ticketPackageUserDict,
 					align: 'center',
 					formatter(row) {
 						let res;
@@ -115,7 +157,6 @@ export default {
 				{
 					label: '球迷会',
 					prop: 'fanClubId',
-					filters: [],
 					align: 'center',
 					formatter(row) {
 						let regionName = '-';
@@ -125,17 +166,11 @@ export default {
 							}
 						});
 						return regionName;
-					},
-					'filter-method': (value, row, column) => {
-						console.log(value);
-						console.log(row);
-						return row[column['property']] == value;
 					}
 				},
 				{
 					label: '实名状态',
 					prop: 'userCertification',
-					filters: useCcertificationDict,
 					align: 'center',
 					formatter(row) {
 						let res;
@@ -146,11 +181,6 @@ export default {
 						});
 						return res;
 					},
-					'filter-method': (value, row, column) => {
-						console.log(value);
-						console.log(row);
-						return row[column['property']] == value;
-					},
 					width: 90
 				},
 				{
@@ -158,23 +188,23 @@ export default {
 					prop: 'userName',
 					align: 'center'
 				},
-				{ label: '可用积分', prop: 'availablePoints', align: 'center' },
+				{ label: '可用积分', prop: 'availablePoints', align: 'center', sortable: true, width: 120 },
 				{
 					label: '累计积分',
 					prop: 'accumulatedPoints',
-					align: 'center'
+					sortable: true,
+					align: 'center',
+					width: 120
 				},
 				{
 					label: '积分排名',
 					prop: 'pointsOrder',
 					align: 'center',
-					sortable: true,
 					width: 100
 				},
 				{
 					label: '会员等级',
 					prop: 'vipLevel',
-					filters: vipLevelDict,
 					align: 'center',
 					width: 90,
 					formatter(row) {
@@ -185,11 +215,6 @@ export default {
 							}
 						});
 						return res;
-					},
-					'filter-method': (value, row, column) => {
-						console.log(value);
-						console.log(row);
-						return row[column['property']] == value;
 					}
 				},
 				{
@@ -226,9 +251,10 @@ export default {
 
 	methods: {
 		onLoad({ ctx, app }) {
-			this.tableColumn[7].filters = this.fanClubList;
 			ctx.service(this.$service.app.user.info).done();
-			app.refresh();
+			app.refresh({
+				...this.tableFlters
+			});
 		},
 		//编辑
 		editDialog(id) {
@@ -245,3 +271,10 @@ export default {
 	}
 };
 </script>
+<style lang="scss" scoped>
+.table-flters-form {
+	::v-deep .el-form-item {
+		margin: 0 10px;
+	}
+}
+</style>

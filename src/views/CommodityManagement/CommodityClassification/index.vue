@@ -7,7 +7,7 @@
 		</el-row>
 
 		<el-row>
-			<cl-table :columns="tableColumn">
+			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
 				<!-- 状态-->
 				<template #column-commodityTypeStatus="{ scope }">
 					<el-switch :value="scope.row.commodityTypeStatus" :active-value="1" :inactive-value="0"></el-switch>

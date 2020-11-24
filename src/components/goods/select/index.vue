@@ -23,7 +23,7 @@
 			</el-row>
 
 			<el-row>
-				<cl-table ref="table" v-bind="table" @selection-change="onSelectionChange">
+				<cl-table ref="table" v-bind="table" @selection-change="onSelectionChange" :props="{ height: '70vh' }">
 					<!-- 轮播图 -->
 					<template #column-pics="{ scope }">
 						<el-image

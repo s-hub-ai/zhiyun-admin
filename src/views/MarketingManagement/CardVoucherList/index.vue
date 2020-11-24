@@ -7,7 +7,7 @@
 		</el-row>
 
 		<el-row>
-			<cl-table :columns="tableColumn">
+			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
 					<el-button type="text" @click="detailDialogShow = true">详情</el-button>

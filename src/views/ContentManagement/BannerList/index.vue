@@ -7,7 +7,7 @@
 		</el-row>
 
 		<el-row>
-			<cl-table :columns="tableColumn">
+			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
 				<!-- 轮播图-->
 				<template #column-bannerImg="{ scope }">
 					<el-image style="width: 175px; height: 75px" :preview-src-list="[scope.row.bannerImg]" :src="scope.row.bannerImg"> </el-image>

@@ -8,7 +8,7 @@
 		</el-row>
 
 		<el-row>
-			<cl-table :columns="tableColumn"> </cl-table>
+			<cl-table :columns="tableColumn" :props="{ height: '70vh' }"> </cl-table>
 		</el-row>
 
 		<el-row type="flex">

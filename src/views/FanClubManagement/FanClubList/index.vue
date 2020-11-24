@@ -7,7 +7,7 @@
 		</el-row>
 
 		<el-row>
-			<cl-table :columns="tableColumn">
+			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
 				<!-- 封面 -->
 				<template #column-fanClubCover="{ scope }">
 					<el-image style="width: 100px; height: 100px" :src="scope.row.fanClubCover" :preview-src-list="scope.row.fanClubCover"> </el-image>

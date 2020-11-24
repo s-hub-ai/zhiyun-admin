@@ -8,7 +8,7 @@
 		</el-row>
 
 		<el-row>
-			<cl-table :columns="tableColumn">
+			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
 				<!-- 证件有效期 -->
 				<template #column-userCertificateValidity="{ scope }">
 					<span>{{ scope.row.userCertificateValidityStart }}至{{ scope.row.userCertificateValidityEnd }}</span>

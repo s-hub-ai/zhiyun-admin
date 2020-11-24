@@ -8,7 +8,7 @@
 		</el-row>
 
 		<el-row>
-			<cl-table :columns="tableColumn">
+			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
 				<!-- 商品封面 -->
 				<template #column-commodityCover="{ scope }">
 					<el-image style="width: 100px; height: 100px" :src="scope.row.commodityCover" :preview-src-list="[scope.row.commodityCover]"> </el-image>
