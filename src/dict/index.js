@@ -125,12 +125,12 @@ export const orderStatusDict = [{
     type: "success"
   },
   {
-    text: "已退款",
+    text: "平台退款中",
     value: 5,
     type: "danger"
   },
   {
-    text: "订单关闭",
+    text: "订单关闭/已退款",
     value: 6,
     type: "danger"
   }, {
