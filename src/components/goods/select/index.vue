@@ -10,14 +10,7 @@
 		<cl-crud @load="onLoad">
 			<el-row type="flex">
 				<cl-refresh-btn></cl-refresh-btn>
-				<el-button
-					size="mini"
-					type="primary"
-					:disabled="selection.length == 0"
-					v-if="multiple"
-					@click="multiSelect"
-					>选择</el-button
-				>
+				<el-button size="mini" type="primary" :disabled="selection.length == 0" v-if="multiple" @click="multiSelect">选择</el-button>
 				<cl-flex1></cl-flex1>
 				<cl-search-key></cl-search-key>
 			</el-row>
@@ -26,13 +19,7 @@
 				<cl-table ref="table" v-bind="table" @selection-change="onSelectionChange" :props="{ height: '70vh' }">
 					<!-- 轮播图 -->
 					<template #column-pics="{ scope }">
-						<el-image
-							class="goods-pic"
-							fit="cover"
-							lazy
-							:src="scope.row.pics | goods_pics(0)"
-							:preview-src-list="scope.row.pics | goods_pics"
-						></el-image>
+						<el-image class="goods-pic" fit="cover" lazy :src="scope.row.pics | goods_pics(0)" :preview-src-list="scope.row.pics | goods_pics"></el-image>
 					</template>
 				</cl-table>
 			</el-row>
@@ -45,10 +32,10 @@
 </template>
 
 <script>
-import { ActivityGoodsStatus } from "@/dict";
+import { ActivityGoodsStatus } from '@/dict/index.js';
 
 export default {
-	name: "goods-select",
+	name: 'goods-select',
 
 	props: {
 		multiple: Boolean
@@ -59,19 +46,19 @@ export default {
 			visible: false,
 			table: {
 				props: {
-					"max-height": "500px"
+					'max-height': '500px'
 				},
 				columns: [
 					{
-						type: "selection",
-						align: "center",
+						type: 'selection',
+						align: 'center',
 						width: 60,
 						hidden: !this.multiple
 					},
 					{
-						type: "op",
-						align: "center",
-						width: "100px",
+						type: 'op',
+						align: 'center',
+						width: '100px',
 						layout: [
 							({ scope }) => {
 								return (
@@ -80,7 +67,8 @@ export default {
 										round
 										on-click={() => {
 											this.select(scope.row);
-										}}>
+										}}
+									>
 										选择
 									</el-button>
 								);
@@ -88,26 +76,26 @@ export default {
 						]
 					},
 					{
-						label: "商品图",
-						align: "center",
-						prop: "pics"
+						label: '商品图',
+						align: 'center',
+						prop: 'pics'
 					},
 					{
-						label: "商品名称",
-						align: "center",
-						prop: "title",
-						"min-width": 180,
-						"show-overflow-tooltip": true
+						label: '商品名称',
+						align: 'center',
+						prop: 'title',
+						'min-width': 180,
+						'show-overflow-tooltip': true
 					},
 					{
-						label: "商品售价",
-						align: "center",
-						prop: "price"
+						label: '商品售价',
+						align: 'center',
+						prop: 'price'
 					},
 					{
-						label: "销量",
-						align: "center",
-						prop: "sales"
+						label: '销量',
+						align: 'center',
+						prop: 'sales'
 					},
 					// {
 					// 	label: "库存",
@@ -115,14 +103,14 @@ export default {
 					// 	prop: "inventory"
 					// },
 					{
-						label: "状态",
-						align: "center",
-						prop: "status",
+						label: '状态',
+						align: 'center',
+						prop: 'status',
 						dict: ActivityGoodsStatus
 					}
 				],
 				on: {
-					"cell-dblclick": (row) => {
+					'cell-dblclick': (row) => {
 						this.select(row);
 					}
 				}
@@ -134,7 +122,7 @@ export default {
 
 	filters: {
 		goods_pics(str, index) {
-			let arr = (str || "").split(",");
+			let arr = (str || '').split(',');
 			return index === undefined ? arr : arr[index];
 		}
 	},
@@ -151,30 +139,32 @@ export default {
 		},
 
 		select(row) {
-			this.$emit("select", row);
+			this.$emit('select', row);
 			this.close();
 		},
 
 		multiSelect() {
-			this.$emit("select", ...this.selection);
+			this.$emit('select', ...this.selection);
 			this.close();
 		},
 
 		onLoad({ ctx, app }) {
-			ctx.service({
-				page: (params) => {
-					if (this.params.couponId) {
-						// 优惠券商品列表
-						return this.$service.biz.activity.couponGoods.select(params);
-					} else if (this.params.activityId) {
-						// 活动商品列表
-						return this.$service.biz.activity.infoGoods.select(params);
-					} else {
-						// 默认商品列表
-						return this.$service.biz.goods.info.page(params);
+			ctx
+				.service({
+					page: (params) => {
+						if (this.params.couponId) {
+							// 优惠券商品列表
+							return this.$service.biz.activity.couponGoods.select(params);
+						} else if (this.params.activityId) {
+							// 活动商品列表
+							return this.$service.biz.activity.infoGoods.select(params);
+						} else {
+							// 默认商品列表
+							return this.$service.biz.goods.info.page(params);
+						}
 					}
-				}
-			}).done();
+				})
+				.done();
 
 			app.refresh(this.params);
 		},

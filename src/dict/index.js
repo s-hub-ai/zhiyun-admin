@@ -170,3 +170,14 @@ export const vipLevelDict = [{
   value: 4,
   text: '黑金'
 }]
+// 活动商品状态
+export const ActivityGoodsStatus = [{
+    label: "开启",
+    value: 1
+  },
+  {
+    label: "关闭",
+    value: 0,
+    type: "danger"
+  }
+];

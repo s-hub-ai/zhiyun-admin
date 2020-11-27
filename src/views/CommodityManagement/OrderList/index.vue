@@ -50,7 +50,7 @@
 				</template>
 				<!-- 购买信息 -->
 				<template #column-buyInfo="{ scope }">
-					<div>收件人:{{ scope.row.cantact }}</div>
+					<div>收件人:{{ scope.row.contact }}</div>
 					<div>手机号:{{ scope.row.phone }}</div>
 				</template>
 				<!-- 操作 -->

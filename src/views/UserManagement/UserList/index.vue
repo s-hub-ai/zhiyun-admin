@@ -1,7 +1,7 @@
 <template>
 	<cl-crud @load="onLoad" ref="crud">
 		<el-row type="flex" align="middle">
-			<el-form class="table-flters-form" :inline="true" :model="tableFlters" size="mini">
+			<el-form class="table-flters-form" label-position="right" label-width="85px" :inline="true" :model="tableFlters" size="mini">
 				<el-form-item
 					label="套票类型
 				"
@@ -40,14 +40,27 @@
 						<el-option v-for="(item, index) in vipLevelDict" :key="index" :label="item.text" :value="item.value"></el-option>
 					</el-select>
 				</el-form-item>
+
+				<el-form-item
+					label="支云卡状态
+				"
+				>
+					<el-select v-model="tableFlters.zhiyunCardStatus" placeholder="请选择" @change="$refs['crud'].refresh({ ...tableFlters })">
+						<el-option label="全部" value=""></el-option>
+						<el-option v-for="(item, index) in zhiyunCardStatusDict" :key="index" :label="item.text" :value="item.value"></el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item>
+					<cl-search-key placeholder="请输入用户姓名、手机号、套票号"></cl-search-key>
+				</el-form-item>
 			</el-form>
-			<cl-search-key placeholder="请输入用户姓名、手机号、套票号"></cl-search-key>
-			<cl-flex1></cl-flex1>
+
+			<!-- 			<cl-flex1></cl-flex1> -->
 			<!-- 		<el-button size="mini" type="primary">导出</el-button> -->
 		</el-row>
 
 		<el-row>
-			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
+			<cl-table :columns="tableColumn" :props="{ height: '65vh' }">
 				<!-- 头像 -->
 				<template #column-avatar="{ scope }">
 					<cl-avatar shape="square" size="medium" :src="scope.row.avatar | default_avatar" :style="{ margin: 'auto' }"> </cl-avatar>
@@ -102,6 +115,7 @@ export default {
 			ticketPackageUserDict,
 			useCcertificationDict,
 			vipLevelDict,
+			zhiyunCardStatusDict,
 			tableFlters: { page: 1 }, //ticketPackageUser: -1, fanClubId: -1, userCertification: -1, vipLevel: -1 },
 			addDialogShow: false,
 			addDialogTitle: '',
@@ -205,8 +219,9 @@ export default {
 				{
 					label: '会员等级',
 					prop: 'vipLevel',
+					fixed: 'right',
 					align: 'center',
-					width: 90,
+					width: 80,
 					formatter(row) {
 						let res;
 						vipLevelDict?.map((value) => {
@@ -220,8 +235,8 @@ export default {
 				{
 					label: '支云卡状态',
 					prop: 'zhiyunCardStatus',
+					fixed: 'right',
 					align: 'center',
-					filters: zhiyunCardStatusDict,
 					formatter(row) {
 						let res;
 						zhiyunCardStatusDict?.map((value) => {
@@ -231,12 +246,7 @@ export default {
 						});
 						return res;
 					},
-					'filter-method': (value, row, column) => {
-						console.log(value);
-						console.log(row);
-						return row[column['property']] == value;
-					},
-					width: 100
+					width: 90
 				},
 				{
 					label: '操作',
@@ -274,7 +284,7 @@ export default {
 <style lang="scss" scoped>
 .table-flters-form {
 	::v-deep .el-form-item {
-		margin: 0 10px;
+		margin: 0 10px 10px 0;
 	}
 }
 </style>
