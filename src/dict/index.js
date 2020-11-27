@@ -27,10 +27,10 @@ export const useCcertificationDict = [{
 //支云卡状态
 export const zhiyunCardStatusDict = [{
   value: 0,
-  text: '非云卡用户'
+  text: '非支云卡用户'
 }, {
   value: 1,
-  text: '云卡用户'
+  text: '支云卡用户'
 }]
 //积分使用事件类型
 export const pointsUseDetailTypeDict = [{
@@ -179,5 +179,26 @@ export const ActivityGoodsStatus = [{
     label: "关闭",
     value: 0,
     type: "danger"
+  }
+];
+// 支付方式
+export const paymentDict = [{
+    text: "一网通支付",
+    value: 0
+  },
+  {
+    text: "微信支付",
+    value: 1,
+    type: "danger"
+  }
+];
+// 支付方式
+export const deliveryMethodDict = [{
+    text: "普通快递",
+    value: 0
+  },
+  {
+    text: "到店自提",
+    value: 1
   }
 ];

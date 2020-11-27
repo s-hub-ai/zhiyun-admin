@@ -32,9 +32,10 @@
 					>
 					</el-date-picker>
 				</el-form-item>
+				<el-form-item>
+					<cl-search-key placeholder="请输入订单编号或收件人手机号"></cl-search-key>
+				</el-form-item>
 			</el-form>
-			<cl-flex1></cl-flex1>
-			<cl-search-key placeholder="请输入订单编号或收件人手机号"></cl-search-key>
 		</el-row>
 
 		<el-row>
@@ -123,7 +124,7 @@
 			</div>
 		</el-dialog>
 		<!-- 详情弹出框 -->
-		<el-dialog title="订单详情" :visible.sync="detailDialogShow" width="80%">
+		<el-dialog title="订单详情" :visible.sync="detailDialogShow" width="80%" @close="detail = {}">
 			<el-form label-width="100px" class="demo-ruleForm" :inline="true">
 				<h3>消息详情</h3>
 				<div style="max-width: 900px">
@@ -140,17 +141,17 @@
 						<span>{{ detail.orderTime|default }}</span>
 					</el-form-item>
 					<el-form-item class="form-item" label="收件人:">
-						<span>{{ detail.addresseeName |default}}</span>
+						<span v-if="detail.address">{{ detail.address.contact |default}}</span>
 					</el-form-item>
 					<el-form-item class="form-item" label="手机号:">
-						<span>{{ detail.addresseePhoneNum|default }}</span>
+						<span v-if="detail.address">{{ detail.address.phone |default }}</span>
 					</el-form-item>
-					<el-form-item class="form-item" label="收件地址:" v-if="detail.addresseeAddress">
-						<span>{{ detail.province.label + detail.city.label + detail.country.label }}{{ detail.addresseeAddress|default }}</span>
+					<el-form-item class="form-item" label="收件地址:" v-if="detail.address">
+						<span>{{ detail.address.province.label + detail.address.city.label + detail.address.country.label }}{{ detail.address.detail|default }}</span>
 					</el-form-item>
 				</div>
 				<h3 style="margin-top: 45px">商品信息</h3>
-				<div v-for="(item, index) in detail.skus" :key="index">
+				<div v-for="(item, index) in detail.sku" :key="index">
 					<el-form-item class="form-item" label="商品名称:">
 						<span>{{ item.commodityName }}</span>
 					</el-form-item>
@@ -164,49 +165,49 @@
 				<h3 style="margin-top: 45px">支付信息</h3>
 				<div>
 					<el-form-item class="form-item" label="支付方式:">
-						<span>{{ detail.orderMethod|default }}</span>
+						<span v-if="detail.payment">{{ paymentType|default }}</span>
 					</el-form-item>
 					<el-form-item class="form-item" label="付款时间:">
-						<span>{{ detail.buttonTime|default }}</span>
+						<span v-if="detail.payment">{{ detail.payment.paymentTime|default }}</span>
 					</el-form-item>
 					<el-form-item class="form-item" label="总计金额:">
-						<span>{{ detail.totalPayment|default }}</span>
+						<span v-if="detail.payment">{{ detail.payment.totalPayment|default }}</span>
 					</el-form-item>
 					<el-form-item class="form-item" label="优惠金额:">
-						<span>{{ detail.salePromotion|default }}</span>
+						<span v-if="detail.payment">{{ detail.payment.salePromotion|default }}</span>
 					</el-form-item>
 					<el-form-item class="form-item" label="实付金额:">
-						<span>{{ detail.realPayment|default }}</span>
+						<span v-if="detail.payment">{{ detail.payment.realPayment|default }}</span>
 					</el-form-item>
 				</div>
 				<h3 style="margin-top: 45px">物流信息</h3>
 				<div>
 					<el-form-item class="form-item" label="发货时间:">
-						<span>{{ detail.deliveryTime|default }}</span>
+						<span v-if="detail.delivery">{{ detail.delivery.deliveryTime|default }}</span>
 					</el-form-item>
 					<el-form-item class="form-item" label="物流方式:">
-						<span>{{ detail.deliveryMethod|default  }}</span>
+						<span v-if="detail.delivery">{{ deliveryMethodType|default  }}</span>
 					</el-form-item>
 					<el-form-item class="form-item" label="物流单号:">
-						<span>{{ detail.deliverySN|default  }}</span>
+						<span v-if="detail.delivery">{{ detail.delivery.deliverySN|default  }}</span>
 					</el-form-item>
 				</div>
 				<h3 style="margin-top: 45px">售后信息</h3>
 				<div>
 					<el-form-item class="form-item" label="退款原因:">
-						<span>{{ detail.drawbackReason|default  }}</span>
+						<span v-if="detail.drawback">{{ detail.drawback.drawbackReason|default  }}</span>
 					</el-form-item>
 					<el-form-item class="form-item" label="申请时间:">
-						<span>{{ detail.applyTime |default }}</span>
+						<span v-if="detail.drawback">{{ detail.drawback.applyTime |default }}</span>
 					</el-form-item>
 					<el-form-item class="form-item" label="退款金额:">
-						<span>{{ detail.drawbackAmount|default  }}</span>
+						<span v-if="detail.drawback">{{ detail.drawback.drawbackAmount|default  }}</span>
 					</el-form-item>
 					<el-form-item class="form-item" label="退款编号:">
-						<span>{{ detail.drawbackSN|default  }}</span>
+						<span v-if="detail.drawback">{{ detail.drawback.drawbackSN|default  }}</span>
 					</el-form-item>
-					<el-form-item v-if="detail.drawbackVerify == 1" class="form-item" label="退款时间:">
-						<span>{{ detail.drawbackTime |default }}</span>
+					<el-form-item class="form-item" label="退款时间:">
+						<span v-if="detail.drawback">{{ detail.drawback.drawbackTime |default }}</span>
 					</el-form-item>
 				</div>
 			</el-form>
@@ -215,13 +216,31 @@
 </template>
 
 <script>
-import { orderTypeDict, orderStatusDict } from '@/dict/index.js';
+import { orderTypeDict, orderStatusDict, paymentDict, deliveryMethodDict } from '@/dict/index.js';
 export default {
 	computed: {
 		orderType() {
 			let res;
 			orderTypeDict?.map((value, index, array) => {
 				if (value.value == this.detail.orderType) {
+					res = value.text;
+				}
+			});
+			return res;
+		},
+		paymentType() {
+			let res;
+			paymentDict?.map((value, index, array) => {
+				if (value.value == this.detail.payment?.paymentMethod) {
+					res = value.text;
+				}
+			});
+			return res;
+		},
+		deliveryMethodType() {
+			let res;
+			deliveryMethodDict?.map((value, index, array) => {
+				if (value.value == this.detail.delivery?.deliveryMethod) {
 					res = value.text;
 				}
 			});
@@ -252,11 +271,12 @@ export default {
 				{
 					type: 'index',
 					align: 'center',
+					fixed: 'left',
 					label: '编号'
 				},
 				{
 					label: '订单类型',
-					width: 110,
+					width: 85,
 					align: 'center',
 					prop: 'orderType',
 					formatter(row) {
@@ -272,6 +292,8 @@ export default {
 				{
 					label: '订单编号',
 					prop: 'orderSN',
+					width: 185,
+					fixed: 'left',
 					align: 'center'
 				},
 				{
@@ -282,17 +304,19 @@ export default {
 				{
 					label: '价格￥',
 					prop: 'totalPayment',
+					width: 100,
 					align: 'center'
 				},
 				{
 					label: '商品实付￥',
+					width: 100,
 					prop: 'realPayment',
 					align: 'center'
 				},
 				{
 					label: '购买信息',
 					prop: 'buyInfo',
-					align: 'center'
+					align: 'left'
 				},
 				{
 					label: '下单时间',
@@ -302,7 +326,7 @@ export default {
 				},
 				{
 					label: '订单状态',
-					width: 110,
+					width: 90,
 					prop: 'orderStatus',
 					align: 'center',
 					formatter(row) {
@@ -473,9 +497,12 @@ export default {
 				let res = await this.$service.app.order.info({
 					id
 				});
-				res.province = JSON.parse(res.addresseeProvince);
-				res.city = JSON.parse(res.addresseeCity);
-				res.country = JSON.parse(res.addresseeCountry);
+				if (res.address) {
+					res.address.province = JSON.parse(res.address.province);
+					res.address.city = JSON.parse(res.address.city);
+					res.address.country = JSON.parse(res.address.country);
+				}
+
 				this.detail = res;
 			} catch (error) {
 				this.$message.error(error);
@@ -490,6 +517,6 @@ export default {
 }
 
 ::v-deep .el-form-item {
-	margin: 0 10px;
+	margin: 0 10px 10px 0;
 }
 </style>
