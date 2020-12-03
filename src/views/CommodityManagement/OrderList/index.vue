@@ -53,6 +53,7 @@
 				<template #column-buyInfo="{ scope }">
 					<div>收件人:{{ scope.row.contact }}</div>
 					<div>手机号:{{ scope.row.phone }}</div>
+					<div v-if="scope.row.city != null">收货地址:{{ scope.row.province.label + scope.row.city.label + scope.row.country.label }}{{scope.row.detail|default }}</div>
 				</template>
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
@@ -304,12 +305,12 @@ export default {
 				{
 					label: '价格￥',
 					prop: 'totalPayment',
-					width: 100,
+					width: 90,
 					align: 'center'
 				},
 				{
 					label: '商品实付￥',
-					width: 100,
+					width: 90,
 					prop: 'realPayment',
 					align: 'center'
 				},

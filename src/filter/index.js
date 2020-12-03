@@ -26,16 +26,16 @@ Vue.filter("format_spec", value => {
 	if (value) {
 		let arr = [];
 		let spec = value;
-		try{
+		try {
 			spec = eval("(" + value + ")");
-			
+
 			for (let i in spec) {
 				arr.push(spec[i]);
 			}
 			spec = arr.join(',')
-			
+
 			return spec
-		}catch(e){
+		} catch (e) {
 			console.log(e)
 			return spec
 		}
@@ -43,4 +43,10 @@ Vue.filter("format_spec", value => {
 	} else {
 		return "默认规格";
 	}
+});
+
+Vue.filter("fixed", (value) => {
+	console.log(value);
+	value = value ? value : 0;
+	return value.toFixed(2)
 });

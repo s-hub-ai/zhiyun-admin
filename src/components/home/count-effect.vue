@@ -2,31 +2,56 @@
 	<div class="count-effect">
 		<div class="card">
 			<div class="card__header">
-				<span class="label">总销售额</span>
-				<span class="value">￥15920</span>
+				<span class="label">总订单数</span>
+				<span class="value">{{ d.all }}</span>
 			</div>
 
-			<div class="card__container">
-				<el-progress :percentage="50" :stroke-width="8"></el-progress>
+			<div class="card__container" style="display: flex">
+				<span style="padding-right: 10px">付款占比 </span>
+				<el-progress style="flex: 1" :percentage="(((d.yfk + d.ywc) / d.all) * 100) | fixed" :stroke-width="8"></el-progress>
 			</div>
 
 			<div class="card__footer">
 				<ul class="count-effect__cop">
 					<li>
-						<span>周同比</span>
+						<span>待付款</span>
 
 						<div class="fall">
-							<i class="el-icon-bottom-right"></i>
-							<span>-4%</span>
+							<!-- 	<i class="el-icon-bottom-right"></i> -->
+							<span>{{ d.dfk|default }}</span>
 						</div>
 					</li>
 
 					<li>
-						<span>日同比</span>
+						<span>已付款</span>
 
 						<div class="rise">
-							<i class="el-icon-top-right"></i>
-							<span>+7%</span>
+							<!-- 					<i class="el-icon-top-right"></i> -->
+							<span>{{ d.yfk|default }}</span>
+						</div>
+					</li>
+					<li>
+						<span>退款申请</span>
+
+						<div class="fall">
+							<!-- 	<i class="el-icon-bottom-right"></i> -->
+							<span>{{ d.fqtk|default }}</span>
+						</div>
+					</li>
+					<li>
+						<span>已完成</span>
+
+						<div class="rise">
+							<!-- 	<i class="el-icon-bottom-right"></i> -->
+							<span>{{ d.ywc|default }}</span>
+						</div>
+					</li>
+					<li>
+						<span>已关闭</span>
+
+						<div class="fall">
+							<!-- 	<i class="el-icon-bottom-right"></i> -->
+							<span>{{ d.ygb|default }}</span>
 						</div>
 					</li>
 				</ul>
@@ -36,11 +61,29 @@
 </template>
 
 <script>
-export default {};
+export default {
+	data() {
+		return {
+			d: {}
+		};
+	},
+	created() {
+		this.getData();
+	},
+	methods: {
+		async getData() {
+			try {
+				this.d = await this.$service.app.count.orders();
+			} catch (error) {
+				this.$message.error(error);
+			}
+		}
+	}
+};
 </script>
 
 <style lang="scss" scoped>
-@import "./common.scss";
+@import './common.scss';
 
 .count-effect {
 	&__cop {
