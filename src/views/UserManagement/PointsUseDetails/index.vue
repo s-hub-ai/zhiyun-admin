@@ -8,14 +8,14 @@
 
 		<el-row>
 			<cl-refresh-btn></cl-refresh-btn>
-			<el-button size="mini" @click="visible=true">增加积分</el-button>
-			<el-button size="mini" @click="visible2=true">减少积分</el-button>
+			<el-button size="mini" @click="visible = true">增加积分</el-button>
+			<el-button size="mini" @click="visible2 = true">减少积分</el-button>
 		</el-row>
 		<el-row>
-			<cl-table  :columns="tableColumn" :props="{ height: '70vh' }">
+			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
 				<template #column-score="{ scope }">
-					<span :class="scope.row.scoreType?'text-green-400':'text-red-500'">
-						{{` ${scope.row.scoreType?'+':'-'}${scope.row.score}`}}
+					<span :class="scope.row.scoreType ? 'text-green-400' : 'text-red-500'">
+						{{ ` ${scope.row.scoreType ? '+' : '-'}${scope.row.score}` }}
 					</span>
 				</template>
 			</cl-table>
@@ -51,11 +51,11 @@ import { pointsUseDetailTypeDict } from '@/dict/index.js';
 export default {
 	data() {
 		return {
-			visible:false,
-			visible2:false,
+			visible: false,
+			visible2: false,
 			serach: '',
-			addScore:0,
-			minusScore:0,
+			addScore: 0,
+			minusScore: 0,
 			// tableProps: { 'show-summary': true },
 			tableColumn: [
 				{
@@ -72,13 +72,13 @@ export default {
 					// ],
 					align: 'center',
 					formatter(row) {
-						return [ '使用','获取'][row.scoreType]
-					},
+						return ['使用', '获取'][row.scoreType];
+					}
 				},
 				{
 					label: '积分数量',
 					prop: 'score',
-					align: 'center',
+					align: 'center'
 				},
 				{
 					label: '事件类型',
@@ -87,34 +87,34 @@ export default {
 					align: 'center',
 					formatter(row) {
 						let res;
-						pointsUseDetailTypeDict?.map(el => {
+						pointsUseDetailTypeDict?.map((el) => {
 							if (row.scoreSource == el.value) {
 								res = el.text;
 							}
 						});
 						return res || '其他';
-					},
+					}
 				}
 			]
 		};
 	},
 
 	methods: {
-		async submitAdd(){
+		async submitAdd() {
 			await this.$service.app.user.info.updateScore({
 				userId: this.$route.query.id,
-				score:this.addScore
-			})
-			this.visible = false
-			this.$refs.crud.refresh()
+				score: this.addScore
+			});
+			this.visible = false;
+			this.$refs.crud.refresh();
 		},
-		async submitMinus(){
+		async submitMinus() {
 			await this.$service.app.user.info.updateScore({
 				userId: this.$route.query.id,
-				score:-this.minusScore
-			})
-			this.visible2 = false
-			this.$refs.crud.refresh()
+				score: -this.minusScore
+			});
+			this.visible2 = false;
+			this.$refs.crud.refresh();
 		},
 		openForm() {
 			this.$refs['form'].open({
