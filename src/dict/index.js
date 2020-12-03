@@ -66,7 +66,11 @@ export const pointsUseDetailTypeDict = [{
 }, {
   value: 10,
   text: '个人原有积分'
-}]
+}, {
+  value: 11,
+  text: '系统扣除'
+}
+]
 
 //商品类型
 export const goodsTypeDict = [{
