@@ -340,16 +340,16 @@ export default {
 				});
 			} */
 	},
-	created() {
-		this.$store.dispatch('setDefaultcolumn', specColumn);
-		this.getCommodityTypeList();
+	async created() {
+		await this.$store.dispatch('setDefaultcolumn', specColumn);
+		await this.getCommodityTypeList();
 	},
 	methods: {
 		//获取商品分类
 		async getCommodityTypeList() {
 			try {
-				let res = await this.$service.app.commodityType.list();
-				this.commodityTypeList = res;
+				let res = await this.$service.app.commodityType.page({ page: 1, size: 999, commodityTypeStatus: 1 });
+				this.commodityTypeList = res.list;
 				console.log(res);
 			} catch (error) {
 				this.$message.error(error);
