@@ -447,8 +447,14 @@ export default {
 		//下单日期选择
 		orderTimeChange(e) {
 			console.log(e);
-			this.tableFlters.startTime = e[0];
-			this.tableFlters.endTime = e[1];
+			if (e == null) {
+				this.tableFlters.startTime = '';
+				this.tableFlters.endTime = '';
+			} else {
+				this.tableFlters.startTime = e[0];
+				this.tableFlters.endTime = e[1];
+			}
+
 			this.$refs['crud'].refresh({
 				...this.tableFlters
 			});

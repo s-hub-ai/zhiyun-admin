@@ -22,7 +22,7 @@
 
 						<div class="rise">
 							<!-- 	<i class="el-icon-top-right"></i> -->
-							<span>{{ Number(d.scoreReward) | fixed }}</span>
+							<span>{{ Number(d.scoreReward) }}</span>
 						</div>
 					</li>
 				</ul>

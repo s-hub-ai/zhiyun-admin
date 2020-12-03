@@ -8,7 +8,7 @@
 
 			<div class="card__container" style="display: flex">
 				<span style="padding-right: 10px">付款占比 </span>
-				<el-progress style="flex: 1" :percentage="(((d.yfk + d.ywc) / d.all) * 100) | fixed" :stroke-width="8"></el-progress>
+				<el-progress style="flex: 1" :percentage="(((d.yfk + d.ywc + d.fqtk) / d.all) * 100) | fixed" :stroke-width="8"></el-progress>
 			</div>
 
 			<div class="card__footer">
