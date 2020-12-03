@@ -17,14 +17,14 @@
 						</div>
 					</li>
 
-					<li>
+					<!-- 					<li>
 						<span>总奖励积分</span>
 
 						<div class="rise">
-							<!-- 	<i class="el-icon-top-right"></i> -->
+								<i class="el-icon-top-right"></i> 
 							<span>{{ Number(d.scoreReward) }}</span>
 						</div>
-					</li>
+					</li> -->
 				</ul>
 			</div>
 
