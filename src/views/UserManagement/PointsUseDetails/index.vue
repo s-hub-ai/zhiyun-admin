@@ -9,6 +9,7 @@
 		<el-row>
 			<cl-refresh-btn></cl-refresh-btn>
 			<el-button size="mini" @click="visible=true">增加积分</el-button>
+			<el-button size="mini" @click="visible2=true">减少积分</el-button>
 		</el-row>
 		<el-row>
 			<cl-table  :columns="tableColumn" :props="{ height: '70vh' }">
@@ -26,10 +27,18 @@
 		</el-row>
 		<cl-dialog title="增加积分" :visible.sync="visible">
 			<el-form label-width="100px">
-				<el-form-item label-width="输入积分">
+				<el-form-item label-width="输入要增加的积分数量">
 					<el-input-number :min="0" :max="999999" v-model="addScore"></el-input-number>
 				</el-form-item>
 				<el-button @click="submitAdd">确定添加</el-button>
+			</el-form>
+		</cl-dialog>
+		<cl-dialog title="减少" :visible.sync="visible2">
+			<el-form label-width="100px">
+				<el-form-item label-width="输入要减少的积分数量">
+					<el-input-number :min="0" :max="999999" v-model="minusScore"></el-input-number>
+				</el-form-item>
+				<el-button @click="submitMinus">确定减少</el-button>
 			</el-form>
 		</cl-dialog>
 		<!-- 自定义表单 -->
@@ -43,8 +52,10 @@ export default {
 	data() {
 		return {
 			visible:false,
+			visible2:false,
 			serach: '',
 			addScore:0,
+			minusScore:0,
 			// tableProps: { 'show-summary': true },
 			tableColumn: [
 				{
@@ -95,6 +106,14 @@ export default {
 				score:this.addScore
 			})
 			this.visible = false
+			this.$refs.crud.refresh()
+		},
+		async submitMinus(){
+			await this.$service.app.user.info.updateScore({
+				userId: this.$route.query.id,
+				score:-this.minusScore
+			})
+			this.visible2 = false
 			this.$refs.crud.refresh()
 		},
 		openForm() {
