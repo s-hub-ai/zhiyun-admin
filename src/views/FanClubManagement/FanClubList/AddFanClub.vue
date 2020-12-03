@@ -6,7 +6,7 @@
 			</el-form-item>
 			<el-form-item class="form-item" prop="fanClubRegion" label="区域">
 				<el-select style="width: 100%" v-model="ruleForm.fanClubRegion" placeholder="请选择">
-					<el-option v-for="item in fanClubRegionList" :key="item.id" :label="item.regionName" :value="item.id"> </el-option>
+					<el-option v-for="item in fanClubRegionList" :key="item.id" :label="item.regionName" :value="Number(item.id)"> </el-option>
 				</el-select>
 			</el-form-item>
 

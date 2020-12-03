@@ -1,6 +1,6 @@
 <template>
 	<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
-		<el-form-item label="商品分类" required>
+		<el-form-item label="商品分类" prop="commodityTypeId">
 			<el-select v-model="ruleForm.commodityTypeId" placeholder="请选择">
 				<el-option v-for="item in commodityTypeList" :key="item.id" :label="item.commodityTypeName" :value="item.id"></el-option>
 			</el-select>
@@ -261,6 +261,13 @@ export default {
 				isScoreReward: 0
 			},
 			rules: {
+				commodityTypeId: [
+					{
+						required: true,
+						message: '请选择商品分类',
+						trigger: 'change'
+					}
+				],
 				commodityName: [
 					{
 						required: true,
@@ -340,16 +347,16 @@ export default {
 				});
 			} */
 	},
-	created() {
-		this.$store.dispatch('setDefaultcolumn', specColumn);
-		this.getCommodityTypeList();
+	async created() {
+		await this.$store.dispatch('setDefaultcolumn', specColumn);
+		await this.getCommodityTypeList();
 	},
 	methods: {
 		//获取商品分类
 		async getCommodityTypeList() {
 			try {
-				let res = await this.$service.app.commodityType.list();
-				this.commodityTypeList = res;
+				let res = await this.$service.app.commodityType.page({ page: 1, size: 999, commodityTypeStatus: 1 });
+				this.commodityTypeList = res.list;
 				console.log(res);
 			} catch (error) {
 				this.$message.error(error);

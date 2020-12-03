@@ -6,7 +6,7 @@
 		<el-form-item label="商品封面" prop="commodityCover">
 			<cl-upload :value="ruleForm.commodityCover" class="avatar-uploader" :size="[150, 150]" icon="el-icon-plus" accept="*" :on-success="commodityCoverUploadSuccess"></cl-upload>
 		</el-form-item>
-		<el-form-item label="商品图片" prop="">
+		<el-form-item label="商品图片" prop="commodityBannerImg">
 			<cl-upload
 				multiple
 				:limit="5"

@@ -53,6 +53,9 @@
 				<el-form-item>
 					<cl-search-key placeholder="请输入用户姓名、手机号、套票号"></cl-search-key>
 				</el-form-item>
+				<el-form-item>
+					<el-button size="mini" type="primary" @click="exportExcelAll">导出</el-button>
+				</el-form-item>
 			</el-form>
 
 			<!-- 			<cl-flex1></cl-flex1> -->
@@ -90,6 +93,9 @@
 </template>
 
 <script>
+import * as _ from 'lodash';
+import FileSaver from 'file-saver';
+import XLSX from 'xlsx';
 import { ticketPackageUserDict, useCcertificationDict, vipLevelDict, zhiyunCardStatusDict } from '@/dict/index.js';
 import addDialog from './detail';
 export default {
@@ -102,11 +108,15 @@ export default {
 			let arr = list?.map((value, index, array) => {
 				let o = {
 					value: value.id,
-					text: value.fanClubName
+					text: value.fanClubName,
+					fanClubRegion: value.fanClubRegion
 				};
 				return o;
 			});
 			return arr;
+		},
+		fanClubRegionList() {
+			return this.$store.state.common.fanClubRegion;
 		}
 	},
 	data() {
@@ -145,7 +155,7 @@ export default {
 				},
 				{
 					label: '微信号',
-					prop: 'weChatAccount',
+					prop: 'wxAccount',
 					align: 'center'
 				},
 				{
@@ -265,6 +275,67 @@ export default {
 			app.refresh({
 				...this.tableFlters
 			});
+		},
+		//导出
+		async exportExcelAll() {
+			/* 从表生成工作簿对象 */
+			//var wb = XLSX.utils.table_to_book(document.querySelector("#out-table"));
+			let res = await this.$service.app.user.info.page({ ...this.tableFlters, size: 9999 });
+			let data = [];
+			res.list.forEach((e) => {
+				let ticketPackageUser = _.find(ticketPackageUserDict, function (o) {
+					if (o.value == e.ticketPackageUser) {
+						return o;
+					}
+				});
+				let fanClub = _.find(this.fanClubList, function (o) {
+					if (o.value == e.fanClubId) {
+						return o;
+					}
+				});
+				console.log(fanClub);
+				let fanClubRegion = _.find(this.fanClubRegionList, function (o) {
+					if (o.id == fanClub?.fanClubRegion) {
+						return o;
+					}
+				});
+				console.log(fanClubRegion);
+				let vipLevel = _.find(vipLevelDict, function (o) {
+					if (o.value == e.vipLevel) {
+						return o;
+					}
+				});
+				let obj = {
+					昵称: e.nickName,
+					手机号: e.phoneNum,
+					微信号: e.wxAccount,
+					邮箱号: e.email,
+					微博号: e.weiboAccount,
+					套票类型: ticketPackageUser?.text,
+					套票号: e.ticketPackageNum,
+					球迷会: fanClub?.text || '',
+					区域: fanClubRegion?.regionName || '',
+					实名状态: e.userCertification == 0 ? '未实名' : '已实名',
+					真实姓名: e.userName,
+					性别: e.userSex,
+					生日: e.userBirthday,
+					证件类型: '身份证',
+					证件号码: e.userCertificateNum,
+					有效期: e.userCertificateValidityStart != null ? e.userCertificateValidityStart + '-' + e.userCertificateValidityEnd : '',
+					身份证住址: e.userCertificateAddress,
+					可用积分: e.availablePoints,
+					累计积分: e.accumulatedPoints,
+					积分排名: e.pointsOrder,
+					会员等级: vipLevel?.text,
+					支云卡状态: e.zhiyunCardStatus == 0 ? '非支云卡用户' : '支云卡用户'
+				};
+				data.push(obj);
+			});
+			var ws = XLSX.utils.json_to_sheet(data);
+			/* 获取二进制字符串作为输出 */
+			var wb = XLSX.utils.book_new(); /*新建book*/
+			XLSX.utils.book_append_sheet(wb, ws, 'People'); /* 生成xlsx文件(book,sheet数据,sheet命名) */
+			XLSX.writeFile(wb, 'user.xlsx'); /*写文件(book,xlsx文件名称)*/
 		},
 		//编辑
 		editDialog(id) {
