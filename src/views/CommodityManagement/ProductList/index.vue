@@ -19,7 +19,7 @@
 				</template>
 				<!-- 销量展示 -->
 				<template #column-salesVolumeShow="{ scope }">
-					<el-switch v-model="scope.row.salesVolumeShow" @change="updateShowSaleVolume(scope.row)" :active-value="1" :inactive-value="0" active-text="自定义" inactive-text="真实"> </el-switch>
+					<el-switch v-model="scope.row.salesVolumeShow" @change="updateShowSaleVolume(scope.row)" :active-value="1" :inactive-value="0" active-text="真实" inactive-text="自定义"> </el-switch>
 				</template>
 				<!-- 状态 -->
 				<template #column-commodityStatus="{ scope }">
