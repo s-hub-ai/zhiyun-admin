@@ -4,7 +4,7 @@
 			<cl-refresh-btn></cl-refresh-btn>
 			<cl-search-key placeholder="请输入用户姓名、手机号"></cl-search-key>
 			<cl-flex1></cl-flex1>
-			<el-button size="mini" type="primary" @click="openForm">导出</el-button>
+			<!-- 	<el-button size="mini" type="primary" @click="openForm">导出</el-button> -->
 		</el-row>
 
 		<el-row>
@@ -15,28 +15,13 @@
 				</template>
 				<!-- 身份证图片 -->
 				<template #column-userCertificatePositiveImg="{ scope }">
-					<el-image
-						style="width: 79px; height: 50px"
-						:src="scope.row.userCertificatePositiveImg | default_avatar"
-						:preview-src-list="[scope.row.userCertificatePositiveImg]"
-					>
-					</el-image>
+					<el-image style="width: 79px; height: 50px" :src="scope.row.userCertificatePositiveImg | default_avatar" :preview-src-list="[scope.row.userCertificatePositiveImg]"> </el-image>
 				</template>
 				<template #column-userCertificateNegativeImg="{ scope }">
-					<el-image
-						style="width: 79px; height: 50px"
-						:src="scope.row.userCertificateNegativeImg | default_avatar"
-						:preview-src-list="[scope.row.userCertificateNegativeImg ]"
-					>
-					</el-image>
+					<el-image style="width: 79px; height: 50px" :src="scope.row.userCertificateNegativeImg | default_avatar" :preview-src-list="[scope.row.userCertificateNegativeImg]"> </el-image>
 				</template>
 				<template #column-userCertificatePortraitImg="{ scope }">
-					<el-image
-						style="width: 79px; height: 50px"
-						:src="scope.row.userCertificatePortraitImg | default_avatar"
-						:preview-src-list="[ scope.row.userCertificatePortraitImg]"
-					>
-					</el-image>
+					<el-image style="width: 79px; height: 50px" :src="scope.row.userCertificatePortraitImg | default_avatar" :preview-src-list="[scope.row.userCertificatePortraitImg]"> </el-image>
 				</template>
 			</cl-table>
 		</el-row>

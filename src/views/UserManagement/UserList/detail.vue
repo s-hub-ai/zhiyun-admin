@@ -19,8 +19,8 @@
 				<el-form-item label="手机号:" prop="phoneNum">
 					<el-input v-model="ruleForm.phoneNum" placeholder="请输入手机号"></el-input>
 				</el-form-item>
-				<el-form-item label="微信号:" prop="weChatAccount">
-					<el-input v-model="ruleForm.weChatAccount" placeholder="请输入微信账号"></el-input>
+				<el-form-item label="微信号:" prop="wxAccount">
+					<el-input v-model="ruleForm.wxAccount" placeholder="请输入微信账号"></el-input>
 				</el-form-item>
 				<el-form-item label="邮箱号:" prop="email">
 					<el-input v-model="ruleForm.email" placeholder="请输入邮箱"></el-input>
