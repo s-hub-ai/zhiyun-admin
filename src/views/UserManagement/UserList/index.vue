@@ -6,7 +6,7 @@
 					label="套票类型
 				"
 				>
-					<el-select v-model="tableFlters.ticketPackageUser" placeholder="请选择" @change="$refs['crud'].refresh({ ...tableFlters })">
+					<el-select v-model="tableFlters.ticketPackageUser" multiple placeholder="请选择" @change="tableSelectFn">
 						<el-option label="全部" value=""></el-option>
 						<el-option v-for="(item, index) in ticketPackageUserDict" :key="index" :label="item.text" :value="item.value"></el-option>
 					</el-select>
@@ -16,7 +16,7 @@
 					label="球迷会
 				"
 				>
-					<el-select v-model="tableFlters.fanClubId" placeholder="请选择" @change="$refs['crud'].refresh({ ...tableFlters })">
+					<el-select v-model="tableFlters.fanClubId" placeholder="请选择" @change="tableSelectFn">
 						<el-option label="全部" value=""></el-option>
 						<el-option v-for="(item, index) in fanClubList" :key="index" :label="item.text" :value="item.value"></el-option>
 					</el-select>
@@ -26,7 +26,7 @@
 					label="实名状态
 				"
 				>
-					<el-select v-model="tableFlters.userCertification" placeholder="请选择" @change="$refs['crud'].refresh({ ...tableFlters })">
+					<el-select v-model="tableFlters.userCertification" placeholder="请选择" @change="tableSelectFn">
 						<el-option label="全部" value=""></el-option>
 						<el-option v-for="(item, index) in useCcertificationDict" :key="index" :label="item.text" :value="item.value"></el-option>
 					</el-select>
@@ -35,7 +35,7 @@
 					label="会员等级
 				"
 				>
-					<el-select v-model="tableFlters.vipLevel" placeholder="请选择" @change="$refs['crud'].refresh({ ...tableFlters })">
+					<el-select v-model="tableFlters.vipLevel" placeholder="请选择" @change="tableSelectFn">
 						<el-option label="全部" value=""></el-option>
 						<el-option v-for="(item, index) in vipLevelDict" :key="index" :label="item.text" :value="item.value"></el-option>
 					</el-select>
@@ -45,7 +45,7 @@
 					label="支云卡状态
 				"
 				>
-					<el-select v-model="tableFlters.zhiyunCardStatus" placeholder="请选择" @change="$refs['crud'].refresh({ ...tableFlters })">
+					<el-select v-model="tableFlters.zhiyunCardStatus" placeholder="请选择" @change="tableSelectFn">
 						<el-option label="全部" value=""></el-option>
 						<el-option v-for="(item, index) in zhiyunCardStatusDict" :key="index" :label="item.text" :value="item.value"></el-option>
 					</el-select>
@@ -270,6 +270,13 @@ export default {
 	},
 
 	methods: {
+		tableSelectFn() {
+			let params = {
+				...this.tableFlters
+			};
+			params.ticketPackageUser = params.ticketPackageUser.toString();
+			this.$refs['crud'].refresh(params);
+		},
 		onLoad({ ctx, app }) {
 			ctx.service(this.$service.app.user.info).done();
 			app.refresh({
