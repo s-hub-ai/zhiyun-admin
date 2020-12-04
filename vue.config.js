@@ -40,7 +40,6 @@ module.exports = {
 					"^/dev": "/"
 				}
 			},
-
 			"/pro": {
 				target: "https://mb.ntzycm.cn",
 				changeOrigin: true,

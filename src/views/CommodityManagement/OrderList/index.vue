@@ -6,16 +6,13 @@
 					label="订单类型
 				"
 				>
-					<el-select v-model="tableFlters.orderType" placeholder="请选择" @change="$refs['crud'].refresh({ ...tableFlters })">
+					<el-select style="width: 120px" v-model="tableFlters.orderType" placeholder="请选择" @change="$refs['crud'].refresh({ ...tableFlters })">
 						<el-option v-for="(item, index) in orderTypeDict" :key="index" :label="item.text" :value="item.value"></el-option>
 					</el-select>
 				</el-form-item>
 
-				<el-form-item
-					label="订单状态
-				"
-				>
-					<el-select v-model="tableFlters.orderStatus" placeholder="请选择" @change="$refs['crud'].refresh({ ...tableFlters })">
+				<el-form-item label="订单状态">
+					<el-select style="width: 120px" v-model="tableFlters.orderStatus" placeholder="请选择" @change="$refs['crud'].refresh({ ...tableFlters })">
 						<el-option v-for="(item, index) in orderStatusDict" :key="index" :label="item.text" :value="item.value"></el-option>
 					</el-select>
 				</el-form-item>
@@ -33,7 +30,10 @@
 					</el-date-picker>
 				</el-form-item>
 				<el-form-item>
-					<cl-search-key placeholder="请输入订单编号或收件人手机号"></cl-search-key>
+					<cl-search-key v-model="search" placeholder="请输入订单编号或收件人手机号"></cl-search-key>
+				</el-form-item>
+				<el-form-item>
+					<el-button size="mini" type="primary" @click="exportExcelAll">导出</el-button>
 				</el-form-item>
 			</el-form>
 		</el-row>
@@ -208,7 +208,7 @@
 						<span v-if="detail.drawback">{{ detail.drawback.drawbackSN|default  }}</span>
 					</el-form-item>
 					<el-form-item class="form-item" label="退款时间:">
-						<span v-if="detail.drawback">{{ detail.drawback.drawbackTime |default }}</span>
+						<span v-if="detail.drawback">{{ detail.drawback.updateTime |default }}</span>
 					</el-form-item>
 				</div>
 			</el-form>
@@ -217,6 +217,9 @@
 </template>
 
 <script>
+import * as _ from 'lodash';
+import FileSaver from 'file-saver';
+import XLSX from 'xlsx';
 import { orderTypeDict, orderStatusDict, paymentDict, deliveryMethodDict } from '@/dict/index.js';
 export default {
 	computed: {
@@ -256,6 +259,7 @@ export default {
 			dialogLogistics: false,
 			detailDialogShow: false,
 			drawbackAuditShow: false,
+			search: '',
 			drawbackVerify: 1,
 			drawbackAuditD: {},
 			detail: {},
@@ -364,6 +368,80 @@ export default {
 			app.refresh({
 				...this.tableFlters
 			});
+		},
+		formatSpec(value) {
+			if (value) {
+				let arr = [];
+				let spec = value;
+				try {
+					spec = eval('(' + value + ')');
+
+					for (let i in spec) {
+						arr.push(spec[i]);
+					}
+					spec = arr.join(',');
+
+					return spec;
+				} catch (e) {
+					console.log(e);
+					return spec;
+				}
+			} else {
+				return '默认规格';
+			}
+		},
+		//导出
+		async exportExcelAll() {
+			/* 从表生成工作簿对象 */
+			//var wb = XLSX.utils.table_to_book(document.querySelector("#out-table"));
+			let params = {
+				...this.tableFlters,
+				size: 9,
+				page: 1,
+				sort: '',
+				keyWord: this.search
+			};
+			console.log(params);
+			let res = await this.$service.app.order.page(params);
+			let data = [];
+			res.list.forEach((e) => {
+				let orderType = _.find(orderTypeDict, function (o) {
+					if (o.value == e.orderType) {
+						return o;
+					}
+				});
+				let sku = '';
+				if (e.skus.length > 0) {
+					for (let i = 0; i < e.skus.length; i++) {
+						let item = e.skus[i];
+						sku += `;商品名称:${item.commodityName}规格:${this.formatSpec(item.skuString)}数量:${item.commodityVolume}`;
+					}
+				}
+				let address = `${e.province?.label || ''}${e.city?.label || ''}${e.country?.label || ''}${e.detail}`;
+				let orderStatus = _.find(orderStatusDict, function (o) {
+					if (o.value == e.orderStatus) {
+						return o;
+					}
+				});
+				let obj = {
+					订单编号: e.orderSN,
+					订单类型: orderType.text,
+					商品信息: sku,
+					价格: e.price,
+					商品实付: e.realPayment,
+					收件人: e.contact,
+					手机号: e.phone,
+					收件地址: address,
+					下单时间: e.orderTime,
+					订单状态: orderStatus.text
+				};
+				data.push(obj);
+			});
+			var ws = XLSX.utils.json_to_sheet(data);
+			/* 获取二进制字符串作为输出 */
+			var wb = XLSX.utils.book_new(); /*新建book*/
+			XLSX.utils.book_append_sheet(wb, ws, '订单信息'); /* 生成xlsx文件(book,sheet数据,sheet命名) */
+			XLSX.writeFile(wb, '订单.xlsx'); /*写文件(book,xlsx文件名称)*/
 		},
 		//商品出库
 		orderComplete(id) {
@@ -478,6 +556,18 @@ export default {
 		//发货
 		async delivergoods() {
 			try {
+				if (this.deliveryForm.deliverySN == '') {
+					this.$message.error('请输入快递单号');
+					return;
+				}
+				if (this.deliveryForm.deliveryCompany == '') {
+					this.$message.error('请选择快递公司');
+					return;
+				}
+				if (this.deliveryForm.orderId == '') {
+					this.$message.error('订单id为空');
+					return;
+				}
 				await this.$service.system.delivery.add({
 					...this.deliveryForm
 				});
