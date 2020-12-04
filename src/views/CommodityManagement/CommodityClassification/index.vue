@@ -10,7 +10,7 @@
 			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
 				<!-- 状态-->
 				<template #column-commodityTypeStatus="{ scope }">
-					<el-switch :value="scope.row.commodityTypeStatus" :active-value="1" :inactive-value="0"></el-switch>
+					<el-switch v-model="scope.row.commodityTypeStatus" @change="updateTableRow(scope.row)" :active-value="1" :inactive-value="0"></el-switch>
 				</template>
 				<!-- 排序 -->
 				<template #column-commodityTypeOrder="{ scope }">
