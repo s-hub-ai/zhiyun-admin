@@ -51,7 +51,7 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item>
-					<cl-search-key placeholder="请输入用户姓名、手机号、套票号"></cl-search-key>
+					<cl-search-key v-model="search" placeholder="请输入用户姓名、手机号、套票号"></cl-search-key>
 				</el-form-item>
 				<el-form-item>
 					<el-button size="mini" type="primary" @click="exportExcelAll">导出</el-button>
@@ -129,6 +129,7 @@ export default {
 			tableFlters: { page: 1 }, //ticketPackageUser: -1, fanClubId: -1, userCertification: -1, vipLevel: -1 },
 			addDialogShow: false,
 			addDialogTitle: '',
+			search: '',
 			tableColumn: [
 				{
 					type: 'index',
@@ -287,7 +288,14 @@ export default {
 		async exportExcelAll() {
 			/* 从表生成工作簿对象 */
 			//var wb = XLSX.utils.table_to_book(document.querySelector("#out-table"));
-			let res = await this.$service.app.user.info.page({ ...this.tableFlters, size: 9999 });
+			let params = {
+				...this.tableFlters,
+				size: 9999,
+				keyWord: this.search
+			};
+			params.ticketPackageUser = params.ticketPackageUser.toString();
+			console.log(params);
+			let res = await this.$service.app.user.info.page(params);
 			let data = [];
 			res.list.forEach((e) => {
 				let ticketPackageUser = _.find(ticketPackageUserDict, function (o) {
