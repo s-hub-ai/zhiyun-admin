@@ -396,7 +396,7 @@ export default {
 			//var wb = XLSX.utils.table_to_book(document.querySelector("#out-table"));
 			let params = {
 				...this.tableFlters,
-				size: 9,
+				size: 99999,
 				page: 1,
 				sort: '',
 				keyWord: this.search
@@ -411,7 +411,7 @@ export default {
 					}
 				});
 				let sku = '';
-				if (e.skus.length > 0) {
+				if (e.skus) {
 					for (let i = 0; i < e.skus.length; i++) {
 						let item = e.skus[i];
 						sku += `;商品名称:${item.commodityName}规格:${this.formatSpec(item.skuString)}数量:${item.commodityVolume}`;
@@ -425,15 +425,15 @@ export default {
 				});
 				let obj = {
 					订单编号: e.orderSN,
-					订单类型: orderType.text,
+					订单类型: orderType?.text,
 					商品信息: sku,
-					价格: e.price,
+					价格: e.totalPayment,
 					商品实付: e.realPayment,
 					收件人: e.contact,
 					手机号: e.phone,
 					收件地址: address,
 					下单时间: e.orderTime,
-					订单状态: orderStatus.text
+					订单状态: orderStatus?.text
 				};
 				data.push(obj);
 			});

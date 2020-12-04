@@ -14,6 +14,9 @@ export const ticketPackageUserDict = [{
 }, {
   value: 4,
   text: 'VIP套票'
+}, {
+  value: 5,
+  text: '天使套票'
 }]
 //用户实名状态
 export const useCcertificationDict = [{
@@ -69,8 +72,7 @@ export const pointsUseDetailTypeDict = [{
 }, {
   value: 11,
   text: '系统扣除'
-}
-]
+}]
 
 //商品类型
 export const goodsTypeDict = [{
