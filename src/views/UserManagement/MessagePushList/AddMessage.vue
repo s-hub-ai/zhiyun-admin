@@ -39,15 +39,17 @@
 		</el-form-item>
 		<div v-if="ruleForm.userType == 2">
 			<el-form-item label="实名状态">
-				<el-select v-model="userArgs.userCertification" placeholder="请选择">
-					<el-option v-for="(item, index) in useCcertificationDict" :key="index" :label="item.text" :value="item.value"></el-option>
-				</el-select>
+				<el-checkbox :indeterminate="useCcertificationIndeterminate" v-model="useCcertificationCheckAll" @change="useCcertificationCheckAllChange">全选</el-checkbox>
+				<el-checkbox-group v-model="useCcertificationCheckbox" @change="useCcertificationCheckedCitiesChange">
+					<el-checkbox v-for="item in useCcertificationDict" :label="item.value" :key="item.value">{{ item.text }}</el-checkbox>
+				</el-checkbox-group>
 			</el-form-item>
 			<el-form-item label="球迷会">
-				<el-select v-model="userArgs.fanClubId" placeholder="请选择">
-					<el-option label="非实名用户" :value="0"></el-option>
-					<el-option label="实名用户" :value="1"></el-option>
-				</el-select>
+				<el-checkbox :indeterminate="fanClubIdIndeterminate" v-model="fanClubIdCheckAll" @change="fanClubIdCheckAllChange">全选</el-checkbox>
+				<el-checkbox-group v-model="fanClubIdCheckbox" @change="fanClubIdCheckedCitiesChange">
+					<el-checkbox :label="0">非实名用户</el-checkbox>
+					<el-checkbox :label="1">实名用户</el-checkbox>
+				</el-checkbox-group>
 			</el-form-item>
 			<el-form-item label="套票类型">
 				<el-select v-model="userArgs.ticketPackageUser" placeholder="请选择">
@@ -97,12 +99,47 @@ export default {
 					{ min: 1, max: 50, message: '长度在 1 到 5 个字符', trigger: 'blur' }
 				],
 				pushMethod: [{ required: true, message: '请选择推送方式', trigger: 'change' }],
+				userType: [{ required: true, message: '请选择', trigger: 'change' }],
 				messageContent: [{ required: true, message: '请填写消息内容', trigger: 'blur' }],
 				pushTime: [{ type: 'date', required: true, message: '请选择推送时间', trigger: 'blur' }]
-			}
+			},
+			useCcertificationCheckbox: [],
+			useCcertificationIndeterminate: true,
+			useCcertificationCheckAll: false,
+			fanClubIdCheckbox: [],
+			fanClubIdIndeterminate: true,
+			fanClubIdCheckAll: false
 		};
 	},
+	created() {
+		this.useCcertificationCheckbox = useCcertificationDict.map((v) => v.value);
+	},
 	methods: {
+		//
+		useCcertificationCheckAllChange(val) {
+			console.log(val);
+			let useCcertificationCheckbox = useCcertificationDict.map((v) => v.value);
+			this.useCcertificationCheckbox = val ? useCcertificationCheckbox : [];
+			this.useCcertificationIndeterminate = false;
+		},
+		useCcertificationCheckedCitiesChange(value) {
+			let checkedCount = value.length;
+			this.useCcertificationCheckAll = checkedCount == this.useCcertificationCheckbox.length;
+			console.log(checkedCount);
+			this.useCcertificationIndeterminate = checkedCount > 0 && checkedCount < this.useCcertificationCheckbox.length;
+		},
+		fanClubIdCheckAllChange(val) {
+			console.log(val);
+			this.fanClubIdCheckbox = val ? [0, 1] : [];
+			this.fanClubIdIndeterminate = false;
+		},
+		fanClubIdCheckedCitiesChange(value) {
+			console.log(value);
+			let checkedCount = value.length;
+			this.fanClubIdCheckAll = checkedCount === this.fanClubIdCheckbox.length;
+			this.fanClubIdIndeterminate = checkedCount > 0 && checkedCount < this.fanClubIdCheckbox.length;
+		},
+		//
 		submitForm(formName) {
 			this.$refs[formName].validate(async (valid) => {
 				if (valid) {

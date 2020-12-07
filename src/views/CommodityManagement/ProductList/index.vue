@@ -41,9 +41,15 @@
 				</template>
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
-					<el-button type="text" 
-					@click="editing = scope.row;$refs.editDialog.editDialog=true;"
-					@cacnel="editing=null">编辑</el-button>
+					<el-button
+						type="text"
+						@click="
+							editing = scope.row;
+							$refs.editDialog.editDialog = true;
+						"
+						@cacnel="editing = null"
+						>编辑</el-button
+					>
 					<el-button type="text" @click="deleteFn(scope.row)">删除</el-button>
 				</template>
 			</cl-table>
@@ -58,15 +64,15 @@
 		<cl-form ref="form"></cl-form>
 
 		<!-- 编辑商品dialog -->
-		<ProductEdit :item="editing" @update="refresh"  ref="editDialog"/>
+		<ProductEdit :item="editing" @update="refresh" ref="editDialog" />
 	</cl-crud>
 </template>
 
 <script>
 import { goodsTypeDict } from '@/dict/index.js';
 export default {
-	components:{
-		ProductEdit:()=>import('./ProductEdit')
+	components: {
+		ProductEdit: () => import('./ProductEdit')
 	},
 	data() {
 		return {
@@ -158,7 +164,7 @@ export default {
 					width: 120
 				}
 			],
-			editing:null
+			editing: null
 		};
 	},
 
@@ -230,9 +236,9 @@ export default {
 		async updateFakeSaleVolume(params) {
 			console.log(params);
 			try {
-				let { id, goodsType, fakeSaleVolume } = params;
+				let { id, goodsType, fakeSalesVolume } = params;
 				console.log(id);
-				await this.$service.app.commodity.common.updateFakeSaleVolume({ id, goodsType, fakeSaleVolume });
+				await this.$service.app.commodity.common.updateFakeSaleVolume({ id, goodsType, fakeSalesVolume });
 				this.$message({
 					message: '修改成功',
 					type: 'success'
@@ -256,12 +262,12 @@ export default {
 				this.$message.error(error);
 			}
 		},
-		refresh(){
+		refresh() {
 			this.$refs.crud.refresh({
 				goodsType: -1,
 				prop: 'createTime',
 				order: 'desc'
-			})
+			});
 		},
 		onLoad({ ctx, app }) {
 			ctx.service(this.$service.app.commodity.common).done();
