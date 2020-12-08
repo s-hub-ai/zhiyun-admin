@@ -1,7 +1,7 @@
 <template>
-	<cl-crud @load="onLoad">
+	<cl-crud @load="onLoad" ref="crud">
 		<el-row type="flex" align="middle">
-			<cl-search-key field="serachName" placeholder="请输入用户姓名、手机号、套票号"></cl-search-key>
+			<cl-search-key placeholder="请输入消息标题"></cl-search-key>
 			<cl-flex1></cl-flex1>
 			<el-button size="mini" type="primary" @click="addDialogShow = true">新增消息</el-button>
 		</el-row>
@@ -10,9 +10,7 @@
 			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
-					<el-button size="mini" type="text" @click="$router.push({ path: 'MessageDetail', query: { id: scope.row.id } })">查看详情</el-button>
-					<el-button size="mini" type="text" @click="$router.push({ path: 'EditMessage', query: { id: scope.row.id } })">编辑</el-button>
-					<el-button size="mini" type="text" @click="deleteFn(scope.row.id)">删除</el-button>
+					<el-button size="mini" type="text" @click="editDialog(scope.row.id)">查看详情</el-button>
 				</template>
 			</cl-table>
 		</el-row>
@@ -23,42 +21,29 @@
 		</el-row>
 
 		<!-- 新增编辑弹出框 -->
-		<el-dialog title="新增消息" :visible.sync="addDialogShow" width="800px">
-			<add-dialog></add-dialog>
+		<el-dialog title="新增消息" :visible.sync="addDialogShow" width="1000px" @close="addDialogClose">
+			<add-dialog ref="editDialog" :addDialogShow.sync="addDialogShow"></add-dialog>
+		</el-dialog>
+
+		<!-- 详情弹出框 -->
+		<el-dialog title="推送详情" :visible.sync="addDialogDetailShow" width="1000px" @close="detailDialogClose">
+			<detail-dialog ref="detailDialog" :addDialogShow.sync="addDialogDetailShow"></detail-dialog>
 		</el-dialog>
 	</cl-crud>
 </template>
 
 <script>
-const userList = [
-	{
-		id: 1,
-		status: 35.2,
-		useDate: '2019年09月05日',
-		useNum: 242.1,
-		type: 72.1,
-		images: ['https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/1.jpg']
-	},
-	{
-		id: 2,
-		name: '陈二',
-		status: 35.2,
-		useDate: '2019年09月05日',
-		useNum: 242.1,
-		type: 72.1,
-		salesStatus: 1,
-		images: ['https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/2.jpg']
-	}
-];
 import addDialog from './AddMessage';
+import detailDialog from './MessageDetail';
 export default {
 	components: {
-		addDialog
+		addDialog,
+		detailDialog
 	},
 	data() {
 		return {
 			addDialogShow: false,
-			serach: '',
+			addDialogDetailShow: false,
 			tableColumn: [
 				{
 					type: 'index',
@@ -84,11 +69,27 @@ export default {
 				{
 					label: '推送方式',
 					prop: 'pushMethod',
-					align: 'center'
+					align: 'center',
+					formatter(row) {
+						switch (Number(row.pushMethod)) {
+							case -1:
+								return '全部';
+								break;
+							case 1:
+								return '站内信';
+								break;
+							case 2:
+								return '短信';
+								break;
+							default:
+								break;
+						}
+					}
 				},
 				{
 					label: '操作',
 					prop: 'op',
+					width: 100,
 					align: 'center'
 				}
 			]
@@ -116,52 +117,25 @@ export default {
 					});
 				});
 		},
+		//编辑
+		editDialog(id) {
+			this.addDialogDetailShow = true;
+			this.$nextTick(() => {
+				this.$refs.detailDialog.getEditInfo(id);
+			});
+		},
 		onLoad({ ctx, app }) {
-			ctx
-				.service({
-					page: (p) => {
-						console.log('GET[page]', p);
-						return Promise.resolve({
-							list: userList,
-							pagination: {
-								page: p.page,
-								size: p.size,
-								total: 200
-							}
-						});
-					},
-					info: (d) => {
-						console.log('GET[info]', d);
-						return new Promise((resolve) => {
-							resolve({
-								name: 'icssoa',
-								price: 100
-							});
-						});
-					},
-					add: (d) => {
-						console.log('POST[add]', d);
-						return Promise.resolve();
-					},
-					delete: (d) => {
-						console.log('POST[delete]', d);
-						return Promise.resolve();
-					},
-					update: (d) => {
-						console.log('POST[update]', d);
-						return Promise.resolve();
-					}
-				})
-				.permission(() => {
-					return {
-						add: true,
-						update: true,
-						delete: true
-					};
-				})
-				.done();
-
+			ctx.service(this.$service.app.message).done();
 			app.refresh();
+		},
+		addDialogClose() {
+			this.$refs.editDialog.resetForm('ruleForm');
+			this.$refs.editDialog.ruleForm = {};
+			this.$refs['crud'].refresh();
+		},
+		detailDialogClose() {
+			this.$refs.detailDialog.ruleForm = {};
+			this.$refs['crud'].refresh();
 		}
 	}
 };
