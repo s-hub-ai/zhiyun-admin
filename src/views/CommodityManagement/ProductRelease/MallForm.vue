@@ -333,19 +333,19 @@ export default {
 			}
 		}
 		/* 		'ruleForm.deliveryMethod': function (val, oldval) {
-				console.log(val);
-				val.map((value, index, array) => {
-					if (val.length < 1) {
-						this.ruleForm.freeShippingMethodShow = false;
-						return;
-					}
-					if (val.indexOf(1) > -1) {
-						this.ruleForm.freeShippingMethodShow = true;
-					} else {
-						this.ruleForm.freeShippingMethodShow = false;
-					}
-				});
-			} */
+					console.log(val);
+					val.map((value, index, array) => {
+						if (val.length < 1) {
+							this.ruleForm.freeShippingMethodShow = false;
+							return;
+						}
+						if (val.indexOf(1) > -1) {
+							this.ruleForm.freeShippingMethodShow = true;
+						} else {
+							this.ruleForm.freeShippingMethodShow = false;
+						}
+					});
+				} */
 	},
 	async created() {
 		await this.$store.dispatch('setDefaultcolumn', specColumn);
@@ -355,7 +355,11 @@ export default {
 		//获取商品分类
 		async getCommodityTypeList() {
 			try {
-				let res = await this.$service.app.commodityType.page({ page: 1, size: 999, commodityTypeStatus: 1 });
+				let res = await this.$service.app.commodityType.page({
+					page: 1,
+					size: 999,
+					commodityTypeStatus: 1
+				});
 				this.commodityTypeList = res.list;
 				console.log(res);
 			} catch (error) {
@@ -436,7 +440,15 @@ export default {
 		},
 		submitForm(formName) {
 			this.$refs[formName].validate(async (valid) => {
-				const { type, spec } = this.$refs['goods-spec-select'].validate();
+							let { type, spec } = this.$refs['goods-spec-select'].validate();
+			if (spec.sku.length < 1) {
+				this.$message.error('请填写商品规格');
+				return false;
+			}
+			if (spec.spec.length < 1) {
+				this.$message.error('请填写商品规格');
+				return false;
+			}
 				this.ruleForm.specificationType = type;
 				this.ruleForm.specification = JSON.stringify(spec);
 				if (valid) {
@@ -447,8 +459,7 @@ export default {
 					console.log(JSON.stringify(params));
 					await this.$service.app.commodity.shopping.add(params);
 					this.$alert('商品添加成功！', '提示', {
-						confirmButtonText: '确定',
-						callback: (action) => {}
+						confirmButtonText: '确定'
 					});
 				} else {
 					console.log('error submit!!');

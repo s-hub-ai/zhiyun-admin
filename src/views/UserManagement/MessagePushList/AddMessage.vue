@@ -2,16 +2,15 @@
 	<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
 		<div style="max-width: 900px">
 			<el-form-item label="消息标题" prop="messageTitle">
-				<el-input v-model="ruleForm.messageTitle" placeholder="请输入消息标题" maxlength="50" show-word-limit> </el-input>
+				<el-input v-model="ruleForm.messageTitle" placeholder="请输入消息标题" :maxlength="messageTitleLength" show-word-limit> </el-input>
 			</el-form-item>
 			<el-form-item label="消息内容" prop="messageContent">
-				<el-input type="textarea" rows="5" v-model="ruleForm.messageContent" placeholder="" maxlength="800" show-word-limit></el-input>
+				<el-input type="textarea" rows="5" v-model="ruleForm.messageContent" placeholder="" :maxlength="messageContentLength" show-word-limit></el-input>
 			</el-form-item>
 			<el-form-item class="form-item" label="推送方式" prop="pushMethod">
-				<el-select v-model="ruleForm.pushMethod" placeholder="请选择">
+				<el-select v-model="ruleForm.pushMethod" placeholder="请选择" @change="pushMethodChange">
 					<el-option
 						v-for="item in [
-							{ value: -1, text: '全部' },
 							{ value: 1, text: '站内信' },
 							{ value: 2, text: '短信' }
 						]"
@@ -117,6 +116,8 @@ export default {
 					return time.getTime() <= Date.now() - 24 * 60 * 60 * 1000;
 				}
 			},
+			messageTitleLength: 50,
+			messageContentLength: 800,
 			ruleForm: {
 				messageTitle: '',
 				messageContent: '',
@@ -282,13 +283,26 @@ export default {
 							console.log(xlsxData);
 							let ids = [];
 							xlsxData.map((value) => {
-								ids.push(value.手机号);
+								let phone = String(value.手机号);
+								console.log(phone);
+								phone = phone.replace(/\s+/g, '');
+								ids.push(phone);
 							});
 							_this.getUserIds(ids);
 						}
 					}
 				};
 				reader.readAsBinaryString(files[i]);
+			}
+		},
+		//
+		pushMethodChange(e) {
+			if (e == 1) {
+				this.messageTitleLength = 50;
+				this.messageContentLength = 500;
+			} else if (e == 2) {
+				this.messageTitleLength = 15;
+				this.messageContentLength = 35;
 			}
 		},
 		//
@@ -313,10 +327,23 @@ export default {
 							...this.ruleForm
 						};
 						if (params.userType == 2) {
+							let isNull = true;
+							for (const key in this.userArgs) {
+								if (this.userArgs[key].length > 0) {
+									isNull = false;
+								}
+							}
+							if (isNull) {
+								this.$message.error('请至少勾选一种用户分类！');
+								return false;
+							}
 							params.userArgs = JSON.stringify(this.userArgs);
 						}
 						if (params.userType == 1) {
 							params.userArgs = params.userArgs.toString();
+						}
+						if (params.userType == 0) {
+							delete params.userArgs;
 						}
 						await this.$service.app.message.add(params);
 						this.$emit('update:addDialogShow', false);
