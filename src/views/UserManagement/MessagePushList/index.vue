@@ -22,7 +22,7 @@
 
 		<!-- 新增编辑弹出框 -->
 		<el-dialog title="新增消息" :visible.sync="addDialogShow" width="1000px" @close="addDialogClose">
-			<add-dialog ref="editDialog" :addDialogShow.sync="addDialogShow"></add-dialog>
+			<add-dialog v-if="addDialogShow" ref="editDialog" :addDialogShow.sync="addDialogShow"></add-dialog>
 		</el-dialog>
 
 		<!-- 详情弹出框 -->
@@ -130,7 +130,6 @@ export default {
 		},
 		addDialogClose() {
 			this.$refs.editDialog.resetForm('ruleForm');
-			this.$refs.editDialog.ruleForm = {};
 			this.$refs['crud'].refresh();
 		},
 		detailDialogClose() {
