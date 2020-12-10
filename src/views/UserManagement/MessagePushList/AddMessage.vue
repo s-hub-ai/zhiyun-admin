@@ -15,13 +15,18 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
+			<el-form-item v-if="ruleForm.pushMethod == 2" label="短信模板" prop="templateId">
+				<el-select v-model="ruleForm.templateId" placeholder="请选择" @change="templateIdChange">
+					<el-option v-for="item in messageTemplateList" :key="item.value" :label="item.messageTitle" :value="item.templateId"> </el-option>
+				</el-select>
+			</el-form-item>
 			<el-form-item v-if="ruleForm.pushMethod == 1" label="消息标题" prop="messageTitle">
 				<el-input v-model="ruleForm.messageTitle" placeholder="请输入消息标题" :maxlength="messageTitleLength" show-word-limit> </el-input>
 			</el-form-item>
-			<el-form-item v-if="ruleForm.pushMethod == 2" label="消息标题" prop="messageTitle">
+			<el-form-item v-if="ruleForm.templateId" label="消息标题" prop="messageTitle">
 				<el-input v-model="ruleForm.messageTitle" disabled placeholder="请输入消息标题" :maxlength="messageTitleLength" show-word-limit> </el-input>
 			</el-form-item>
-			<el-form-item v-if="ruleForm.pushMethod == 2" label="消息内容" prop="messageContent">
+			<el-form-item v-if="ruleForm.templateId" label="消息内容" prop="messageContent">
 				<el-input type="textarea" rows="5" disabled v-model="ruleForm.messageContent" placeholder="" :maxlength="messageContentLength" show-word-limit></el-input>
 			</el-form-item>
 			<el-form-item v-if="ruleForm.pushMethod == 1" label="消息内容" prop="messageContent">
@@ -137,6 +142,7 @@ export default {
 			},
 			messageTitleLength: 50,
 			messageContentLength: 800,
+			messageTemplateList: [],
 			ruleForm: {
 				messageTitle: '',
 				messageContent: '',
@@ -172,6 +178,13 @@ export default {
 					{
 						required: true,
 						message: '请选择推送方式',
+						trigger: 'change'
+					}
+				],
+				templateId: [
+					{
+						required: true,
+						message: '请选择短信模板',
 						trigger: 'change'
 					}
 				],
@@ -323,13 +336,31 @@ export default {
 			}
 		},
 		//
-		pushMethodChange(e) {
+		async getMessagesTemplate() {
+			try {
+				this.messageTemplateList = await this.$service.app.messageTemplate.list();
+			} catch (error) {
+				this.$message.error(error);
+			}
+		},
+		//
+		templateIdChange(e) {
+			this.messageTemplateList.map((value, index, array) => {
+				if (value.templateId == e) {
+					this.ruleForm.messageTitle = value.messageTitle;
+					this.ruleForm.messageContent = value.templateContent;
+				}
+			});
+		},
+		//
+		async pushMethodChange(e) {
 			if (e == 1) {
 				this.messageTitleLength = 50;
 				this.messageContentLength = 500;
 				this.ruleForm.messageTitle = '';
 				this.ruleForm.messageContent = '';
 			} else if (e == 2) {
+				await this.getMessagesTemplate();
 				this.messageTitleLength = 15;
 				this.messageContentLength = 35;
 				this.ruleForm.messageTitle = '阿里云短信模板标题';
@@ -338,6 +369,7 @@ export default {
 		},
 		//
 		async getUserIds(ids) {
+			if (ids.length < 1) return;
 			try {
 				let res = await this.$service.app.message.importUser({ ids });
 				this.ruleForm.userArgs = res.map((value) => {
