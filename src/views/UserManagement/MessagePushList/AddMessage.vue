@@ -1,15 +1,6 @@
 <template>
 	<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
 		<div style="max-width: 900px">
-			<el-form-item label="消息标题" prop="messageTitle">
-				<el-input v-model="ruleForm.messageTitle" placeholder="请输入消息标题" :maxlength="messageTitleLength" show-word-limit> </el-input>
-			</el-form-item>
-			<el-form-item v-if="ruleForm.pushMethod == 2" label="消息内容" prop="messageContent">
-				<el-input type="textarea" rows="5" v-model="ruleForm.messageContent" placeholder="" :maxlength="messageContentLength" show-word-limit></el-input>
-			</el-form-item>
-			<el-form-item v-if="ruleForm.pushMethod == 1" label="消息内容" prop="messageContent">
-				<cl-editor-quill height="300" v-model="ruleForm.messageContent"></cl-editor-quill>
-			</el-form-item>
 			<el-form-item class="form-item" label="推送方式" prop="pushMethod">
 				<el-select v-model="ruleForm.pushMethod" placeholder="请选择" @change="pushMethodChange">
 					<el-option
@@ -24,9 +15,34 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item class="form-item" label="推送时间" prop="pushTime">
-				<el-date-picker v-model="ruleForm.pushTime" :picker-options="pickerOptions" type="datetime" placeholder="选择日期时间" value-format="yyyy-MM-dd HH:00:00" format="yyyy-MM-dd HH:00:00">
-				</el-date-picker>
+			<el-form-item v-if="ruleForm.pushMethod == 1" label="消息标题" prop="messageTitle">
+				<el-input v-model="ruleForm.messageTitle" placeholder="请输入消息标题" :maxlength="messageTitleLength" show-word-limit> </el-input>
+			</el-form-item>
+			<el-form-item v-if="ruleForm.pushMethod == 2" label="消息标题" prop="messageTitle">
+				<el-input v-model="ruleForm.messageTitle" disabled placeholder="请输入消息标题" :maxlength="messageTitleLength" show-word-limit> </el-input>
+			</el-form-item>
+			<el-form-item v-if="ruleForm.pushMethod == 2" label="消息内容" prop="messageContent">
+				<el-input type="textarea" rows="5" disabled v-model="ruleForm.messageContent" placeholder="" :maxlength="messageContentLength" show-word-limit></el-input>
+			</el-form-item>
+			<el-form-item v-if="ruleForm.pushMethod == 1" label="消息内容" prop="messageContent">
+				<cl-editor-quill height="300" v-model="ruleForm.messageContent"></cl-editor-quill>
+			</el-form-item>
+
+			<el-form-item class="form-item" label="推送日期" prop="date">
+				<el-date-picker v-model="ruleForm.date" :picker-options="pickerOptions" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" format="yyyy-MM-dd"> </el-date-picker>
+			</el-form-item>
+			<el-form-item class="form-item" label="推送时间" prop="time">
+				<el-time-select
+					value-format="HH:mm:ss"
+					v-model="ruleForm.time"
+					:picker-options="{
+						start: '00:00',
+						step: '01:00',
+						end: '23:00'
+					}"
+					placeholder="选择时间"
+				>
+				</el-time-select>
 			</el-form-item>
 		</div>
 		<p style="margin-top: 45px">选择用户</p>
@@ -124,8 +140,9 @@ export default {
 			ruleForm: {
 				messageTitle: '',
 				messageContent: '',
-				pushMethod: '',
-				pushTime: '',
+				pushMethod: 1,
+				time: '',
+				date: '',
 				userArgs: [],
 				userType: 0
 			},
@@ -179,7 +196,14 @@ export default {
 						trigger: 'blur'
 					}
 				],
-				pushTime: [
+				date: [
+					{
+						required: true,
+						message: '请选择推送日期',
+						trigger: 'blur'
+					}
+				],
+				time: [
 					{
 						required: true,
 						message: '请选择推送时间',
@@ -303,9 +327,13 @@ export default {
 			if (e == 1) {
 				this.messageTitleLength = 50;
 				this.messageContentLength = 500;
+				this.ruleForm.messageTitle = '';
+				this.ruleForm.messageContent = '';
 			} else if (e == 2) {
 				this.messageTitleLength = 15;
 				this.messageContentLength = 35;
+				this.ruleForm.messageTitle = '阿里云短信模板标题';
+				this.ruleForm.messageContent = '阿里云短信模板内容';
 			}
 		},
 		//
@@ -348,6 +376,9 @@ export default {
 						if (params.userType == 0) {
 							delete params.userArgs;
 						}
+						params.pushTime = params.date + ' ' + params.time;
+						delete params.date;
+						delete params.time;
 						await this.$service.app.message.add(params);
 						this.$emit('update:addDialogShow', false);
 						this.$message({
