@@ -8,6 +8,9 @@
 
 		<el-row>
 			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
+				<template #column-messageContent="{ scope }">
+					<span class="overflow" v-text="scope.row.messageContent"></span>
+				</template>
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
 					<el-button size="mini" type="text" @click="editDialog(scope.row.id)">查看详情</el-button>
@@ -54,13 +57,21 @@ export default {
 				{
 					label: '消息标题',
 					prop: 'messageTitle',
-					align: 'center'
+					align: 'center',
+					formatter(row) {
+						if (row.messageTitle.length < 15) {
+							return row.messageTitle;
+						} else {
+							return row.messageTitle.substring(0, 15) + '...';
+						}
+					}
 				},
-				{
+				/* 			{
 					label: '消息内容',
 					prop: 'messageContent',
-					align: 'center'
-				},
+					align: 'center',
+					width: 200
+				}, */
 				{
 					label: '推送时间',
 					prop: 'pushTime',
@@ -89,7 +100,6 @@ export default {
 				{
 					label: '操作',
 					prop: 'op',
-					width: 100,
 					align: 'center'
 				}
 			]
@@ -139,3 +149,11 @@ export default {
 	}
 };
 </script>
+<style lang="scss" scoped>
+.overflow {
+	max-width: 300px;
+	overflow: hidden; //超出的文本隐藏
+	text-overflow: ellipsis; //溢出用省略号显示
+	white-space: nowrap; //溢出不换行
+}
+</style>

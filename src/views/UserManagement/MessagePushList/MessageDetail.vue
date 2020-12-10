@@ -5,7 +5,7 @@
 				<span>{{ ruleForm.messageTitle }}</span>
 			</el-form-item>
 			<el-form-item label="消息内容:">
-				<span>{{ ruleForm.messageContent }}</span>
+				<span v-html="ruleForm.messageContent"></span>
 			</el-form-item>
 			<el-form-item class="form-item" label="推送方式:">
 				<span>{{ formatPushMethod(ruleForm.pushMethod) }}</span>
