@@ -18,7 +18,7 @@
 		<el-divider></el-divider>
 		<div style="display: flex; justify-content: space-between; align-items: start">
 			<el-form-item class="form-item-tag" label="已选择用户">
-				<el-tag v-if="ruleForm.userType == -1" type="success">全部用户</el-tag>
+				<el-tag v-if="ruleForm.userType == 0" type="success">全部用户</el-tag>
 			</el-form-item>
 			<el-table v-if="ruleForm.userType == 1" :data="tableData" border style="width: 100%">
 				<el-table-column type="index" label="序号" width="50"> </el-table-column>

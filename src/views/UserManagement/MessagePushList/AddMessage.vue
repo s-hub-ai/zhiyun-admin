@@ -4,8 +4,11 @@
 			<el-form-item label="消息标题" prop="messageTitle">
 				<el-input v-model="ruleForm.messageTitle" placeholder="请输入消息标题" :maxlength="messageTitleLength" show-word-limit> </el-input>
 			</el-form-item>
-			<el-form-item label="消息内容" prop="messageContent">
+			<el-form-item v-if="ruleForm.pushMethod == 2" label="消息内容" prop="messageContent">
 				<el-input type="textarea" rows="5" v-model="ruleForm.messageContent" placeholder="" :maxlength="messageContentLength" show-word-limit></el-input>
+			</el-form-item>
+			<el-form-item v-if="ruleForm.pushMethod == 1" label="消息内容" prop="messageContent">
+				<cl-editor-quill height="300" v-model="ruleForm.messageContent"></cl-editor-quill>
 			</el-form-item>
 			<el-form-item class="form-item" label="推送方式" prop="pushMethod">
 				<el-select v-model="ruleForm.pushMethod" placeholder="请选择" @change="pushMethodChange">
