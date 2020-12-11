@@ -242,6 +242,15 @@ export default {
 		submitForm(formName) {
 			this.$refs[formName].validate(async (valid) => {
 				const { type, spec } = this.$refs['goods-spec-select'].validate();
+				if (spec.sku.length < 1) {
+					this.$message.error('请填写商品规格');
+					return false;
+				}
+				if (spec.spec.length < 1) {
+					this.$message.error('请填写商品规格');
+					return false;
+				}
+
 				this.ruleForm.specificationType = type;
 				this.ruleForm.specification = JSON.stringify(spec);
 				if (valid) {
