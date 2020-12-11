@@ -28,3 +28,10 @@ export function deepMerge(a, b) {
 	}
 	return a;
 }
+export function arrDistinctByProp(arr, prop) {
+	let obj = {};
+	return arr.reduce(function (preValue, item) {
+		obj[item[prop]] ? '' : obj[item[prop]] = true && preValue.push(item);
+		return preValue
+	}, [])
+}

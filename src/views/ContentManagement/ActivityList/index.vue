@@ -1,13 +1,44 @@
 <template>
-	<cl-crud @load="onLoad">
+	<cl-crud @load="onLoad" ref="crud">
 		<el-row type="flex" align="middle">
-			<cl-search-key placeholder="请输入活动名称"></cl-search-key>
+			<el-form class="table-form" :inline="true" :model="tableFlters" size="mini">
+				<el-form-item label="是否打卡">
+					<el-select style="width: 120px" v-model="tableFlters.isClockin" placeholder="请选择" @change="$refs['crud'].refresh({ ...tableFlters })">
+						<el-option label="全部" value=""></el-option>
+						<el-option label="否" :value="0"></el-option>
+						<el-option label="是" :value="1"></el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="活动状态">
+					<el-select style="width: 120px" v-model="tableFlters.activityStatus" placeholder="请选择" @change="$refs['crud'].refresh({ ...tableFlters })">
+						<el-option label="全部" :value="-1"></el-option>
+						<el-option label="未开始" :value="0"></el-option>
+						<el-option label="进行中" :value="1"></el-option>
+						<el-option label="已结束" :value="2"></el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item>
+					<cl-search-key placeholder="请输入活动名称"></cl-search-key>
+				</el-form-item>
+			</el-form>
 			<cl-flex1></cl-flex1>
 			<el-button size="mini" type="primary" @click="(addDialogTitle = '新增活动'), (addDialogShow = true)">新增活动</el-button>
 		</el-row>
 
 		<el-row>
 			<cl-table :columns="tableColumn">
+				<!-- 活动时间段 -->
+				<template #column-activityTime="{ scope }">
+					<div>{{ scope.row.activityStartTime }}</div>
+					<div>至</div>
+					<div>{{ scope.row.activityEndTime }}</div>
+				</template>
+				<!-- 报名时间段 -->
+				<template #column-applyTime="{ scope }">
+					<div>{{ scope.row.applyStartTime }}</div>
+					<div>至</div>
+					<div>{{ scope.row.applyEndTime }}</div>
+				</template>
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
 					<el-button size="mini" type="text" @click="editDialog(scope.row.id)">查看报名</el-button>
@@ -23,98 +54,77 @@
 		</el-row>
 
 		<!-- 新增编辑弹出框 -->
-		<el-dialog :title="addDialogTitle" :visible.sync="addDialogShow" @close="addDialogClose" width="800px">
+		<el-dialog :title="addDialogTitle" :visible.sync="addDialogShow" @close="addDialogClose" width="1100px">
 			<add-dialog v-if="addDialogShow" ref="editDialog" :addDialogShow.sync="addDialogShow"></add-dialog>
 		</el-dialog>
 	</cl-crud>
 </template>
 
 <script>
-const userList = [
-	{
-		id: 1,
-		name: '刘一',
-		process: 42.2,
-		endTime: '2019年09月02日',
-		price: 75.99,
-		salesRate: 52.2,
-		salesStatus: 1,
-		images: ['https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/1.jpg'],
-		children: [
-			{
-				id: 6,
-				name: '刘一儿子',
-				process: 35.2,
-				endTime: '2019年09月05日',
-				price: 242.1,
-				salesRate: 72.1,
-				salesStatus: 1,
-				images: []
-			}
-		]
-	},
-	{
-		id: 2,
-		name: '陈二',
-		process: 35.2,
-		endTime: '2019年09月05日',
-		price: 242.1,
-		salesRate: 72.1,
-		salesStatus: 1,
-		images: ['https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/2.jpg']
-	},
-	{
-		id: 3,
-		name: '张三',
-		process: 10.2,
-		endTime: '2019年09月12日',
-		price: 74.11,
-		salesRate: 23.9,
-		salesStatus: 0,
-		images: ['https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/3.jpg']
-	},
-	{
-		id: 4,
-		name: '李四',
-		process: 75.5,
-		endTime: '2019年09月13日',
-		price: 276.64,
-		salesRate: 47.2,
-		salesStatus: 0,
-		images: ['https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/4.jpg']
-	},
-	{
-		id: 5,
-		name: '王五',
-		process: 25.4,
-		endTime: '2019年09月18日',
-		price: 160.23,
-		salesRate: 28.3,
-		salesStatus: 1,
-		images: ['https://cool-comm.oss-cn-shenzhen.aliyuncs.com/show/imgs/chat/avatar/5.jpg']
-	}
-];
 import addDialog from './AddActivity';
 export default {
 	components: {
 		addDialog
 	},
 	data() {
+		let _this = this;
 		return {
 			addDialogShow: false,
 			addDialogTitle: '',
+			tableFlters: {
+				isClockin: '',
+				activityStatus: -1
+			},
 			tableColumn: [
 				{
-					type: 'selection'
+					label: '活动id',
+					prop: 'id',
+					width: 45,
+					align: 'center'
 				},
 				{
-					label: '姓名',
-					prop: 'name'
+					label: '活动名称',
+					prop: 'title'
 				},
 				{
-					label: '存款',
-					prop: 'price',
-					sortable: true
+					label: '活动时间段',
+					prop: 'activityTime',
+					align: 'center'
+				},
+				{
+					label: '报名时间段',
+					prop: 'applyTime',
+					align: 'center'
+				},
+				{
+					label: '报名占比',
+					prop: 'percent',
+					align: 'center',
+					width: 100,
+					formatter(row) {
+						return (row.joinPeopleNum / row.applyPeopleNum) * 100 + '%';
+					}
+				},
+				{
+					label: '是否打卡',
+					prop: 'isClockin',
+					align: 'center',
+					width: 100,
+					formatter(row) {
+						return row.isClockin == 1 ? '是' : '否';
+					}
+				},
+				{
+					label: '活动状态',
+					prop: 'activityStatus',
+					align: 'center',
+					width: 100,
+					formatter(row) {
+						if (row.activityStartStatus == 0) {
+							return '已结束';
+						}
+						return _this.activityStatusFormatter(row.activityStartTime, row.activityEndTime);
+					}
 				},
 				{
 					label: '操作',
@@ -127,52 +137,23 @@ export default {
 	},
 
 	methods: {
+		activityStatusFormatter(s, e) {
+			let d = new Date().getTime();
+			s = new Date(s.replace(/-/g, '/')).getTime();
+			e = new Date(e.replace(/-/g, '/')).getTime();
+			if (e < d) {
+				return '结束';
+			} else {
+				if (s > d) {
+					return '未开始';
+				} else {
+					return '进行中';
+				}
+			}
+		},
 		onLoad({ ctx, app }) {
-			ctx
-				.service({
-					page: (p) => {
-						console.log('GET[page]', p);
-						return Promise.resolve({
-							list: userList,
-							pagination: {
-								page: p.page,
-								size: p.size,
-								total: 200
-							}
-						});
-					},
-					info: (d) => {
-						console.log('GET[info]', d);
-						return new Promise((resolve) => {
-							resolve({
-								name: 'icssoa',
-								price: 100
-							});
-						});
-					},
-					add: (d) => {
-						console.log('POST[add]', d);
-						return Promise.resolve();
-					},
-					delete: (d) => {
-						console.log('POST[delete]', d);
-						return Promise.resolve();
-					},
-					update: (d) => {
-						console.log('POST[update]', d);
-						return Promise.resolve();
-					}
-				})
-				.permission(() => {
-					return {
-						add: true,
-						update: true,
-						delete: true
-					};
-				})
-				.done();
-
-			app.refresh();
+			ctx.service(this.$service.app.activity).done();
+			app.refresh({ ...this.tableFlters });
 		},
 		addDialogClose() {
 			this.$refs.editDialog.resetForm('ruleForm');
@@ -188,18 +169,19 @@ export default {
 		},
 		//删除
 		deleteFn(id) {
-			this.$confirm('是否删除该条轮播数据?', '提示', {
+			this.$confirm('是否删除该条活动数据?', '提示', {
 				confirmButtonText: '确定',
 				cancelButtonText: '取消',
 				type: 'warning'
 			})
 				.then(async () => {
 					try {
-						await this.$service.app.carousel.delete({ ids: id });
+						await this.$service.app.activity.update({ id, isDeleted: 1 });
 						this.$message({
 							type: 'success',
 							message: '删除成功!'
 						});
+						this.$refs['crud'].refresh();
 					} catch (error) {
 						this.$message.error(error);
 					}
@@ -214,3 +196,10 @@ export default {
 	}
 };
 </script>
+<style scoped lang="scss">
+.table-form {
+	::v-deep .el-form-item {
+		margin: 0 10px 0 0;
+	}
+}
+</style>
