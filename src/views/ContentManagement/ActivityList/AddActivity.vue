@@ -47,6 +47,12 @@
 					<el-radio :label="1">付费</el-radio>
 				</el-radio-group>
 			</el-form-item>
+			<el-form-item label="是否核销" required>
+				<el-radio-group style="width: 178px" v-model="ruleForm.isVerify">
+					<el-radio :label="0">否</el-radio>
+					<el-radio :label="1">是</el-radio>
+				</el-radio-group>
+			</el-form-item>
 			<template v-if="ruleForm.isPay == 1">
 				<el-form-item label="原价">
 					<el-input-number controls-position="right" v-model="ruleForm.originalPrice" :precision="2" :step="0.1" :min="1"></el-input-number>
@@ -65,7 +71,7 @@
 			</el-radio-group>
 		</el-form-item>
 		<el-form-item v-if="ruleForm.isClockin == 1" label="地址" prop="addressName">
-			<bd-map ref="map" v-bind:radius="ruleForm.radius" @setlngAndLat="setlngAndLat"></bd-map>
+			<bd-map ref="map" v-bind:radius="ruleForm.radius" v-bind:addressName="ruleForm.addressName" @setlngAndLat="setlngAndLat"></bd-map>
 		</el-form-item>
 		<div style="display: flex" v-if="ruleForm.isClockin == 1">
 			<el-form-item label="奖励积分" prop="awardIntegral">
@@ -149,6 +155,7 @@
 				<el-radio :label="1">是</el-radio>
 			</el-radio-group>
 		</el-form-item>
+
 		<div style="text-align: center">
 			<el-button type="primary" @click="submitForm('ruleForm')">确定</el-button>
 			<el-button @click="resetForm('ruleForm')">重置</el-button>
@@ -215,10 +222,12 @@ export default {
 				applyAudit: 0,
 				activityStartStatus: 1,
 				originalPrice: 0,
+				isVerify: 0,
 				price: 0,
 				longitude: '',
 				latitude: '',
-				infoField: ['name', 'phone']
+				infoField: ['name', 'phone'],
+				addressName: null
 			},
 			infoFieldDialog: false,
 			infoFieldList: [
@@ -396,9 +405,9 @@ export default {
 		//设置经纬度
 		setlngAndLat(d) {
 			console.log(d);
+			this.ruleForm.addressName = d.addressName;
 			this.ruleForm.longitude = d.lng;
 			this.ruleForm.latitude = d.lat;
-			this.ruleForm.addressName = d.addressName;
 		},
 		//其他信息多选
 		infoFieldChange(e) {

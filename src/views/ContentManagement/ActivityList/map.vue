@@ -12,6 +12,10 @@ export default {
 		radius: {
 			type: Number,
 			default: 0
+		},
+		addressName: {
+			type: String,
+			default: null
 		}
 	},
 	data() {
@@ -29,6 +33,10 @@ export default {
 	},
 	mounted() {
 		this.mapLoad();
+		this.address = this.addressName;
+		if (this.addressName != null) {
+			this.getAddress();
+		}
 	},
 	methods: {
 		//地图生成
@@ -77,8 +85,8 @@ export default {
 				});
 				_this.map.addOverlay(_this.circle);
 				_this.map.centerAndZoom(poi.point, 16);
-    _this.map.addOverlay(new BMapGL.Marker(poi.point, { title: _this.address }));
-    poi.point.addressName=_this.address;
+				_this.map.addOverlay(new BMapGL.Marker(poi.point, { title: _this.address }));
+				poi.point.addressName = _this.address;
 				_this.$emit('setlngAndLat', poi.point);
 			});
 			localSearch.search(_this.address);
