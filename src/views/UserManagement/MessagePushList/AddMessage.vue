@@ -403,7 +403,7 @@ export default {
 							params.userArgs = JSON.stringify(this.userArgs);
 						}
 						if (params.userType == 1) {
-							params.userArgs = params.userArgs.toString();
+							params.userArgs = JSON.stringify(params.userArgs);
 						}
 						if (params.userType == 0) {
 							delete params.userArgs;
