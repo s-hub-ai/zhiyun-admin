@@ -142,7 +142,7 @@ export default {
 		},
 		async getUserTable(ids) {
 			try {
-				ids = ids.split(',');
+				ids = JSON.parse(ids);
 				let res = await this.$service.app.message.transferUserDetail({
 					ids
 				});
