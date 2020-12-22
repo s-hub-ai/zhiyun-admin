@@ -2,18 +2,18 @@
 	<el-form :model="ruleForm" :inline="false" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
 		<h3>活动信息</h3>
 		<el-form-item label="活动封面" prop="activityCover">
-			<cl-upload :value="ruleForm.activityCover" class="avatar-uploader" :size="[150, 150]" icon="el-icon-plus" accept="*" :on-success="activityCoverUploadSuccess"></cl-upload>
+			<cl-upload :value="ruleForm.activityCover" listType="picture-card" class="avatar-uploader" :size="[150, 150]" icon="el-icon-plus" :on-success="activityCoverUploadSuccess"></cl-upload>
 			<div class="tips">限上传1张</div>
 		</el-form-item>
 		<el-form-item style="width: 100%" label="活动图片" prop="activityBanner">
 			<cl-upload
+				multiple
 				:limit="5"
 				listType="picture-card"
 				:value="ruleForm.activityBanner"
 				class="avatar-uploader"
 				:size="[150, 150]"
 				icon="el-icon-plus"
-				accept="*"
 				:on-success="activityBannerUploadSuccess"
 			></cl-upload>
 			<div class="tips">限上传1-5张</div>
@@ -42,34 +42,48 @@
 		</el-form-item>
 		<div style="display: flex">
 			<el-form-item label="是否付费" required>
-				<el-radio-group v-model="ruleForm.isPay">
+				<el-radio-group v-model="ruleForm.isPay" style="width: 150px" @change="isPayChange">
 					<el-radio :label="0">免费</el-radio>
 					<el-radio :label="1">付费</el-radio>
 				</el-radio-group>
 			</el-form-item>
+			<template v-if="ruleForm.isPay == 1">
+				<el-form-item label="原价">
+					<el-input-number controls-position="right" v-model="ruleForm.originalPrice" :precision="2" :step="0.01" :min="0.01"></el-input-number>
+				</el-form-item>
+				<el-form-item label="优惠价">
+					<el-input-number controls-position="right" v-model="ruleForm.price" :precision="2" :step="0.1" :min="0.01"></el-input-number>
+				</el-form-item>
+			</template>
 			<el-form-item label="是否核销" required>
-				<el-radio-group style="width: 178px" v-model="ruleForm.isVerify">
+				<el-radio-group style="width: 140px" v-model="ruleForm.isVerify">
 					<el-radio :label="0">否</el-radio>
 					<el-radio :label="1">是</el-radio>
 				</el-radio-group>
 			</el-form-item>
-			<template v-if="ruleForm.isPay == 1">
-				<el-form-item label="原价">
-					<el-input-number controls-position="right" v-model="ruleForm.originalPrice" :precision="2" :step="0.1" :min="1"></el-input-number>
-				</el-form-item>
-				<el-form-item label="优惠价">
-					<el-input-number controls-position="right" v-model="ruleForm.price" :precision="2" :step="0.1" :min="1"></el-input-number>
-				</el-form-item>
-			</template>
 		</div>
 
 		<h3>打卡设置</h3>
-		<el-form-item label="是否打卡" required>
-			<el-radio-group style="width: 178px" v-model="ruleForm.isClockin" @change="isClockinChange">
-				<el-radio :label="0">否</el-radio>
-				<el-radio :label="1">是</el-radio>
-			</el-radio-group>
-		</el-form-item>
+		<div style="display: flex">
+			<el-form-item label="是否打卡" required>
+				<el-radio-group style="width: 150px" v-model="ruleForm.isClockin" @change="isClockinChange">
+					<el-radio :label="0">否</el-radio>
+					<el-radio :label="1">是</el-radio>
+				</el-radio-group>
+			</el-form-item>
+			<el-form-item v-if="ruleForm.isClockin == 1" label="打卡时间" prop="clockinTime">
+				<el-date-picker
+					size="small"
+					value-format="yyyy-MM-dd HH:mm:ss"
+					v-model="ruleForm.clockinTime"
+					type="datetimerange"
+					range-separator="至"
+					start-placeholder="开始日期"
+					end-placeholder="结束日期"
+				>
+				</el-date-picker>
+			</el-form-item>
+		</div>
 		<el-form-item v-if="ruleForm.isClockin == 1" label="地址" prop="addressName">
 			<bd-map ref="map" v-bind:radius="ruleForm.radius" v-bind:addressName="ruleForm.addressName" @setlngAndLat="setlngAndLat"></bd-map>
 		</el-form-item>
@@ -139,12 +153,12 @@
 		<h3>其他信息</h3>
 		<el-form-item label="填写信息">
 			<el-checkbox-group v-model="ruleForm.infoField" size="small" @change="infoFieldChange">
-				<el-checkbox v-for="(item, index) in infoFieldList" :key="index" :label="item.value" border>{{ item.label }}</el-checkbox>
-				<el-button size="small" type="primary" style="margin-left: 25px" @click="infoFieldDialog = true">添加字段</el-button>
+				<el-checkbox v-for="(item, index) in infoFieldList" :key="index" :label="item.value" border :disabled="index < 2">{{ item.label }}</el-checkbox>
+				<el-button size="small" type="primary" style="margin-left: 25px" @click="infoFieldDialog = true">添加字段 </el-button>
 			</el-checkbox-group>
 		</el-form-item>
 		<el-form-item label="报名审核" required>
-			<el-radio-group style="width: 178px" v-model="ruleForm.applyAudit">
+			<el-radio-group style="width: 178px" v-model="ruleForm.applyAudit" :disabled="ruleForm.isPay == 1">
 				<el-radio :label="0">否</el-radio>
 				<el-radio :label="1">是</el-radio>
 			</el-radio-group>
@@ -219,7 +233,7 @@ export default {
 				awardIntegral: 0,
 				userType: 0,
 				userArgs: [],
-				applyAudit: 0,
+				applyAudit: 1,
 				activityStartStatus: 1,
 				originalPrice: 0,
 				isVerify: 0,
@@ -231,16 +245,43 @@ export default {
 			},
 			infoFieldDialog: false,
 			infoFieldList: [
-				{ label: '姓名', value: 'name' },
-				{ label: '手机号', value: 'phone' },
-				{ label: '微信号', value: 'wxAccount' },
-				{ label: '身份证号', value: 'userCertificateNum' },
-				{ label: '邮箱', value: 'email' },
-				{ label: '地址', value: 'address' },
-				{ label: '性别', value: 'sex' },
-				{ label: '年龄', value: 'age' }
+				{
+					label: '姓名',
+					value: 'name'
+				},
+				{
+					label: '手机号',
+					value: 'phone'
+				},
+				{
+					label: '微信号',
+					value: 'wxAccount'
+				},
+				{
+					label: '身份证号',
+					value: 'userCertificateNum'
+				},
+				{
+					label: '邮箱',
+					value: 'email'
+				},
+				{
+					label: '地址',
+					value: 'address'
+				},
+				{
+					label: '性别',
+					value: 'sex'
+				},
+				{
+					label: '年龄',
+					value: 'age'
+				}
 			],
-			infoForm: { label: '', value: '' },
+			infoForm: {
+				label: '',
+				value: ''
+			},
 			infoRules: {
 				label: [
 					{
@@ -327,6 +368,13 @@ export default {
 						message: '请选择报名时间',
 						trigger: 'change'
 					}
+				],
+				clockinTime: [
+					{
+						required: true,
+						message: '请选择打卡时间',
+						trigger: 'change'
+					}
 				]
 			},
 			userList: [],
@@ -371,10 +419,15 @@ export default {
 		//编辑
 		async getEditInfo(id) {
 			try {
-				let res = await this.$service.app.activity.info({ id });
+				let res = await this.$service.app.activity.info({
+					id
+				});
 				res.activityTime = [new Date(res.activityStartTime.replace(/-/g, '/')), new Date(res.activityEndTime.replace(/-/g, '/'))];
 				res.applyTime = [new Date(res.applyStartTime.replace(/-/g, '/')), new Date(res.applyEndTime.replace(/-/g, '/'))];
-				//	res.activityBanner = res.activityBanner.split(',');
+				if (res.isClockin == 1) {
+					res.clockinTime = [new Date(res.clockinStartTime.replace(/-/g, '/')), new Date(res.clockinEndTime.replace(/-/g, '/'))];
+				}
+				//res.activityBanner = res.activityBanner.split(',');
 				if (res.infoField != null) {
 					let infoField = JSON.parse(res.infoField);
 					res.infoField = infoField.map((value, index, array) => {
@@ -414,10 +467,7 @@ export default {
 			console.log(e);
 			//	this.ruleForm.infoField = e;
 		},
-		isClockinChange(e) {
-			if (e == 1) {
-			}
-		},
+		isClockinChange(e) {},
 		//提交
 		submitForm(formName) {
 			console.log(this.ruleForm);
@@ -427,6 +477,20 @@ export default {
 						let params = {
 							...this.ruleForm
 						};
+						params.activityStartTime = params.activityTime[0];
+						params.activityEndTime = params.activityTime[1];
+						params.applyStartTime = params.applyTime[0];
+						params.applyEndTime = params.applyTime[1];
+						params.activityBanner = params.activityBanner.toString();
+						console.log(params.activityStartTime);
+						if (params.activityEndTime < params.applyStartTime) {
+							this.$message.error('报名开始时间不可晚于活动结束时间');
+							return false;
+						}
+						if (params.activityEndTime < params.applyEndTime) {
+							this.$message.error('报名结束时间不可晚于活动结束时间');
+							return false;
+						}
 						if (params.userType == 0) {
 							delete params.userArgs;
 						}
@@ -434,11 +498,29 @@ export default {
 							params.userArgs = params.userArgs.toString();
 						}
 						if (params.userType == 2) {
+							let isNull = true;
+							for (const key in this.userArgs) {
+								if (this.userArgs[key].length > 0) {
+									isNull = false;
+								}
+							}
+							if (isNull) {
+								this.$message.error('请至少勾选一种用户分类');
+								return false;
+							}
+							params.userArgs = JSON.stringify(this.userArgs);
+							let userIds = await this.$service.app.activity.userIds({
+								userArgs: this.userArgs
+							});
+							params.userIds = userIds.toString();
 							params.userArgs = JSON.stringify(this.userArgs);
 						}
 						if (params.isClockin == 0) {
 							delete params.latitude;
 							delete params.longitude;
+						} else {
+							params.clockinStartTime = params.clockinTime[0];
+							params.clockinEndTime = params.clockinTime[1];
 						}
 						if (params.infoField.length > 0) {
 							let arr = [];
@@ -452,13 +534,10 @@ export default {
 						} else {
 							delete params.infoField;
 						}
-						params.activityStartTime = params.activityTime[0];
-						params.activityEndTime = params.activityTime[1];
-						params.applyStartTime = params.applyTime[0];
-						params.applyEndTime = params.applyTime[1];
+
 						delete params.activityTime;
 						delete params.applyTime;
-						params.activityBanner = params.activityBanner.toString();
+
 						await this.$service.app.activity.add(params);
 						this.$emit('update:addDialogShow', false);
 						this.$message({
@@ -466,6 +545,7 @@ export default {
 							type: 'success'
 						});
 					} catch (error) {
+						console.log(error);
 						this.$message.error(error);
 					}
 				} else {
@@ -615,11 +695,19 @@ export default {
 				reader.readAsBinaryString(files[i]);
 			}
 		},
+		//是否付费
+		isPayChange(e) {
+			if (e == 1) {
+				this.ruleForm.applyAudit = 0;
+			}
+		},
 		//
 		async getUserIds(ids) {
 			if (ids.length < 1) return;
 			try {
-				let res = await this.$service.app.message.importUser({ ids });
+				let res = await this.$service.app.message.importUser({
+					ids
+				});
 				this.ruleForm.userArgs = res.map((value) => {
 					return Number(value.id);
 				});
@@ -637,14 +725,17 @@ export default {
 	color: #909399;
 	font-size: 12px;
 }
+
 ::v-deep .el-transfer-panel {
 	width: 350px;
 }
+
 .form-item {
 	::v-deep .el-input {
 		min-width: 300px;
 	}
 }
+
 .import-btn {
 	position: absolute;
 	left: 0;
@@ -655,6 +746,7 @@ export default {
 	filter: alpha(opacity=0);
 	cursor: pointer;
 }
+
 ::v-deep .el-checkbox.is-bordered + .el-checkbox.is-bordered {
 	margin-left: 0;
 }

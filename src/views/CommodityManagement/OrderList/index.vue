@@ -42,12 +42,17 @@
 			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
 				<!-- 商品信息 -->
 				<template #column-skus="{ scope }">
-					<div v-for="(item, index) in scope.row.skus" :key="item.id">
-						<el-divider v-if="index != 0" style="margin: 4px 0"></el-divider>
-						<div>商品名称:{{ item.commodityName }}</div>
-						<div>规格:{{ item.skuString | format_spec }}</div>
-						<div>数量:{{ item.commodityVolume }}</div>
-					</div>
+					<template v-if="scope.row.orderType != 3">
+						<div v-for="(item, index) in scope.row.skus" :key="item.id">
+							<el-divider v-if="index != 0" style="margin: 4px 0"></el-divider>
+							<div>商品名称:{{ item.commodityName }}</div>
+							<div>规格:{{ item.skuString | format_spec }}</div>
+							<div>数量:{{ item.commodityVolume }}</div>
+						</div>
+					</template>
+					<template v-else>
+						<div>活动名称:{{ scope.row.activityTitle }}</div>
+					</template>
 				</template>
 				<!-- 购买信息 -->
 				<template #column-buyInfo="{ scope }">
@@ -57,10 +62,11 @@
 				</template>
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
-					<el-button type="text" v-if="scope.row.orderStatus == 1" @click="(deliveryForm.orderId = scope.row.id), (deliveDialogShow = true)">发货</el-button>
-					<el-button v-if="scope.row.orderStatus == 7" type="text" @click="orderComplete(scope.row.id)">出库 </el-button>
-
-					<el-button type="text" v-if="scope.row.orderStatus == 2" @click="(deliveryForm.orderId = scope.row.id), getLogistics()">物流</el-button>
+					<template v-if="scope.row.orderType != 3">
+						<el-button type="text" v-if="scope.row.orderStatus == 1" @click="(deliveryForm.orderId = scope.row.id), (deliveDialogShow = true)">发货</el-button>
+						<el-button v-if="scope.row.orderStatus == 7" type="text" @click="orderComplete(scope.row.id)">出库 </el-button>
+						<el-button type="text" v-if="scope.row.orderStatus == 2" @click="(deliveryForm.orderId = scope.row.id), getLogistics()">物流</el-button>
+					</template>
 					<el-button type="text" v-if="scope.row.orderStatus == 4" @click="(deliveryForm.orderId = scope.row.id), (drawbackAuditShow = true), getEditInfo(scope.row.id)"> 退款审核</el-button>
 					<el-button type="text" @click="(detailDialogShow = true), getEditInfo(scope.row.id)">详情</el-button>
 				</template>
@@ -100,18 +106,21 @@
 		<!-- 退款审核弹出框 -->
 		<el-dialog title="退款审核" :visible.sync="drawbackAuditShow" width="500px">
 			<el-form>
-				<el-form-item label="退款原因:">
-					<span>{{ detail.drawbackReason }}</span>
-				</el-form-item>
-				<el-form-item label="申请时间:">
-					<span>{{ detail.applyTime }}</span>
-				</el-form-item>
-				<el-form-item label="退款件数:">
-					<span>{{ detail.applyTime }}</span>
-				</el-form-item>
-				<el-form-item label="退款金额:">
-					<span>{{ detail.drawbackAmount }}</span>
-				</el-form-item>
+				<template v-if="detail.orderType != 3">
+					<el-form-item label="退款原因:">
+						<span>{{ detail.drawbackReason }}</span>
+					</el-form-item>
+					<el-form-item label="申请时间:">
+						<span>{{ detail.applyTime }}</span>
+					</el-form-item>
+					<el-form-item label="退款件数:">
+						<span>{{ detail.applyTime }}</span>
+					</el-form-item>
+					<el-form-item label="退款金额:">
+						<span>{{ detail.drawbackAmount }}</span>
+					</el-form-item>
+				</template>
+
 				<el-form-item label="退款审核">
 					<el-radio-group v-model="drawbackVerify">
 						<el-radio :label="1">同意退款</el-radio>
@@ -339,6 +348,9 @@ export default {
 						orderStatusDict?.map((value) => {
 							if (row.orderStatus == value.value) {
 								name = value.text;
+								if (row.orderType == 3 && value.value == 7) {
+									name = '待使用';
+								}
 							}
 						});
 						return name;
@@ -417,12 +429,17 @@ export default {
 						sku += `;商品名称:${item.commodityName}规格:${this.formatSpec(item.skuString)}数量:${item.commodityVolume}`;
 					}
 				}
-				let address = `${e.province?.label || ''}${e.city?.label || ''}${e.country?.label || ''}${e.detail}`;
+				if (e.activityTitle) {
+					sku += `活动名称:${e.activityTitle}`;
+				}
+				let address = `${e.province?.label || ''}${e.city?.label || ''}${e.country?.label || ''}${e.detail}` || '无';
 				let orderStatus = _.find(orderStatusDict, function (o) {
 					if (o.value == e.orderStatus) {
 						return o;
 					}
 				});
+				address = address == 'null' ? '无' : address;
+				console.log(address);
 				let obj = {
 					订单编号: e.orderSN,
 					订单类型: orderType?.text,

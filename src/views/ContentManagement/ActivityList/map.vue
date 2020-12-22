@@ -70,6 +70,7 @@ export default {
 		getAddress() {
 			let _this = this;
 			if (this.address.trim() == '') return;
+			_this.map.clearOverlays();
 			var localSearch = new BMapGL.LocalSearch(this.map);
 			localSearch.enableAutoViewport(); //允许自动调节窗体大小
 			localSearch.setSearchCompleteCallback(function (searchResult) {

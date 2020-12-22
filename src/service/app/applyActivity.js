@@ -4,14 +4,13 @@ import {
  Permission
 } from "@/cool";
 
-@Service("app/activity")
+@Service("app/applyActivity")
 export default class extends BaseService {
- @Permission("userIds")
- userIds(data) {
+ @Permission("audit")
+ audit(params) {
   return this.request({
-   url: "/userIds",
-   method: "POST",
-   data
+   url: "/audit",
+   params
   });
  }
 }

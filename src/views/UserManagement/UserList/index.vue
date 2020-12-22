@@ -269,7 +269,12 @@ export default {
 			]
 		};
 	},
-
+	mounted() {
+		//从别的页面过来查看用户信息
+		if (this.$route.params.userId) {
+			this.editDialog(this.$route.params.userId);
+		}
+	},
 	methods: {
 		tableSelectFn() {
 			let params = {

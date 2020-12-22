@@ -102,8 +102,8 @@ export const orderTypeDict = [{
   value: 2,
   text: '兑换订单'
 }, {
-  value: 1,
-  text: '票务订单'
+  value: 3,
+  text: '活动订单'
 }]
 //订单状态
 export const orderStatusDict = [{

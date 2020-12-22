@@ -41,7 +41,7 @@
 				</template>
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
-					<el-button size="mini" type="text" @click="editDialog(scope.row.id)">查看报名</el-button>
+					<el-button size="mini" type="text" @click="$router.push({ path: 'ApplyDetail', query: { id: scope.row.id } })">查看报名</el-button>
 					<el-button size="mini" type="text" @click="editDialog(scope.row.id)">编辑</el-button>
 					<el-button size="mini" type="text" @click="deleteFn(scope.row.id)">删除</el-button>
 				</template>
@@ -54,7 +54,7 @@
 		</el-row>
 
 		<!-- 新增编辑弹出框 -->
-		<el-dialog :title="addDialogTitle" :visible.sync="addDialogShow" @close="addDialogClose" width="1100px">
+		<el-dialog :title="addDialogTitle" :visible.sync="addDialogShow" @close="addDialogClose" width="1200px">
 			<add-dialog v-if="addDialogShow" ref="editDialog" :addDialogShow.sync="addDialogShow"></add-dialog>
 		</el-dialog>
 	</cl-crud>
@@ -77,7 +77,13 @@ export default {
 			},
 			tableColumn: [
 				{
-					label: '活动id',
+					label: '编号',
+					width: 45,
+					type: 'index',
+					align: 'center'
+				},
+				{
+					label: 'ID',
 					prop: 'id',
 					width: 45,
 					align: 'center'
@@ -89,20 +95,31 @@ export default {
 				{
 					label: '活动时间段',
 					prop: 'activityTime',
+					width: 180,
 					align: 'center'
 				},
 				{
 					label: '报名时间段',
 					prop: 'applyTime',
+					width: 180,
 					align: 'center'
 				},
 				{
-					label: '报名占比',
+					label: '报名人数/报名名额',
 					prop: 'percent',
+					align: 'center',
+					width: 130,
+					formatter(row) {
+						return row.joinPeopleNum + '/' + row.applyPeopleNum;
+					}
+				},
+				{
+					label: '报名占比',
+					prop: 'percent2',
 					align: 'center',
 					width: 100,
 					formatter(row) {
-						return (row.joinPeopleNum / row.applyPeopleNum) * 100 + '%';
+						return parseInt((row.joinPeopleNum / row.applyPeopleNum) * 100) + '%';
 					}
 				},
 				{
@@ -118,7 +135,7 @@ export default {
 					label: '活动状态',
 					prop: 'activityStatus',
 					align: 'center',
-					width: 100,
+					width: 80,
 					formatter(row) {
 						if (row.activityStartStatus == 0) {
 							return '已结束';
@@ -128,6 +145,7 @@ export default {
 				},
 				{
 					label: '操作',
+					fixed: 'right',
 					prop: 'op',
 					width: 150,
 					align: 'center'
@@ -142,7 +160,7 @@ export default {
 			s = new Date(s.replace(/-/g, '/')).getTime();
 			e = new Date(e.replace(/-/g, '/')).getTime();
 			if (e < d) {
-				return '结束';
+				return '已结束';
 			} else {
 				if (s > d) {
 					return '未开始';
