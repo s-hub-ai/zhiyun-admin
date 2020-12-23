@@ -149,9 +149,9 @@
 			</el-form-item>
 		</div>
 		<h3>其他信息</h3>
-		<el-form-item label="填写信息">
+		<el-form-item label="填写信息" prop="infoField">
 			<el-checkbox-group v-model="ruleForm.infoField" size="small" @change="infoFieldChange">
-				<el-checkbox v-for="(item, index) in infoFieldList" :key="index" :label="item.value" border :disabled="index < 2">{{ item.label }}</el-checkbox>
+				<el-checkbox v-for="(item, index) in infoFieldList" :key="index" :label="item.value" border>{{ item.label }}</el-checkbox>
 				<el-button size="small" type="primary" style="margin-left: 25px" @click="infoFieldDialog = true">添加字段 </el-button>
 			</el-checkbox-group>
 		</el-form-item>
@@ -238,7 +238,7 @@ export default {
 				price: 0,
 				longitude: '',
 				latitude: '',
-				infoField: ['name', 'phone'],
+				infoField: [],
 				addressName: null
 			},
 			infoFieldDialog: false,
@@ -367,6 +367,14 @@ export default {
 						trigger: 'change'
 					}
 				],
+				infoField: [
+					{
+						type: 'array',
+						required: true,
+						message: '请至少选择一个报名信息',
+						trigger: ['blur', 'change']
+					}
+				],
 				clockinTime: [
 					{
 						required: true,
@@ -475,6 +483,11 @@ export default {
 						let params = {
 							...this.ruleForm
 						};
+						console.log(params.detail);
+						if (params.detail == '<p><br></p>') {
+							this.$message.error('请填写活动详情');
+							return false;
+						}
 						params.activityStartTime = params.activityTime[0];
 						params.activityEndTime = params.activityTime[1];
 						params.applyStartTime = params.applyTime[0];

@@ -18,7 +18,10 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item>
-					<cl-search-key placeholder="请输入关键字"></cl-search-key>
+					<cl-search-key v-model="search" placeholder="请输入关键字"></cl-search-key>
+				</el-form-item>
+				<el-form-item>
+					<el-button size="mini" type="primary" @click="exportExcelAll">导出</el-button>
 				</el-form-item>
 			</el-form>
 		</el-row>
@@ -41,11 +44,14 @@
 </template>
 
 <script>
+import FileSaver from 'file-saver';
+import XLSX from 'xlsx';
 export default {
 	data() {
 		let _this = this;
 		return {
 			addDialogShow: false,
+			search: '',
 			addDialogTitle: '',
 			tableFlters: {
 				auditStatus: -1,
@@ -65,6 +71,60 @@ export default {
 	},
 
 	methods: {
+		//导出
+		async exportExcelAll() {
+			/* 从表生成工作簿对象 */
+			//var wb = XLSX.utils.table_to_book(document.querySelector("#out-table"));
+			let params = {
+				...this.tableFlters,
+				size: 99999,
+				page: 1,
+				sort: '',
+				keyWord: this.search
+			};
+			console.log(params);
+			let res = await this.$service.app.applyActivity.page(params);
+			let data = [];
+			let tableColumn = this.tableColumn;
+
+			res.list.forEach((e) => {
+				let obj = {};
+				e.auditStatus = this.auditStatusFormatter(e.auditStatus);
+				e.NO = 'no.' + e.NO;
+				if (e.orderStatus) {
+					e.orderStatus = e.orderStatus == 0 ? '未支付' : '支付完成';
+				}
+				for (let i = 0; i < tableColumn.length; i++) {
+					const e2 = tableColumn[i];
+					obj[e2.label] = e[e2.prop];
+				}
+				delete obj['操作'];
+				console.log(obj);
+				data.push(obj);
+			});
+
+			console.log(data);
+			var ws = XLSX.utils.json_to_sheet(data);
+			/* 获取二进制字符串作为输出 */
+			var wb = XLSX.utils.book_new(); /*新建book*/
+			XLSX.utils.book_append_sheet(wb, ws, '活动报名详情'); /* 生成xlsx文件(book,sheet数据,sheet命名) */
+			XLSX.writeFile(wb, '活动报名.xlsx'); /*写文件(book,xlsx文件名称)*/
+		},
+		auditStatusFormatter(num) {
+			switch (num) {
+				case 0:
+					return '未通过';
+					break;
+				case 1:
+					return '通过';
+					break;
+				case 2:
+					return '待审核';
+					break;
+				default:
+					break;
+			}
+		},
 		//审核
 		auditFn(id) {
 			this.$confirm('是否通过该条报名数据?', '提示', {
