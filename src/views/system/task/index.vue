@@ -13,12 +13,7 @@
 								<i class="el-icon-loading"></i>
 							</li>
 
-							<li
-								v-else
-								@click="refreshTask({ page: 1 })"
-								class="refresh-btn"
-								v-permission="perm.delete"
-							>
+							<li v-else @click="refreshTask({ page: 1 })" class="refresh-btn" v-permission="perm.delete">
 								<i class="el-icon-refresh"></i>
 								<span>刷新</span>
 							</li>
@@ -31,21 +26,8 @@
 					</div>
 
 					<div class="container scroller1">
-						<draggable
-							v-model="list[index].list"
-							v-bind="drag.options"
-							tag="ul"
-							:data-type="item.params.type"
-							:data-status="item.params.status"
-							@end="(e) => onDragEnd(e, item)"
-						>
-							<li
-								v-for="item2 in list[index].list"
-								:key="item2.id"
-								:data-id="item2.id"
-								@contextmenu.stop.prevent="openCM($event, item2)"
-								class="_drag"
-							>
+						<draggable v-model="list[index].list" v-bind="drag.options" tag="ul" :data-type="item.params.type" :data-status="item.params.status" @end="(e) => onDragEnd(e, item)">
+							<li v-for="item2 in list[index].list" :key="item2.id" :data-id="item2.id" @contextmenu.stop.prevent="openCM($event, item2)" class="_drag">
 								<div class="h">
 									<span class="type _warning" v-show="item2.status === 0">
 										{{ item2.type | task_type }}
@@ -57,7 +39,7 @@
 
 								<div class="f">
 									<template v-if="item2.status">
-										<span class="date">{{ item2.nextRunTime || "..." }}</span>
+										<span class="date">{{ item2.nextRunTime || '...' }}</span>
 										<span class="start">进行中</span>
 									</template>
 
@@ -73,11 +55,7 @@
 										<span>开始</span>
 									</el-col>
 
-									<el-col
-										v-else
-										@click.native="stop(item2)"
-										v-permission="perm.stop"
-									>
+									<el-col v-else @click.native="stop(item2)" v-permission="perm.stop">
 										<i class="el-icon-video-pause"></i>
 										<span>暂停</span>
 									</el-col>
@@ -104,14 +82,7 @@
 							</li>
 						</draggable>
 
-						<el-button
-							class="more"
-							type="text"
-							size="mini"
-							@click="moreTask(index, item)"
-							v-if="item.pagination.total >= item.pagination.size"
-							>查看更多</el-button
-						>
+						<el-button class="more" type="text" size="mini" @click="moreTask(index, item)" v-if="item.pagination.total >= item.pagination.size">查看更多</el-button>
 					</div>
 
 					<div class="footer">
@@ -129,11 +100,7 @@
 						<span class="num">({{ logs.pagination.total }})</span>
 						<span class="flex1"></span>
 
-						<el-checkbox-group
-							class="status"
-							v-model="logs.filters.status"
-							@change="filterLog"
-						>
+						<el-checkbox-group class="status" v-model="logs.filters.status" @change="filterLog">
 							<el-checkbox :label="0">异常</el-checkbox>
 						</el-checkbox-group>
 
@@ -150,24 +117,15 @@
 						</ul>
 					</div>
 
-					<div
-						class="container"
-						v-loading="logs.loading"
-						element-loading-text="拼命加载中"
-					>
+					<div class="container" v-loading="logs.loading" element-loading-text="拼命加载中">
 						<ul class="_scroller" v-infinite-scroll="moreLog">
-							<li
-								v-for="(item, index) in logs.list"
-								:key="index"
-								:class="{ _error: item.status == 0 }"
-								@click="expandLog(item)"
-							>
+							<li v-for="(item, index) in logs.list" :key="index" :class="{ _error: item.status == 0 }" @click="expandLog(item)">
 								<div class="h">
 									<span class="name">{{ index + 1 }} · {{ item.taskName }}</span>
 								</div>
 
 								<div class="remark" :class="{ _ellipsis: !item._expand }">
-									{{ item.detail || "..." }}
+									{{ item.detail || '...' }}
 								</div>
 
 								<div class="f">
@@ -190,11 +148,11 @@
 </template>
 
 <script>
-import draggable from "vuedraggable";
-import { checkPerm, utils } from "@/cool";
+import draggable from 'vuedraggable';
+import { checkPerm, utils } from '@/cool';
 
 export default {
-	name: "system-task",
+	name: 'system-task',
 
 	components: {
 		draggable
@@ -204,9 +162,9 @@ export default {
 		return {
 			list: [
 				{
-					key: "sys",
-					label: "系统任务",
-					icon: "el-icon-s-tools",
+					key: 'sys',
+					label: '系统任务',
+					icon: 'el-icon-s-tools',
 					list: [],
 					loading: false,
 					params: {
@@ -220,9 +178,9 @@ export default {
 					}
 				},
 				{
-					key: "user",
-					label: "用户自定义任务",
-					icon: "el-icon-user-solid",
+					key: 'user',
+					label: '用户自定义任务',
+					icon: 'el-icon-user-solid',
 					list: [],
 					loading: false,
 					params: {
@@ -236,8 +194,8 @@ export default {
 					}
 				},
 				{
-					key: "stop",
-					label: "已停止任务",
+					key: 'stop',
+					label: '已停止任务',
 					list: [],
 					loading: false,
 					params: {
@@ -266,11 +224,11 @@ export default {
 			},
 			drag: {
 				options: {
-					group: "Task",
+					group: 'Task',
 					animation: 300,
-					ghostClass: "Ghost",
-					dragClass: "Drag",
-					draggable: "._drag"
+					ghostClass: 'Ghost',
+					dragClass: 'Drag',
+					draggable: '._drag'
 				}
 			}
 		};
@@ -278,7 +236,7 @@ export default {
 
 	filters: {
 		task_type(i) {
-			return i === 0 ? "系统" : "用户";
+			return i === 0 ? '系统' : '用户';
 		}
 	},
 
@@ -294,9 +252,9 @@ export default {
 
 	methods: {
 		onDragEnd({ to, item }) {
-			const status = to.getAttribute("data-status");
-			const type = to.getAttribute("data-type");
-			const id = item.getAttribute("data-id");
+			const status = to.getAttribute('data-status');
+			const type = to.getAttribute('data-type');
+			const id = item.getAttribute('data-id');
 
 			if (status == 0) {
 				this.stop({ id });
@@ -310,36 +268,36 @@ export default {
 		openCM(e, { id, status, type, name }) {
 			let menus = [
 				{
-					label: "立即执行",
-					perm: ["once"],
-					"suffix-icon": "el-icon-video-play",
+					label: '立即执行',
+					perm: ['once'],
+					'suffix-icon': 'el-icon-video-play',
 					callback: (e, close) => {
 						this.once({ id });
 						close();
 					}
 				},
 				{
-					label: "编辑",
-					perm: ["update", "info"],
-					"suffix-icon": "el-icon-edit",
+					label: '编辑',
+					perm: ['update', 'info'],
+					'suffix-icon': 'el-icon-edit',
 					callback: (e, close) => {
 						this.edit({ id, type });
 						close();
 					}
 				},
 				{
-					label: "删除",
-					perm: ["_delete"],
-					"suffix-icon": "el-icon-delete",
+					label: '删除',
+					perm: ['_delete'],
+					'suffix-icon': 'el-icon-delete',
 					callback: (e, close) => {
 						this.delete({ id });
 						close();
 					}
 				},
 				{
-					label: "查看日志",
-					perm: ["log"],
-					"suffix-icon": "el-icon-tickets",
+					label: '查看日志',
+					perm: ['log'],
+					'suffix-icon': 'el-icon-tickets',
 					callback: (e, close) => {
 						this.findLog({ id, name });
 						close();
@@ -349,9 +307,9 @@ export default {
 
 			if (status == 1) {
 				menus.splice(1, 0, {
-					label: "暂停",
-					perm: ["stop"],
-					"suffix-icon": "el-icon-video-pause",
+					label: '暂停',
+					perm: ['stop'],
+					'suffix-icon': 'el-icon-video-pause',
 					callback: (e, close) => {
 						this.stop({ id, type });
 						close();
@@ -359,9 +317,9 @@ export default {
 				});
 			} else {
 				menus.splice(1, 0, {
-					label: "开始",
-					perm: ["start"],
-					"suffix-icon": "el-icon-video-play",
+					label: '开始',
+					perm: ['start'],
+					'suffix-icon': 'el-icon-video-play',
 					callback: (e, close) => {
 						this.start({ id, type });
 						close();
@@ -369,7 +327,7 @@ export default {
 				});
 			}
 
-			this.$refs["context-menu"].open(e, {
+			this.$refs['context-menu'].open(e, {
 				list: menus.filter((e) => {
 					return checkPerm({
 						and: e.perm.map((a) => this.perm[a])
@@ -401,53 +359,53 @@ export default {
 
 			const isCron = info.taskType ? false : true;
 
-			const form = this.$refs["cl-form"].open({
+			const form = this.$refs['cl-form'].open({
 				props: {
 					title: `编辑任务`,
-					width: "600px",
-					"label-width": "80px"
+					width: '600px',
+					'label-width': '80px'
 				},
 
 				items: [
 					{
-						label: "名称",
-						prop: "name",
+						label: '名称',
+						prop: 'name',
 						value: info.name,
 						component: {
-							name: "el-input",
+							name: 'el-input',
 							attrs: {
-								placeholder: "请输入名称"
+								placeholder: '请输入名称'
 							}
 						},
 						rules: {
 							required: true,
-							message: "名称不能为空"
+							message: '名称不能为空'
 						}
 					},
 					{
-						label: "类型",
-						prop: "taskType",
+						label: '类型',
+						prop: 'taskType',
 						value: info.taskType || 0,
 						component: {
-							name: "el-select",
+							name: 'el-select',
 							options: [
 								{
-									label: "cron",
+									label: 'cron',
 									value: 0
 								},
 								{
-									label: "时间间隔",
+									label: '时间间隔',
 									value: 1
 								}
 							],
 							on: {
 								change: (v) => {
 									form.items.map((e) => {
-										if (e.prop == "cron") {
+										if (e.prop == 'cron') {
 											e.hidden = v !== 0;
 										}
 
-										if (["limit", "every"].includes(e.prop)) {
+										if (['limit', 'every'].includes(e.prop)) {
 											e.hidden = v !== 1;
 
 											if (!e.value) {
@@ -460,28 +418,28 @@ export default {
 						}
 					},
 					{
-						label: "cron",
-						prop: "cron",
+						label: 'cron',
+						prop: 'cron',
 						hidden: !isCron,
 						value: info.cron,
 						component: {
-							name: "el-input",
+							name: 'el-input',
 							attrs: {
-								placeholder: "* * * * * *"
+								placeholder: '* * * * * *'
 							}
 						},
 						rules: {
 							required: true,
-							message: "cron不能为空"
+							message: 'cron不能为空'
 						}
 					},
 					{
-						label: "次数",
-						prop: "limit",
+						label: '次数',
+						prop: 'limit',
 						value: info.limit,
 						hidden: isCron,
 						component: {
-							name: "el-input-number",
+							name: 'el-input-number',
 							props: {
 								min: 1,
 								max: 10000
@@ -489,12 +447,12 @@ export default {
 						}
 					},
 					{
-						label: "间隔(秒)",
-						prop: "every",
+						label: '间隔(秒)',
+						prop: 'every',
 						value: info.every,
 						hidden: isCron,
 						component: {
-							name: "el-input-number",
+							name: 'el-input-number',
 							props: {
 								min: 1,
 								max: 100000000
@@ -502,66 +460,66 @@ export default {
 						},
 						rules: {
 							required: true,
-							message: "执行间隔不能为空"
+							message: '执行间隔不能为空'
 						}
 					},
 					{
-						label: "service",
-						prop: "service",
+						label: 'service',
+						prop: 'service',
 						value: info.service,
 						component: {
-							name: "el-input",
+							name: 'el-input',
 							attrs: {
-								placeholder: "sys.test.add(params)"
+								placeholder: 'sys.test.add(params)'
 							}
 						}
 					},
 					{
-						label: "开始时间",
-						prop: "startDate",
+						label: '开始时间',
+						prop: 'startDate',
 						value: info.startDate,
 						component: {
-							name: "el-date-picker",
+							name: 'el-date-picker',
 							props: {
-								type: "datetime"
+								type: 'datetime'
 							}
 						}
 					},
 					{
-						label: "结束时间",
-						prop: "endDate",
+						label: '结束时间',
+						prop: 'endDate',
 						value: info.endDate,
 						component: {
-							name: "el-date-picker",
+							name: 'el-date-picker',
 							props: {
-								type: "datetime"
+								type: 'datetime'
 							}
 						}
 					},
 					{
-						label: "备注",
-						prop: "remark",
+						label: '备注',
+						prop: 'remark',
 						value: info.remark,
 						component: {
-							name: "el-input",
+							name: 'el-input',
 							props: {
-								type: "textarea"
+								type: 'textarea'
 							}
 						}
 					},
 					{
-						label: "状态",
-						prop: "status",
+						label: '状态',
+						prop: 'status',
 						value: info.status === 0 ? 0 : 1,
 						component: {
-							name: "el-radio-group",
+							name: 'el-radio-group',
 							options: [
 								{
-									label: "停止",
+									label: '停止',
 									value: 0
 								},
 								{
-									label: "运行",
+									label: '运行',
 									value: 1
 								}
 							]
@@ -570,12 +528,12 @@ export default {
 				],
 
 				on: {
-					submit: ({ data, close, done }) => {
+					submit: (data, { close, done }) => {
 						if (!data.limit) {
 							data.limit = null;
 						}
 
-						this.$service.system.task[id ? "update" : "add"]({
+						this.$service.system.task[id ? 'update' : 'add']({
 							...info,
 							...data,
 							every: data.every * 1000
@@ -583,7 +541,7 @@ export default {
 							.then(() => {
 								this.refreshTask();
 
-								this.$message.success("保存成功");
+								this.$message.success('保存成功');
 								close();
 							})
 							.catch((err) => {
@@ -596,8 +554,8 @@ export default {
 		},
 
 		delete({ id }) {
-			this.$confirm("此操作将永久删除该数据，是否继续？", "提示", {
-				type: "warning"
+			this.$confirm('此操作将永久删除该数据，是否继续？', '提示', {
+				type: 'warning'
 			})
 				.then(() => {
 					this.$service.system.task.delete({ ids: id }).then(() => {
@@ -641,13 +599,12 @@ export default {
 		},
 
 		expandLog(e) {
-			this.$set(e, "_expand", !e._expand);
+			this.$set(e, '_expand', !e._expand);
 		},
 
 		refreshTask(params, options) {
 			const { index, more } = options || {};
-			const arr =
-				index === undefined || index === null ? this.list.map((e, i) => i) : [index];
+			const arr = index === undefined || index === null ? this.list.map((e, i) => i) : [index];
 
 			arr.forEach(async (k) => {
 				let item = this.list[k];
@@ -657,7 +614,7 @@ export default {
 					...params
 				});
 
-				this.$set(item, "loading", true);
+				this.$set(item, 'loading', true);
 
 				let res = await this.$service.system.task.page(item.params);
 
@@ -699,7 +656,7 @@ export default {
 			utils.moreList(res, this.logs);
 
 			if (!more) {
-				this.$el.querySelector(".block._log .container ul").scroll(0, 0);
+				this.$el.querySelector('.block._log .container ul').scroll(0, 0);
 			}
 
 			this.logs.loading = false;
@@ -890,7 +847,7 @@ export default {
 							padding: 1px 3px;
 
 							&::before {
-								content: "NEXT";
+								content: 'NEXT';
 								position: absolute;
 								left: 0;
 								top: 1px;
@@ -907,7 +864,7 @@ export default {
 							position: relative;
 
 							&::before {
-								content: "";
+								content: '';
 								display: block;
 								height: 6px;
 								width: 6px;

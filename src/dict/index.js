@@ -72,6 +72,9 @@ export const pointsUseDetailTypeDict = [{
 }, {
   value: 11,
   text: '系统扣除'
+}, {
+  value: 12,
+  text: '活动打卡'
 }]
 
 //商品类型

@@ -154,11 +154,19 @@ export default {
 		},
 
 		_accept() {
-			switch (this.listType) {
-				case 'picture-card':
-					return 'image/*';
-				default:
-					return '*';
+			console.log(this.listType);
+			console.log(this.accept);
+			if (this.accept) {
+				return this.accept;
+			} else {
+				switch (this.listType) {
+					case 'picture-card':
+						return 'image/*';
+					case 'image':
+						return 'image/*';
+					default:
+						return '*';
+				}
 			}
 		},
 

@@ -2,7 +2,7 @@
 	<el-form :model="ruleForm" :inline="false" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
 		<h3>活动信息</h3>
 		<el-form-item label="活动封面" prop="activityCover">
-			<cl-upload :value="ruleForm.activityCover" listType="picture-card" class="avatar-uploader" :size="[150, 150]" icon="el-icon-plus" :on-success="activityCoverUploadSuccess"></cl-upload>
+			<cl-upload :value="ruleForm.activityCover" accept="image/*" class="avatar-uploader" :size="[150, 150]" icon="el-icon-plus" :on-success="activityCoverUploadSuccess"></cl-upload>
 			<div class="tips">限上传1张</div>
 		</el-form-item>
 		<el-form-item style="width: 100%" label="活动图片" prop="activityBanner">
@@ -20,17 +20,15 @@
 		</el-form-item>
 		<div style="display: flex">
 			<el-form-item label="活动时间" prop="activityTime">
-				<el-date-picker value-format="yyyy-MM-dd HH:mm:ss" v-model="ruleForm.activityTime" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
-				</el-date-picker>
+				<el-date-picker v-model="ruleForm.activityTime" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"> </el-date-picker>
 			</el-form-item>
 			<el-form-item label="报名时间" prop="applyTime">
-				<el-date-picker value-format="yyyy-MM-dd HH:mm:ss" v-model="ruleForm.applyTime" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
-				</el-date-picker>
+				<el-date-picker v-model="ruleForm.applyTime" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"> </el-date-picker>
 			</el-form-item>
 		</div>
 		<div style="display: flex">
 			<el-form-item label="活动标题" prop="title">
-				<el-input style="width: 400px" v-model="ruleForm.title" placeholder="请输入活动标题"></el-input>
+				<el-input style="width: 400px" v-model="ruleForm.title" placeholder="请输入活动标题" maxlength="50" show-word-limit></el-input>
 			</el-form-item>
 			<el-form-item label="报名名额" prop="applyPeopleNum">
 				<el-input-number v-model="ruleForm.applyPeopleNum" :min="1"></el-input-number>
@@ -345,7 +343,7 @@ export default {
 					{
 						required: true,
 						message: '请填写活动详情',
-						trigger: 'blur'
+						trigger: ['blur', 'change']
 					}
 				],
 				applyPeopleNum: [
@@ -487,6 +485,7 @@ export default {
 							this.$message.error('报名开始时间不可晚于活动结束时间');
 							return false;
 						}
+						console.log(params.activityEndTime, params.applyEndTime);
 						if (params.activityEndTime < params.applyEndTime) {
 							this.$message.error('报名结束时间不可晚于活动结束时间');
 							return false;
