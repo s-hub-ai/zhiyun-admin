@@ -149,7 +149,7 @@
 			</el-form-item>
 		</div>
 		<h3>其他信息</h3>
-		<el-form-item label="填写信息" prop="infoField">
+		<el-form-item label="填写信息">
 			<el-checkbox-group v-model="ruleForm.infoField" size="small" @change="infoFieldChange">
 				<el-checkbox v-for="(item, index) in infoFieldList" :key="index" :label="item.value" border>{{ item.label }}</el-checkbox>
 				<el-button size="small" type="primary" style="margin-left: 25px" @click="infoFieldDialog = true">添加字段 </el-button>
@@ -367,14 +367,6 @@ export default {
 						trigger: 'change'
 					}
 				],
-				infoField: [
-					{
-						type: 'array',
-						required: true,
-						message: '请至少选择一个报名信息',
-						trigger: ['blur', 'change']
-					}
-				],
 				clockinTime: [
 					{
 						required: true,
@@ -471,7 +463,7 @@ export default {
 		//其他信息多选
 		infoFieldChange(e) {
 			console.log(e);
-			//	this.ruleForm.infoField = e;
+			this.ruleForm.infoField = e;
 		},
 		isClockinChange(e) {},
 		//提交
@@ -534,18 +526,14 @@ export default {
 							params.clockinStartTime = params.clockinTime[0];
 							params.clockinEndTime = params.clockinTime[1];
 						}
-						if (params.infoField.length > 0) {
-							let arr = [];
-							for (let i = 0; i < this.infoFieldList.length; i++) {
-								const e = this.infoFieldList[i];
-								if (params.infoField.indexOf(e.value) > -1) {
-									arr.push(e);
-								}
+						let arr = [];
+						for (let i = 0; i < this.infoFieldList.length; i++) {
+							const e = this.infoFieldList[i];
+							if (params.infoField.indexOf(e.value) > -1) {
+								arr.push(e);
 							}
-							params.infoField = JSON.stringify(arr);
-						} else {
-							delete params.infoField;
 						}
+						params.infoField = JSON.stringify(arr);
 
 						delete params.activityTime;
 						delete params.applyTime;

@@ -232,6 +232,11 @@ export default {
 					this.tableColumn.unshift(column);
 				}
 				this.tableColumn.unshift({
+					label: '昵称',
+					prop: 'nickName',
+					align: 'center'
+				});
+				this.tableColumn.unshift({
 					label: '编号',
 					prop: 'NO',
 					width: 45,

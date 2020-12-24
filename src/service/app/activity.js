@@ -14,4 +14,13 @@ export default class extends BaseService {
    data
   });
  }
+
+
+ @Permission("clockinList")
+ clockinList(params) {
+  return this.request({
+   url: "/clockinList",
+   params
+  });
+ }
 }
