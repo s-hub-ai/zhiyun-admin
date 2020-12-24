@@ -148,7 +148,6 @@ export default {
 					label: '操作',
 					fixed: 'right',
 					prop: 'op',
-					width: 150,
 					align: 'center'
 				}
 			]
