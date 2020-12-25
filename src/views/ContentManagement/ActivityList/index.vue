@@ -43,7 +43,7 @@
 				<template #column-op="{ scope }">
 					<el-button size="mini" type="text" @click="$router.push({ path: 'ApplyDetail', query: { id: scope.row.id } })">查看报名</el-button>
 					<el-button v-if="scope.row.isClockin == 1" size="mini" type="text" @click="$router.push({ path: 'ClockinList', query: { id: scope.row.id } })">打卡记录</el-button>
-					<el-button v-if="activityStatusFormatter(scope.row.activityStartTime, scope.row.activityEndTime) == '未开始'" size="mini" type="text" @click="editDialog(scope.row.id)">编辑</el-button>
+					<el-button size="mini" type="text" @click="editDialog(scope.row.id)">编辑</el-button>
 					<el-button size="mini" type="text" @click="deleteFn(scope.row.id)">删除</el-button>
 				</template>
 			</cl-table>

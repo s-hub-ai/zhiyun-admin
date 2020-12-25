@@ -232,8 +232,13 @@ export default {
 					this.tableColumn.unshift(column);
 				}
 				this.tableColumn.unshift({
-					label: '昵称',
-					prop: 'nickName',
+					label: '姓名',
+					prop: 'userName',
+					align: 'center'
+				});
+				this.tableColumn.unshift({
+					label: '手机号',
+					prop: 'phoneNum',
 					align: 'center'
 				});
 				this.tableColumn.unshift({
