@@ -153,7 +153,7 @@ export const couponTypeDict = [{
   value: -1,
   text: '全部'
 }, {
-  value: 0,
+  value: 4,
   text: '满减券'
 }, {
   value: 1,
@@ -161,6 +161,9 @@ export const couponTypeDict = [{
 }, {
   value: 2,
   text: '折扣券'
+}, {
+  value: 3,
+  text: '商品指定立减券'
 }]
 //用户会员等级
 export const vipLevelDict = [{
