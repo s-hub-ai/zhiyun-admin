@@ -7,7 +7,7 @@ function resolve(dir) {
 }
 
 module.exports = {
-	publicPath: "/",
+	publicPath: "/admin/",
 	lintOnSave: true,
 	productionSourceMap: false,
 	parallel: require("os").cpus().length > 1,

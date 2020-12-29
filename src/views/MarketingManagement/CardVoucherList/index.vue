@@ -19,14 +19,14 @@
 		<el-row>
 			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
 				<template #column-denominationalValue="{ scope }">
-					<div v-if="scope.row.couponType == 0">满{{ scope.row.fullNum }}减{{ scope.row.reduceNum }}</div>
+					<div v-if="scope.row.couponType == 4">满{{ scope.row.fullNum }}减{{ scope.row.reduceNum }}</div>
 					<div v-if="scope.row.couponType == 1">立减{{ scope.row.denominationalValue }}</div>
 					<div v-if="scope.row.couponType == 3">商品立减{{ scope.row.denominationalValue }}</div>
 					<div v-if="scope.row.couponType == 2">{{ scope.row.costRatio }}折</div>
 				</template>
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
-					<el-button type="text" @click="detailDialogShow = true">详情</el-button>
+					<el-button type="text" @click="editDialog(scope.row.id)">详情</el-button>
 					<!-- <el-button type="text" @click="editDialog(scope.row.id)">编辑</el-button> -->
 					<el-button type="text" @click="deleteFn(scope.row.id)">删除</el-button>
 				</template>
@@ -39,12 +39,12 @@
 		</el-row>
 
 		<!-- 新增编辑弹出框 -->
-		<el-dialog title="新增消息" :visible.sync="addDialogShow" width="1000px" @close="addDialogClose">
+		<el-dialog title="新增卡券" :visible.sync="addDialogShow" width="1000px" @close="addDialogClose">
 			<add-dialog v-if="addDialogShow" ref="editDialog" :addDialogShow.sync="addDialogShow"></add-dialog>
 		</el-dialog>
 
 		<!-- 详情弹出框 -->
-		<el-dialog title="推送详情" :visible.sync="addDialogDetailShow" width="1000px" @close="detailDialogClose">
+		<el-dialog title="发放详情" :visible.sync="addDialogDetailShow" width="1000px" @close="detailDialogClose">
 			<detail-dialog ref="detailDialog" :addDialogShow.sync="addDialogDetailShow"></detail-dialog>
 		</el-dialog>
 	</cl-crud>
@@ -160,9 +160,9 @@ export default {
 		},
 		//编辑
 		editDialog(id) {
-			this.addDialogShow = true;
+			this.addDialogDetailShow = true;
 			this.$nextTick(() => {
-				this.$refs.editDialog.getEditInfo(id);
+				this.$refs.detailDialog.getEditInfo(id);
 			});
 		},
 		onLoad({ ctx, app }) {
