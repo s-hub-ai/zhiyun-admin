@@ -258,6 +258,7 @@ export default {
 				detailImage: '',
 				commodityStatus: 1,
 				scopeRewardShow: 0,
+
 				isScoreReward: 1
 			},
 			rules: {

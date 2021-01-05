@@ -24,6 +24,7 @@
 				<el-form-item label="达标金额" prop="fullNum">
 					<el-input-number v-model="ruleForm.fullNum" controls-position="right" :min="0.1"></el-input-number>
 				</el-form-item>
+
 				<el-form-item label="立减金额" prop="reduceNum">
 					<el-input-number v-model="ruleForm.reduceNum" controls-position="right" :min="0.1"></el-input-number>
 				</el-form-item>
