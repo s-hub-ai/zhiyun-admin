@@ -14,7 +14,7 @@
 				</template>
 				<!-- 状态-->
 				<template #column-enableStauts="{ scope }">
-					<el-switch :value="scope.row.enableStatus" :active-value="1" :inactive-value="0"></el-switch>
+					<el-switch v-model="scope.row.enableStatus" :active-value="1" :inactive-value="0" @change="updateTableRow(scope.row)"></el-switch>
 				</template>
 				<!-- 排序 -->
 				<template #column-sort="{ scope }">
@@ -37,7 +37,7 @@
 		<!-- 新增编辑弹出框 -->
 		<!-- 新增编辑弹出框 -->
 		<el-dialog :title="addDialogTitle" :visible.sync="addDialogShow" @close="addDialogClose" width="800px">
-			<add-dialog ref="editDialog" :addDialogShow.sync="addDialogShow"></add-dialog>
+			<add-dialog v-if="addDialogShow" ref="editDialog" :addDialogShow.sync="addDialogShow"></add-dialog>
 		</el-dialog>
 	</cl-crud>
 </template>
