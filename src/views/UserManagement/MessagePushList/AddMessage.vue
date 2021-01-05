@@ -37,17 +37,15 @@
 				<el-date-picker v-model="ruleForm.date" :picker-options="pickerOptions" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" format="yyyy-MM-dd"> </el-date-picker>
 			</el-form-item>
 			<el-form-item class="form-item" label="推送时间" prop="time">
-				<el-time-select
-					value-format="HH:mm:ss"
+				<el-time-picker
+					value-format="HH:mm:00"
 					v-model="ruleForm.time"
 					:picker-options="{
-						start: '00:00',
-						step: '01:00',
-						end: '23:00'
+						selectableRange: '00:00:00 - 23:59:00'
 					}"
 					placeholder="选择时间"
 				>
-				</el-time-select>
+				</el-time-picker>
 			</el-form-item>
 		</div>
 		<p style="margin-top: 45px">选择用户</p>

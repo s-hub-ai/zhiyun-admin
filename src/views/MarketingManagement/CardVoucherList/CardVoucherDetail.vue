@@ -16,6 +16,9 @@
 			<el-form-item class="form-item" label="卡券有效期:">
 				<span>{{ ruleForm.validityPeriodStartTime }}-{{ ruleForm.validityPeriodEndTime }}</span>
 			</el-form-item>
+			<el-form-item class="form-item" label="卡券规则:">
+				<span>{{ ruleForm.rules }}</span>
+			</el-form-item>
 		</div>
 		<p style="margin-top: 45px">推送用户列表</p>
 		<el-divider></el-divider>

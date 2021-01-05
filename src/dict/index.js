@@ -79,21 +79,26 @@ export const pointsUseDetailTypeDict = [{
 
 //商品类型
 export const goodsTypeDict = [{
-  value: -1,
-  text: '全部'
-}, {
-  value: 0,
-  text: '商城商品'
-}, {
+    value: -1,
+    text: '全部'
+  }, {
+    value: 0,
+    text: '商城商品'
+  },
+  {
+    value: 2,
+    text: '积分商品'
+  }
+  /* {
   value: 1,
   text: '票务商品'
-}, {
-  value: 2,
-  text: '积分商品'
-}, {
-  value: 3,
-  text: '活动商品'
-}]
+},  */
+
+  /* , {
+    value: 3,
+    text: '活动商品'
+  } */
+]
 //订单类型
 export const orderTypeDict = [{
   value: -1,

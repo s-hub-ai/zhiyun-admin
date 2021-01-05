@@ -258,7 +258,7 @@ export default {
 				detailImage: '',
 				commodityStatus: 1,
 				scopeRewardShow: 0,
-				isScoreReward: 0
+				isScoreReward: 1
 			},
 			rules: {
 				commodityTypeId: [
@@ -440,15 +440,15 @@ export default {
 		},
 		submitForm(formName) {
 			this.$refs[formName].validate(async (valid) => {
-							let { type, spec } = this.$refs['goods-spec-select'].validate();
-			if (spec.sku.length < 1) {
-				this.$message.error('请填写商品规格');
-				return false;
-			}
-			if (spec.spec.length < 1) {
-				this.$message.error('请填写商品规格');
-				return false;
-			}
+				let { type, spec } = this.$refs['goods-spec-select'].validate();
+				if (spec.sku.length < 1) {
+					this.$message.error('请填写商品规格');
+					return false;
+				}
+				if (spec.spec.length < 1) {
+					this.$message.error('请填写商品规格');
+					return false;
+				}
 				this.ruleForm.specificationType = type;
 				this.ruleForm.specification = JSON.stringify(spec);
 				if (valid) {

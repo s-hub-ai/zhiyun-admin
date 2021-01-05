@@ -22,17 +22,17 @@
 			</el-form-item>
 			<div v-if="ruleForm.couponType == 4" style="display: flex">
 				<el-form-item label="达标金额" prop="fullNum">
-					<el-input-number v-model="ruleForm.fullNum" controls-position="right" :min="1"></el-input-number>
+					<el-input-number v-model="ruleForm.fullNum" controls-position="right" :min="0.1"></el-input-number>
 				</el-form-item>
 				<el-form-item label="立减金额" prop="reduceNum">
-					<el-input-number v-model="ruleForm.reduceNum" controls-position="right" :min="1"></el-input-number>
+					<el-input-number v-model="ruleForm.reduceNum" controls-position="right" :min="0.1"></el-input-number>
 				</el-form-item>
 			</div>
 			<el-form-item v-if="ruleForm.couponType == 1 || ruleForm.couponType == 3" label="卡券面值" prop="denominationalValue">
-				<el-input-number v-model="ruleForm.denominationalValue" controls-position="right" :min="1"></el-input-number>
+				<el-input-number v-model="ruleForm.denominationalValue" controls-position="right" :min="0.1"></el-input-number>
 			</el-form-item>
 			<el-form-item v-if="ruleForm.couponType == 2" label="折扣率" prop="costRatio">
-				<el-input-number v-model="ruleForm.costRatio" controls-position="right" :min="1" :precision="2" :step="0.1"></el-input-number>
+				<el-input-number v-model="ruleForm.costRatio" controls-position="right" :min="0.1" :precision="1" :step="0.1"></el-input-number>
 				<span style="padding-left: 10px">折</span>
 			</el-form-item>
 			<el-form-item v-if="ruleForm.couponType == 3" label="选择商品" prop="commodityId">
@@ -333,7 +333,8 @@ export default {
 		async couponTypeChange(e) {
 			//商品立减券
 			if (e == 3) {
-				this.commodityList = await this.$service.app.commodity.common.list();
+				let res = await this.$service.app.commodity.common.list();
+				this.commodityList = res;
 			}
 		},
 		//
