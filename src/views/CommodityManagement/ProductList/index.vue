@@ -1,6 +1,14 @@
 <template>
 	<cl-crud @load="onLoad" ref="crud">
 		<el-row type="flex" align="middle">
+			<el-form :inline="true" :model="tableFlters" size="mini" class="demo-form-inline">
+				<el-form-item label="商品类型">
+					<el-select style="width: 120px" v-model="tableFlters.goodsType" placeholder="请选择" @change="$refs['crud'].refresh({ ...tableFlters })">
+						<el-option v-for="(item, index) in goodsTypeDict" :key="index" :label="item.text" :value="item.value"></el-option>
+					</el-select>
+				</el-form-item>
+			</el-form>
+
 			<cl-search-key placeholder="请输入商品名称"></cl-search-key>
 			<cl-flex1></cl-flex1>
 			<el-button type="text" size="mini" icon="el-icon-setting" @click="$router.push({ path: 'DeliveryCharge' })">全局设置</el-button>
@@ -76,6 +84,12 @@ export default {
 	},
 	data() {
 		return {
+			goodsTypeDict,
+			tableFlters: {
+				goodsType: -1,
+				prop: 'createTime',
+				order: 'desc'
+			},
 			tableColumn: [
 				{
 					type: 'index',
@@ -264,9 +278,7 @@ export default {
 		},
 		refresh() {
 			this.$refs.crud.refresh({
-				goodsType: -1,
-				prop: 'createTime',
-				order: 'desc'
+				...this.tableFlters
 			});
 		},
 		onLoad({ ctx, app }) {
@@ -280,3 +292,8 @@ export default {
 	}
 };
 </script>
+<style lang="scss" scoped>
+::v-deep .el-form-item {
+	margin: 0 10px 0 0;
+}
+</style>

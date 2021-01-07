@@ -1,12 +1,14 @@
 <template>
 	<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
 		<div style="max-width: 900px">
-			<el-form-item class="form-item" label="推送方式" prop="pushMethod">
-				<el-select v-model="ruleForm.pushMethod" placeholder="请选择" @change="pushMethodChange">
+			<el-form-item class="form-item" label="卡券类型" prop="couponType">
+				<el-select v-model="ruleForm.couponType" placeholder="请选择" @change="couponTypeChange">
 					<el-option
 						v-for="item in [
-							{ value: 1, text: '站内信' },
-							{ value: 2, text: '短信' }
+							{ value: 4, text: '满减券' },
+							{ value: 1, text: '立减券' },
+							{ value: 2, text: '折扣券' },
+							{ value: 3, text: '指定商品立减券' }
 						]"
 						:key="item.value"
 						:label="item.text"
@@ -15,37 +17,42 @@
 					</el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item v-if="ruleForm.pushMethod == 2" label="短信模板" prop="templateId">
-				<el-select v-model="ruleForm.templateId" placeholder="请选择" @change="templateIdChange">
-					<el-option v-for="item in messageTemplateList" :key="item.value" :label="item.messageTitle" :value="item.templateId"> </el-option>
+			<el-form-item label="卡券名称" prop="couponName">
+				<el-input v-model="ruleForm.couponName" placeholder="请输入卡券名称" :maxlength="30" show-word-limit> </el-input>
+			</el-form-item>
+			<div v-if="ruleForm.couponType == 4" style="display: flex">
+				<el-form-item label="达标金额" prop="fullNum">
+					<el-input-number v-model="ruleForm.fullNum" controls-position="right" :min="0.1"></el-input-number>
+				</el-form-item>
+
+				<el-form-item label="立减金额" prop="reduceNum">
+					<el-input-number v-model="ruleForm.reduceNum" controls-position="right" :min="0.1"></el-input-number>
+				</el-form-item>
+			</div>
+			<el-form-item v-if="ruleForm.couponType == 1 || ruleForm.couponType == 3" label="卡券面值" prop="denominationalValue">
+				<el-input-number v-model="ruleForm.denominationalValue" controls-position="right" :min="0.1"></el-input-number>
+			</el-form-item>
+			<el-form-item v-if="ruleForm.couponType == 2" label="折扣率" prop="costRatio">
+				<el-input-number v-model="ruleForm.costRatio" controls-position="right" :min="0.1" :precision="1" :step="0.1"></el-input-number>
+				<span style="padding-left: 10px">折</span>
+			</el-form-item>
+			<el-form-item v-if="ruleForm.couponType == 3" label="选择商品" prop="commodityId">
+				<el-select v-model="ruleForm.commodityId" placeholder="请选择" popper-class="commodity-option" filterable>
+					<el-option v-for="item in commodityList" :key="item.id" :label="item.commodityName" :value="item.id">
+						<div style="display: flex; justify-content: space-between; width: 100%; padding: 2px 0; align-items: flex-start">
+							<el-image style="width: 50px; height: 50px" :src="item.commodityCover" fit="cover"></el-image>
+							<span style="color: #8492a6; font-size: 13px">{{ item.commodityName }}</span>
+						</div>
+					</el-option>
 				</el-select>
 			</el-form-item>
-			<el-form-item v-if="ruleForm.pushMethod == 1" label="消息标题" prop="messageTitle">
-				<el-input v-model="ruleForm.messageTitle" placeholder="请输入消息标题" :maxlength="messageTitleLength" show-word-limit> </el-input>
-			</el-form-item>
-			<el-form-item v-if="ruleForm.templateId" label="消息标题" prop="messageTitle">
-				<el-input v-model="ruleForm.messageTitle" disabled placeholder="请输入消息标题" :maxlength="messageTitleLength" show-word-limit> </el-input>
-			</el-form-item>
-			<el-form-item v-if="ruleForm.templateId" label="消息内容" prop="messageContent">
-				<el-input type="textarea" rows="5" disabled v-model="ruleForm.messageContent" placeholder="" :maxlength="messageContentLength" show-word-limit></el-input>
-			</el-form-item>
-			<el-form-item v-if="ruleForm.pushMethod == 1" label="消息内容" prop="messageContent">
-				<cl-editor-quill height="300" v-model="ruleForm.messageContent"></cl-editor-quill>
-			</el-form-item>
 
-			<el-form-item class="form-item" label="推送日期" prop="date">
-				<el-date-picker v-model="ruleForm.date" :picker-options="pickerOptions" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" format="yyyy-MM-dd"> </el-date-picker>
+			<el-form-item class="form-item" label="有效时间" prop="validityPeriodTime">
+				<el-date-picker v-model="ruleForm.validityPeriodTime" :picker-options="pickerOptions" type="datetimerange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期">
+				</el-date-picker>
 			</el-form-item>
-			<el-form-item class="form-item" label="推送时间" prop="time">
-				<el-time-picker
-					value-format="HH:mm:00"
-					v-model="ruleForm.time"
-					:picker-options="{
-						selectableRange: '00:00:00 - 23:59:00'
-					}"
-					placeholder="选择时间"
-				>
-				</el-time-picker>
+			<el-form-item class="form-item" label="规则">
+				<el-input type="textarea" placeholder="请输入内容" v-model="ruleForm.rules" :maxlength="100" show-word-limit></el-input>
 			</el-form-item>
 		</div>
 		<p style="margin-top: 45px">选择用户</p>
@@ -70,11 +77,11 @@
 			<el-form-item label="实名状态">
 				<el-checkbox :indeterminate="useCcertificationIndeterminate" v-model="useCcertificationCheckAll" @change="useCcertificationCheckAllChange">全选</el-checkbox>
 				<el-checkbox-group v-model="userArgs.userCertification" @change="useCcertificationCheckedCitiesChange">
-					<el-checkbox v-for="item in useCcertificationDict" :label="item.value" :key="item.value"> {{ item.text }}</el-checkbox>
+					<el-checkbox v-for="item in useCcertificationDict" :label="item.value" :key="item.value"> {{ item.text }} </el-checkbox>
 				</el-checkbox-group>
 			</el-form-item>
 			<el-form-item label="球迷会">
-				<el-checkbox :indeterminate="fanClubIdIndeterminate" v-model="fanClubIdCheckAll" @change="fanClubIdCheckAllChange">全选</el-checkbox>
+				<el-checkbox :indeterminate="fanClubIdIndeterminate" v-model="fanClubIdCheckAll" @change="fanClubIdCheckAllChange"> 全选</el-checkbox>
 				<el-checkbox-group v-model="userArgs.fanClubId" @change="fanClubIdCheckedCitiesChange">
 					<el-checkbox v-for="item in fanClubList" :label="item.value" :key="item.value"> {{ item.text }} </el-checkbox>
 				</el-checkbox-group>
@@ -82,11 +89,11 @@
 			<el-form-item label="套票类型">
 				<el-checkbox :indeterminate="ticketPackageUserIndeterminate" v-model="ticketPackageUserCheckAll" @change="ticketPackageUserCheckAllChange">全选</el-checkbox>
 				<el-checkbox-group v-model="userArgs.ticketPackageUser" @change="ticketPackageUserCheckedCitiesChange">
-					<el-checkbox v-for="item in ticketPackageUserDict" :label="item.value" :key="item.value"> {{ item.text }}</el-checkbox>
+					<el-checkbox v-for="item in ticketPackageUserDict" :label="item.value" :key="item.value"> {{ item.text }} </el-checkbox>
 				</el-checkbox-group>
 			</el-form-item>
 			<el-form-item label="会员等级">
-				<el-checkbox :indeterminate="vipLevelIndeterminate" v-model="vipLevelCheckAll" @change="vipLevelCheckAllChange">全选</el-checkbox>
+				<el-checkbox :indeterminate="vipLevelIndeterminate" v-model="vipLevelCheckAll" @change="vipLevelCheckAllChange">全选 </el-checkbox>
 				<el-checkbox-group v-model="userArgs.vipLevel" @change="vipLevelCheckedCitiesChange">
 					<el-checkbox v-for="item in vipLevelDict" :label="item.value" :key="item.value"> {{ item.text }} </el-checkbox>
 				</el-checkbox-group>
@@ -99,14 +106,13 @@
 			</el-form-item>
 		</div>
 		<div style="max-width: 900px; text-align: center">
-			<el-button type="primary" @click="submitForm('ruleForm')">确定</el-button>
+			<el-button type="primary" @click="open">确定</el-button>
 			<el-button @click="resetForm('ruleForm')">重置</el-button>
 		</div>
 	</el-form>
 </template>
 
 <script>
-import XLSX from 'xlsx';
 import { couponTypeDict, ticketPackageUserDict, useCcertificationDict, vipLevelDict, zhiyunCardStatusDict } from '@/dict/index.js';
 export default {
 	computed: {
@@ -138,15 +144,80 @@ export default {
 					return time.getTime() <= Date.now() - 24 * 60 * 60 * 1000;
 				}
 			},
-			messageTitleLength: 50,
-			messageContentLength: 800,
-			messageTemplateList: [],
+			rules: {
+				couponName: [
+					{
+						required: true,
+						message: '请输入卡券名称',
+						trigger: 'blur'
+					}
+				],
+				couponType: [
+					{
+						required: true,
+						message: '请选择卡券类型',
+						trigger: 'change'
+					}
+				],
+				userType: [
+					{
+						required: true,
+						message: '请选择用户类型',
+						trigger: 'change'
+					}
+				],
+				denominationalValue: [
+					{
+						required: true,
+						message: '请填写卡券面值',
+						trigger: 'blur'
+					}
+				],
+				fullNum: [
+					{
+						required: true,
+						message: '请填写达标金额',
+						trigger: 'blur'
+					}
+				],
+				reduceNum: [
+					{
+						required: true,
+						message: '请填写立减金额',
+						trigger: 'blur'
+					}
+				],
+				costRatio: [
+					{
+						required: true,
+						message: '请填写折扣率',
+						trigger: 'blur'
+					}
+				],
+				commodityId: [
+					{
+						required: true,
+						message: '请选择指定商品',
+						trigger: 'change'
+					}
+				],
+				validityPeriodTime: [
+					{
+						required: true,
+						message: '请选择有效时间',
+						trigger: 'change'
+					}
+				]
+			},
+			commodityList: [],
 			ruleForm: {
-				messageTitle: '',
-				messageContent: '',
-				pushMethod: 1,
-				time: '',
-				date: '',
+				couponName: '',
+				couponType: 1,
+				fullNum: 0,
+				reduceNum: 0,
+				denominationalValue: 0,
+				validityPeriodTime: '',
+				commodityId: '',
 				userArgs: [],
 				userType: 0
 			},
@@ -157,70 +228,6 @@ export default {
 				ticketPackageUser: [],
 				vipLevel: [],
 				zhiyunCardStatus: []
-			},
-			rules: {
-				messageTitle: [
-					{
-						required: true,
-						message: '请输入活动名称',
-						trigger: 'blur'
-					},
-					{
-						min: 1,
-						max: 50,
-						message: '长度在 1 到 5 个字符',
-						trigger: 'blur'
-					}
-				],
-				pushMethod: [
-					{
-						required: true,
-						message: '请选择推送方式',
-						trigger: 'change'
-					}
-				],
-				templateId: [
-					{
-						required: true,
-						message: '请选择短信模板',
-						trigger: 'change'
-					}
-				],
-				userType: [
-					{
-						required: true,
-						message: '请选择',
-						trigger: 'change'
-					}
-				],
-				messageContent: [
-					{
-						required: true,
-						message: '请填写消息内容',
-						trigger: 'blur'
-					}
-				],
-				userArgs: [
-					{
-						required: true,
-						message: '请选择用户',
-						trigger: 'blur'
-					}
-				],
-				date: [
-					{
-						required: true,
-						message: '请选择推送日期',
-						trigger: 'blur'
-					}
-				],
-				time: [
-					{
-						required: true,
-						message: '请选择推送时间',
-						trigger: 'blur'
-					}
-				]
 			},
 			loading: false,
 			useCcertificationCheckbox: [],
@@ -299,77 +306,45 @@ export default {
 			this.zhiyunCardStatusCheckAll = checkedCount === this.zhiyunCardStatusCheckbox.length;
 			this.zhiyunCardStatusIndeterminate = checkedCount > 0 && checkedCount < this.zhiyunCardStatusCheckbox.length;
 		},
-		importXlsx(e) {
-			let _this = this;
-			console.log(e);
-			let files = e.target.files;
-			for (let i = 0; i < files.length; i++) {
-				let reader = new FileReader();
-				let name = files[i].name;
-				reader.onload = function (e) {
-					let data = e.target.result;
-					let workbook = XLSX.read(data, {
-						type: typeof FileReader !== 'undefined' && (FileReader.prototype || {}).readAsBinaryString ? 'binary' : 'array'
-					});
-					let workbookSheets = workbook.Sheets;
-					for (let sheet in workbookSheets) {
-						if (workbookSheets.hasOwnProperty(sheet)) {
-							//	fromTo = workbookSheets[sheet]['!ref'];
-							let xlsxData = XLSX.utils.sheet_to_json(workbookSheets[sheet]);
-							// 结果数组
-							console.log(sheet);
-							console.log(xlsxData);
-							let ids = [];
-							xlsxData.map((value) => {
-								let phone = String(value.手机号);
-								console.log(phone);
-								phone = phone.replace(/\s+/g, '');
-								ids.push(phone);
-							});
-							_this.getUserIds(ids);
-						}
-					}
-				};
-				reader.readAsBinaryString(files[i]);
-			}
-		},
-		//
-		async getMessagesTemplate() {
+		//编辑
+		async getEditInfo(id) {
 			try {
-				this.messageTemplateList = await this.$service.app.messageTemplate.list();
+				let res = await this.$service.app.coupon.info({
+					id
+				});
+				res.validityPeriodTime = [new Date(res.validityPeriodStartTime.replace(/-/g, '/')), new Date(res.validityPeriodEndTime.replace(/-/g, '/'))];
+				if (res.userType == 1) {
+					let userArgs = res.userArgs.split(',');
+					res.userArgs = userArgs.map((value, index, array) => {
+						return Number(array[index]);
+					});
+					await this.getUserList();
+				}
+				if (res.userType == 2) {
+					this.userArgs = JSON.parse(res.userArgs);
+					res.userArgs = [];
+				}
+				this.ruleForm = res;
+				console.log(this.ruleForm);
 			} catch (error) {
 				this.$message.error(error);
 			}
 		},
 		//
-		templateIdChange(e) {
-			this.messageTemplateList.map((value, index, array) => {
-				if (value.templateId == e) {
-					this.ruleForm.messageTitle = value.messageTitle;
-					this.ruleForm.messageContent = value.templateContent;
-				}
-			});
-		},
-		//
-		async pushMethodChange(e) {
-			if (e == 1) {
-				this.messageTitleLength = 50;
-				this.messageContentLength = 500;
-				this.ruleForm.messageTitle = '';
-				this.ruleForm.messageContent = '';
-			} else if (e == 2) {
-				await this.getMessagesTemplate();
-				this.messageTitleLength = 15;
-				this.messageContentLength = 35;
-				this.ruleForm.messageTitle = '阿里云短信模板标题';
-				this.ruleForm.messageContent = '阿里云短信模板内容';
+		async couponTypeChange(e) {
+			//商品立减券
+			if (e == 3) {
+				let res = await this.$service.app.commodity.common.list();
+				this.commodityList = res;
 			}
 		},
 		//
 		async getUserIds(ids) {
 			if (ids.length < 1) return;
 			try {
-				let res = await this.$service.app.message.importUser({ ids });
+				let res = await this.$service.app.message.importUser({
+					ids
+				});
 				this.ruleForm.userArgs = res.map((value) => {
 					return Number(value.id);
 				});
@@ -377,6 +352,16 @@ export default {
 			} catch (error) {
 				this.$message.error(error);
 			}
+		},
+		open() {
+			this.$alert('确定要发放本优惠券吗', '提示', {
+				confirmButtonText: '确定',
+				callback: (action) => {
+					if (action == 'confirm') {
+						this.submitForm('ruleForm');
+					}
+				}
+			});
 		},
 		//
 		submitForm(formName) {
@@ -401,15 +386,14 @@ export default {
 							params.userArgs = JSON.stringify(this.userArgs);
 						}
 						if (params.userType == 1) {
-							params.userArgs = JSON.stringify(params.userArgs);
+							params.userArgs = params.userArgs.toString();
 						}
 						if (params.userType == 0) {
 							delete params.userArgs;
 						}
-						params.pushTime = params.date + ' ' + params.time;
-						delete params.date;
-						delete params.time;
-						await this.$service.app.message.add(params);
+						params.validityPeriodStartTime = params.validityPeriodTime[0];
+						params.validityPeriodEndTime = params.validityPeriodTime[1];
+						await this.$service.app.coupon.add(params);
 						this.$emit('update:addDialogShow', false);
 						this.$message({
 							message: '创建成功',
@@ -426,6 +410,27 @@ export default {
 		},
 		resetForm(formName) {
 			this.$refs[formName].resetFields();
+		},
+		async getUserList() {
+			try {
+				this.ruleForm.userArgs = [];
+				this.loading = true;
+				let res = await this.$service.app.message.transferUser();
+				this.userList = res.map((value, index, array) => {
+					return {
+						key: Number(value.id),
+						label: value.phoneNum,
+						disabled: false,
+						nickName: value.nickName,
+						userName: value.userName
+					};
+				});
+				this.loading = false;
+				console.log(this.userList);
+			} catch (error) {
+				this.loading = false;
+				this.$message.error(error);
+			}
 		},
 		//用户选择下拉
 		async userTypeChange(e) {
@@ -473,6 +478,11 @@ export default {
 ::v-deep .el-transfer-panel {
 	width: 300px;
 }
+
+::v-deep.el-select-dropdown__item {
+	height: auto !important;
+}
+
 .import-btn {
 	position: absolute;
 	left: 0;
