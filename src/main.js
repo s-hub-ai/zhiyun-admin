@@ -1,13 +1,15 @@
 import Vue from "vue";
 import App from "./App.vue";
 import ElementUI from "element-ui";
-import { bootstrap } from "@/cool/core";
+import {
+	bootstrap
+} from "@/cool/core";
 
 import router from "@/router";
 import routes from "@/router/routes/views";
 import store from "@/store";
 
-import "@/mock";
+//import "@/mock";
 import "@/icons/index";
 import "@/filter/index";
 import "@/assets/css/element-variables.scss";
@@ -30,8 +32,14 @@ const conf = {
 			},
 			fn: {
 				permission(that) {
-					const { permission } = that.$store.state.menu;
-					const { add, delete: del, update } = that.service.permission || {};
+					const {
+						permission
+					} = that.$store.state.menu;
+					const {
+						add,
+						delete: del,
+						update
+					} = that.service.permission || {};
 
 					return {
 						add: permission.includes(add),
@@ -44,7 +52,10 @@ const conf = {
 	}
 };
 
-bootstrap(conf).then(({ router, store }) => {
+bootstrap(conf).then(({
+	router,
+	store
+}) => {
 	store.dispatch("appLoad");
 
 	new Vue({

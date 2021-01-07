@@ -144,13 +144,18 @@ export const orderStatusDict = [{
     type: "danger"
   },
   {
-    text: "订单关闭/已退款",
-    value: 6,
-    type: "danger"
+    text: "已退款",
+    value: 10,
+    type: "drawback"
   }, {
     text: "待提货",
     value: 7,
     type: "danger"
+  },
+  {
+    text: "订单关闭",
+    value: 6,
+    type: "close"
   }
 ];
 //卡券类型

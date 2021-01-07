@@ -64,6 +64,7 @@
 				<template #column-op="{ scope }">
 					<template v-if="scope.row.orderType != 3">
 						<el-button type="text" v-if="scope.row.orderStatus == 1" @click="(deliveryForm.orderId = scope.row.id), (deliveDialogShow = true)">发货</el-button>
+						<el-button type="text" v-if="scope.row.orderStatus == 2" @click="(deliveryForm.orderId = scope.row.id), (deliveDialogShow = true)">修改快递</el-button>
 						<el-button v-if="scope.row.orderStatus == 7" type="text" @click="orderComplete(scope.row.id)">出库 </el-button>
 						<el-button type="text" v-if="scope.row.orderStatus == 2" @click="(deliveryForm.orderId = scope.row.id), getLogistics()">物流</el-button>
 					</template>
@@ -564,7 +565,7 @@ export default {
 				this.dialogLogistics = true;
 				this.$message({
 					type: 'success',
-					message: '发货！'
+					message: '发货成功'
 				});
 			} catch (error) {
 				this.$message.error(error);
