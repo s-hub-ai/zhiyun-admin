@@ -33,7 +33,7 @@
 				<el-input-number v-model="ruleForm.denominationalValue" controls-position="right" :min="0.1"></el-input-number>
 			</el-form-item>
 			<el-form-item v-if="ruleForm.couponType == 2" label="折扣率" prop="costRatio">
-				<el-input-number v-model="ruleForm.costRatio" controls-position="right" :min="0.1" :precision="1" :step="0.1"></el-input-number>
+				<el-input-number v-model="ruleForm.costRatio" controls-position="right" :min="0.1" :max="10" :precision="1" :step="0.1"></el-input-number>
 				<span style="padding-left: 10px">折</span>
 			</el-form-item>
 			<el-form-item v-if="ruleForm.couponType == 3" label="选择商品" prop="commodityId">

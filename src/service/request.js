@@ -3,10 +3,12 @@ import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import store from "@/store/index";
 import router from "@/router/index";
-import { href } from "@/cool/utils/index";
+import {
+	href
+} from "@/cool/utils/index";
 
 axios.defaults.timeout = 600000;
-axios.defaults.withCredentials = true;
+axios.defaults.withCredentials = false;
 
 axios.defaults.validateStatus = function (status) {
 	return status >= 200 && status <= 500;
@@ -41,7 +43,10 @@ axios.interceptors.request.use(
 	}
 );
 
-const onerror = async ({ url, status }) => {
+const onerror = async ({
+	url,
+	status
+}) => {
 	if (status == 401) {
 		if (url.includes("/logout")) {
 			store.dispatch("userRemove");
@@ -68,14 +73,22 @@ axios.interceptors.response.use(
 	(res) => {
 		NProgress.done();
 
-		const { config, status } = res;
+		const {
+			config,
+			status
+		} = res;
 
 		if (res.status == 401) {
-			return onerror({ url: config.url, status });
+			return onerror({
+				url: config.url,
+				status
+			});
 		}
 
 		if (res.status == 403) {
-			return onerror({ status });
+			return onerror({
+				status
+			});
 		}
 
 		if (res.status == 404) {
@@ -83,14 +96,20 @@ axios.interceptors.response.use(
 		}
 
 		if (res.status == 500) {
-			return onerror({ status });
+			return onerror({
+				status
+			});
 		}
 
 		if (!res.data) {
 			return res;
 		}
 
-		const { code, data, message } = res.data;
+		const {
+			code,
+			data,
+			message
+		} = res.data;
 
 		switch (code) {
 			case 1000:

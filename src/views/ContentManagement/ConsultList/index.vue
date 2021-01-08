@@ -40,7 +40,7 @@
 
 		<!-- 新增编辑弹出框 -->
 		<el-dialog :title="addDialogTitle" :visible.sync="addDialogShow" @close="addDialogClose" width="800px">
-			<add-dialog ref="editDialog" :addDialogShow.sync="addDialogShow"></add-dialog>
+			<add-dialog v-if="addDialogShow" ref="editDialog" :addDialogShow.sync="addDialogShow"></add-dialog>
 		</el-dialog>
 	</cl-crud>
 </template>
@@ -92,6 +92,7 @@ export default {
 		async updateTableRow(params) {
 			try {
 				await this.$service.app.consult.update(params);
+				this.$refs['crud'].refresh();
 			} catch (error) {
 				this.$message.error(error);
 			}

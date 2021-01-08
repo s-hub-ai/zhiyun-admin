@@ -35,6 +35,20 @@ export const zhiyunCardStatusDict = [{
   value: 1,
   text: '支云卡用户'
 }]
+//积分状态
+export const pointStatusDict = [{
+  value: 0,
+  text: '可用'
+}, {
+  value: 1,
+  text: '冻结'
+}, {
+  value: 2,
+  text: '退款扣除'
+}, {
+  value: 3,
+  text: '退款恢复'
+}]
 //积分使用事件类型
 export const pointsUseDetailTypeDict = [{
   value: 0,

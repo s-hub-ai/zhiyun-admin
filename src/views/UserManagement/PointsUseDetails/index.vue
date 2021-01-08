@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { pointsUseDetailTypeDict } from '@/dict/index.js';
+import { pointsUseDetailTypeDict, pointStatusDict } from '@/dict/index.js';
 export default {
 	data() {
 		return {
@@ -73,6 +73,24 @@ export default {
 					align: 'center',
 					formatter(row) {
 						return ['使用', '获取'][row.scoreType];
+					}
+				},
+				{
+					label: '积分状态',
+					prop: 'scoreStatus',
+					// filters: [
+					// 	{ value: 1, text: '获取' },
+					// 	{ value: 2, text: '使用' }
+					// ],
+					align: 'center',
+					formatter(row) {
+						let res;
+						pointStatusDict.map((value) => {
+							if (row.scoreStatus == value.value) {
+								res = value.text;
+							}
+						});
+						return res;
 					}
 				},
 				{
