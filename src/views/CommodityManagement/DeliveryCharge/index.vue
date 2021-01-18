@@ -28,11 +28,14 @@
 			<div class="w-32 text-right text-gray-700">商城购物：</div>
 			<div class="pl-5 flex items-center"><el-input v-model="globalConfig.scoreRewardRatio" class="w-10 mr-2"></el-input> %</div>
 		</div>
-
+		<div class="flex items-center my-3">
+			<div class="w-32 text-right text-gray-700">套票购买：</div>
+			<div class="pl-5 flex items-center"><el-input v-model="globalConfig.packageTicketscoreRewardRatio" class="w-10 mr-2"></el-input> %</div>
+		</div>
 		<el-row type="flex" align="middle">
 			<h4>运费设置</h4>
-			<el-button small @click="dialog = true">新增</el-button>
 			<cl-refresh-btn></cl-refresh-btn>
+			<el-button size="mini" @click="dialog = true">新增</el-button>
 		</el-row>
 
 		<el-form>
@@ -128,7 +131,8 @@ export default {
 				scoreCostRatio: '',
 				scoreRewardRatio: '',
 				scoreDeductionRatio: '',
-				deliveryMethod: ''
+				deliveryMethod: '',
+				packageTicketscoreRewardRatio: ''
 			},
 			deliveryMethod: [],
 			editing: '',

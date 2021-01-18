@@ -17,7 +17,20 @@ export const ticketPackageUserDict = [{
 }, {
   value: 5,
   text: '天使套票'
+}, {
+  value: 6,
+  text: '超级VIP'
 }]
+//票务类型
+export const ticketTypeDict = [{
+    value: 4,
+    text: '套票'
+  }
+  /* , {
+    value: 1,
+    text: '球票'
+  } */
+]
 //用户实名状态
 export const useCcertificationDict = [{
   value: 0,
@@ -126,6 +139,9 @@ export const orderTypeDict = [{
 }, {
   value: 3,
   text: '活动订单'
+}, {
+  value: 4,
+  text: '套票订单'
 }]
 //订单状态
 export const orderStatusDict = [{
