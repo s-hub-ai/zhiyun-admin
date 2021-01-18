@@ -3,26 +3,12 @@
 		<el-row type="flex">
 			<cl-refresh-btn></cl-refresh-btn>
 
-			<el-button
-				v-permission="$service.system.log.permission.clear"
-				size="mini"
-				type="danger"
-				@click="clear"
-			>
-				清空
-			</el-button>
+			<el-button v-permission="$service.system.log.permission.clear" size="mini" type="danger" @click="clear"> 清空 </el-button>
 
 			<div class="keep-day">
 				<span>日志保存天数</span>
 
-				<el-input-number
-					controls-position="right"
-					size="mini"
-					:max="10000"
-					:min="1"
-					v-model="day"
-					@blur="saveDay"
-				></el-input-number>
+				<el-input-number controls-position="right" size="mini" :max="10000" :min="1" v-model="day" @blur="saveDay"></el-input-number>
 			</div>
 
 			<cl-flex1 />
@@ -40,7 +26,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters } from 'vuex';
 
 export default {
 	data() {
@@ -49,61 +35,68 @@ export default {
 			table: {
 				props: {
 					props: {
-						"default-sort": {
-							prop: "createTime",
-							order: "descending"
+						'default-sort': {
+							prop: 'createTime',
+							order: 'descending'
 						}
 					},
 					columns: [
 						{
-							type: "index",
-							label: "#",
-							align: "center",
+							type: 'index',
+							label: '#',
+							align: 'center',
 							width: 60
 						},
 						{
-							prop: "userId",
-							label: "用户ID",
-							align: "center"
+							prop: 'userId',
+							label: '用户ID',
+							align: 'center'
 						},
 						{
-							prop: "name",
-							label: "昵称",
-							align: "center",
-							minWidth: "150"
+							prop: 'name',
+							label: '昵称',
+							align: 'center',
+							minWidth: '150'
 						},
 						{
-							prop: "action",
-							label: "请求地址",
-							align: "center",
-							minWidth: "200",
-							"show-overflow-tooltip": true
+							prop: 'urlName',
+							label: '操作名称',
+							minWidth: '150',
+							align: 'center'
 						},
 						{
-							prop: "params",
-							label: "参数",
-							align: "center",
-							minWidth: "200",
-							"show-overflow-tooltip": true
-						},
-						{
-							prop: "ip",
-							label: "ip",
-							minWidth: "180",
-							align: "center"
-						},
-						{
-							prop: "ipAddr",
-							label: "ip地址",
-							minWidth: "150",
-							align: "center"
-						},
-						{
-							prop: "createTime",
-							label: "创建时间",
-							minWidth: "150",
-							align: "center",
+							prop: 'createTime',
+							label: '请求时间',
+							minWidth: '150',
+							align: 'center',
 							sortable: true
+						},
+						{
+							prop: 'action',
+							label: '请求地址',
+							align: 'center',
+							minWidth: '200',
+							'show-overflow-tooltip': true
+						},
+
+						{
+							prop: 'params',
+							label: '参数',
+							align: 'center',
+							minWidth: '200',
+							'show-overflow-tooltip': true
+						},
+						{
+							prop: 'ip',
+							label: 'ip',
+							minWidth: '180',
+							align: 'center'
+						},
+						{
+							prop: 'ipAddr',
+							label: 'ip地址',
+							minWidth: '150',
+							align: 'center'
 						}
 					]
 				}
@@ -112,7 +105,7 @@ export default {
 	},
 
 	computed: {
-		...mapGetters(["permission"])
+		...mapGetters(['permission'])
 	},
 
 	created() {
@@ -129,20 +122,20 @@ export default {
 
 		saveDay() {
 			this.$service.system.log.setKeep(this.day).then(() => {
-				this.$message.success("保存成功");
+				this.$message.success('保存成功');
 			});
 		},
 
 		clear() {
-			this.$confirm("是否要清空日志", "提示", {
-				type: "warning"
+			this.$confirm('是否要清空日志', '提示', {
+				type: 'warning'
 			})
 				.then(() => {
 					this.$service.system.log
 						.clear()
 						.then(() => {
-							this.$message.success("清空成功");
-							this.$refs["crud"].refresh();
+							this.$message.success('清空成功');
+							this.$refs['crud'].refresh();
 						})
 						.catch((err) => {
 							this.$message.error(err);

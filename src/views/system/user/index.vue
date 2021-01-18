@@ -58,7 +58,7 @@
 				</div>
 
 				<div class="container">
-					<cl-crud ref="crud" @load="onLoad" @refresh="onRefresh">
+					<cl-crud ref="crud" @load="onLoad" :on-refresh="onRefresh">
 						<el-row type="flex">
 							<cl-refresh-btn></cl-refresh-btn>
 							<cl-add-btn></cl-add-btn>
@@ -69,7 +69,7 @@
 						</el-row>
 
 						<el-row>
-							<cl-table ref="table" v-bind="table.props" v-on="table.on">
+							<cl-table ref="table" :props="table.props" v-on="table.on" :columns="table.columns">
 								<!-- 头像 -->
 								<template #column-headImg="{ scope }">
 									<cl-avatar shape="square" size="medium" :src="scope.row.headImg | default_avatar" :style="{ margin: 'auto' }"> </cl-avatar>
@@ -132,93 +132,98 @@ export default {
 				ids: []
 			},
 			table: {
-				props: {
-					props: {
-						'default-sort': {
-							prop: 'createTime',
-							order: 'descending'
-						}
+				columns: [
+					{
+						type: 'selection',
+						align: 'center',
+						width: '60',
+						fixed: 'left'
 					},
-					columns: [
-						{
-							type: 'selection',
-							align: 'center',
-							width: '60',
-							fixed: 'left'
-						},
-						{
-							prop: 'headImg',
-							label: '头像',
-							align: 'center',
-							slot: true
-						},
-						{
-							prop: 'name',
-							label: '姓名',
-							align: 'center',
-							'min-width': 150
-						},
-						{
-							prop: 'username',
-							label: '用户名',
-							align: 'center',
-							'min-width': 150
-						},
-						{
-							prop: 'nickName',
-							label: '昵称',
-							align: 'center',
-							'min-width': 150
-						},
-						{
-							prop: 'departmentName',
-							label: '部门名称',
-							align: 'center',
-							emptyText: '无',
-							'min-width': 150
-						},
-						{
-							prop: 'roleName',
-							label: '角色',
-							'header-align': 'center',
-							emptyText: '无',
-							'min-width': 200
-						},
-						{
-							prop: 'phone',
-							label: '手机号码',
-							align: 'center',
-							'min-width': 150,
-							emptyText: '无'
-						},
-						{
-							prop: 'remark',
-							label: '备注',
-							align: 'center',
-							'min-width': 150,
-							emptyText: '无'
-						},
-						{
-							prop: 'status',
-							label: '状态',
-							align: 'center',
-							'min-width': 150
-						},
-						{
-							prop: 'createTime',
-							label: '创建时间',
-							align: 'center',
-							sortable: true,
-							width: 150
-						},
-						{
-							align: 'center',
-							type: 'op',
-							layout: ['slot-move-btn', 'edit', 'delete'],
-							fixed: 'right',
-							width: '160px'
-						}
-					]
+					{
+						prop: 'headImg',
+						label: '头像',
+						align: 'center',
+						slot: true
+					},
+					{
+						prop: 'name',
+						label: '姓名',
+						align: 'center',
+						'min-width': 150
+					},
+					{
+						prop: 'username',
+						label: '用户名',
+						align: 'center',
+						'min-width': 150
+					},
+					{
+						prop: 'nickName',
+						label: '昵称',
+						align: 'center',
+						'min-width': 150
+					},
+					{
+						prop: 'departmentName',
+						label: '部门名称',
+						align: 'center',
+						emptyText: '无',
+						'min-width': 150
+					},
+					{
+						prop: 'roleName',
+						label: '角色',
+						'header-align': 'center',
+						emptyText: '无',
+						'min-width': 200
+					},
+					{
+						prop: 'fanClubName',
+						label: '管辖球迷会',
+						'header-align': 'center',
+						emptyText: '无',
+						'min-width': 200
+					},
+					{
+						prop: 'phone',
+						label: '手机号码',
+						align: 'center',
+						'min-width': 150,
+						emptyText: '无'
+					},
+					{
+						prop: 'remark',
+						label: '备注',
+						align: 'center',
+						'min-width': 150,
+						emptyText: '无'
+					},
+					{
+						prop: 'status',
+						label: '状态',
+						align: 'center',
+						'min-width': 150
+					},
+					{
+						prop: 'createTime',
+						label: '创建时间',
+						align: 'center',
+						sortable: true,
+						width: 150
+					},
+					{
+						align: 'center',
+						type: 'op',
+						layout: ['slot-move-btn', 'edit', 'delete'],
+						fixed: 'right',
+						width: '160px'
+					}
+				],
+				props: {
+					'default-sort': {
+						prop: 'createTime',
+						order: 'descending'
+					}
 				},
 				on: {
 					'selection-change': (selection) => {
@@ -328,19 +333,9 @@ export default {
 							prop: 'fanClubId',
 							label: '管辖球迷会',
 							span: 24,
-							value: -1,
+							value: [],
 							component: {
-								name: 'el-select',
-								options: [
-									{
-										label: 'cron',
-										value: 0
-									},
-									{
-										label: '时间间隔',
-										value: 1
-									}
-								]
+								name: 'cl-fanClub-select'
 							},
 							rules: {
 								required: true,
@@ -433,12 +428,12 @@ export default {
 
 		async onRefresh(params, { next, render }) {
 			let { list } = await next(params);
-
+			console.log(list);
 			list.map((e) => {
 				if (e.roleName) {
 					this.$set(e, 'roleNameList', e.roleName.split(','));
 				}
-
+				console.log(e);
 				e.status = Boolean(e.status);
 			});
 
@@ -447,7 +442,7 @@ export default {
 
 		onUpsertSubmit(isEdit, data, { next }) {
 			let departmentId = this.selects.dept.id;
-
+			console.log(data);
 			if (!departmentId) {
 				departmentId = this.dept.list[0].id;
 			}

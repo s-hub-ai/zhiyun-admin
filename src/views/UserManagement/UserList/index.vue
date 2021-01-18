@@ -1,6 +1,6 @@
 <template>
 	<cl-crud @load="onLoad" ref="crud">
-		<el-row type="flex" align="middle">
+		<el-row v-permission="$service.app.user.info.permission.page" type="flex" align="middle">
 			<el-form class="table-flters-form" label-position="right" label-width="85px" :inline="true" :model="tableFlters" size="mini">
 				<el-form-item
 					label="套票类型
@@ -54,12 +54,9 @@
 					<cl-search-key v-model="search" placeholder="请输入用户姓名、手机号、套票号"></cl-search-key>
 				</el-form-item>
 				<el-form-item>
-					<el-button size="mini" type="primary" @click="exportExcelAll">导出</el-button>
+					<el-button v-permission="$service.app.user.info.permission.export" size="mini" type="primary" @click="exportExcelAll">导出</el-button>
 				</el-form-item>
 			</el-form>
-
-			<!-- 			<cl-flex1></cl-flex1> -->
-			<!-- 		<el-button size="mini" type="primary">导出</el-button> -->
 		</el-row>
 
 		<el-row>
@@ -295,14 +292,13 @@ export default {
 			//var wb = XLSX.utils.table_to_book(document.querySelector("#out-table"));
 			let params = {
 				...this.tableFlters,
-				size: 9999,
 				keyWord: this.search
 			};
 			params.ticketPackageUser = params.ticketPackageUser.toString();
 			console.log(params);
-			let res = await this.$service.app.user.info.page(params);
+			let res = await this.$service.app.user.info.export(params);
 			let data = [];
-			res.list.forEach((e) => {
+			res.forEach((e) => {
 				let ticketPackageUser = _.find(ticketPackageUserDict, function (o) {
 					if (o.value == e.ticketPackageUser) {
 						return o;

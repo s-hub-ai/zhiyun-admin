@@ -2,7 +2,9 @@
 	<div>
 		<!-- 基础信息 -->
 		<div style="display: flex; justify-content: space-between; align-items: center">
-			<el-button v-if="notEdit" @click="notEdit = false" size="medium" type="primary" :disabled="false" style="margin-left: auto">编辑</el-button>
+			<el-button v-permission="$service.app.user.info.permission.update" v-if="notEdit" @click="notEdit = false" size="medium" type="primary" :disabled="false" style="margin-left: auto"
+				>编辑</el-button
+			>
 			<el-button-group v-else style="margin-left: auto">
 				<el-button size="medium" @click="notEdit = true">取消</el-button>
 				<el-button size="medium" @click="submitForm('ruleForm')" type="primary">保存</el-button>
