@@ -34,7 +34,7 @@
 			<el-divider></el-divider>
 			<div style="max-width: 800px">
 				<el-form-item class="form-item" prop="ticketPackageNum" label="套票号:">
-					<el-input v-model="ruleForm.ticketPackageNum" placeholder="请输入套票号"></el-input>
+					<el-input v-model="ruleForm.ticketPackageNum" placeholder="请输入套票号" @change="checkTicketNum()"></el-input>
 				</el-form-item>
 				<el-form-item class="form-item" prop="ticketPackageUser" label="套票类型:">
 					<el-select v-model="ruleForm.ticketPackageUser" placeholder="请选择套票类型">
@@ -223,6 +223,13 @@ export default {
 		};
 	},
 	methods: {
+		async checkTicketNum() {
+			try {
+				await this.$service.app.commodity.ticket.ticketNumCheck({ ticketPackageNum: this.ruleForm.ticketPackageNum });
+			} catch (error) {
+				this.$message.error(error);
+			}
+		},
 		//会员等级格式
 		vipLevelFormatter(s) {
 			console.log(s);
@@ -274,6 +281,7 @@ export default {
 			this.$refs[formName].validate(async (valid) => {
 				if (valid) {
 					try {
+						await this.$service.app.commodity.ticket.ticketNumCheck({ ticketPackageNum: this.ruleForm.ticketPackageNum });
 						let params = {
 							...this.ruleForm
 						};

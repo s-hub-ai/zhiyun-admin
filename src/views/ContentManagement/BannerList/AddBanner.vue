@@ -9,7 +9,8 @@
 					<el-option
 						v-for="item in [
 							{ value: 1, text: '首页' },
-							{ value: 2, text: '商城' }
+							{ value: 2, text: '商城' },
+							{ value: 3, text: '球票' }
 						]"
 						:key="item.value"
 						:label="item.text"

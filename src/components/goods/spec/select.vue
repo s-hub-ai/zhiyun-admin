@@ -32,7 +32,7 @@
 			<!-- 规格设置 -->
 			<div class="goods-spec-select__upsert">
 				<!-- 规格编辑 -->
-				<goods-spec-edit :create-btn="true" :value="form.spec" @create="onCreated"></goods-spec-edit>
+				<goods-spec-edit v-if="specShow" :create-btn="true" :value="form.spec" @create="onCreated"></goods-spec-edit>
 				<!-- SKU编辑 -->
 				<goods-sku-edit ref="goods-sku-edit" multiple :spec="form.spec" :value="form.sku"></goods-sku-edit>
 			</div>
@@ -62,6 +62,11 @@ export default {
 		type: {
 			type: Number,
 			default: 1
+		},
+		//显示编辑规格
+		specShow: {
+			type: Boolean,
+			default: true
 		},
 		// 规格数据
 		data: {
@@ -107,7 +112,7 @@ export default {
 	},
 
 	created() {
-		this.refreshTmpl();
+		//this.refreshTmpl();
 	},
 
 	methods: {

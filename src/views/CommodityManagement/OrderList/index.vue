@@ -172,6 +172,9 @@
 					<el-form-item class="form-item" label="下单数量:">
 						<span>{{ item.commodityVolume }}</span>
 					</el-form-item>
+					<el-form-item v-if="detail.orderType == 4" class="form-item" label="球迷会名称:">
+						<span>{{ detail.fanClubName }}</span>
+					</el-form-item>
 				</div>
 				<h3 style="margin-top: 45px">支付信息</h3>
 				<div>
