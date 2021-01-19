@@ -81,6 +81,9 @@ export default {
 						if (row.bannerShowLocation == 2) {
 							return '商城';
 						}
+						if (row.bannerShowLocation == 3) {
+							return '球票';
+						}
 					}
 				},
 				{
