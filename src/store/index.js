@@ -21,10 +21,12 @@ const store = new Vuex.Store({
 			actions: {
 				appLoad() {
 					if (store.state.user.token) {
-						store.dispatch("userInfo");
 						store.dispatch("permMenu");
+						store.dispatch("userInfo");
 						store.dispatch("getFanClubRegion")
 						store.dispatch("getFanClub")
+
+
 					}
 				}
 			}
