@@ -32,12 +32,17 @@
 			<div class="w-32 text-right text-gray-700">套票购买：</div>
 			<div class="pl-5 flex items-center"><el-input v-model="globalConfig.packageTicketscoreRewardRatio" class="w-10 mr-2"></el-input> %</div>
 		</div>
+		<div class="flex items-center my-3">
+			<div class="w-32 text-right text-gray-700">支云卡用户套票购买额外奖励:</div>
+			<div class="pl-5 flex items-center"><el-input v-model="globalConfig.packageTicketscoreRewardRatioZy" class="w-10 mr-2"></el-input> %</div>
+		</div>
+
 		<el-row
 			v-permission="{
 				or: [$service.app.commodity.deliveryCharge.permission.add, $service.app.commodity.deliveryCharge.permission.update, $service.app.commodity.deliveryCharge.permission.delete]
 			}"
 		>
-			<div style="display: flex; align-items: center；margin-bottom: 10px;">
+			<div style="display: flex; align-items: center；margin-bottom: 10px;margin-top: 20px;">
 				<h4>运费设置</h4>
 				<cl-refresh-btn style="margin-left: 10px"></cl-refresh-btn>
 				<el-button size="mini" @click="dialog = true">新增</el-button>
@@ -137,7 +142,8 @@ export default {
 				scoreRewardRatio: '',
 				scoreDeductionRatio: '',
 				deliveryMethod: '',
-				packageTicketscoreRewardRatio: ''
+				packageTicketscoreRewardRatio: '',
+				packageTicketscoreRewardRatioZy: ''
 			},
 			deliveryMethod: [],
 			editing: '',

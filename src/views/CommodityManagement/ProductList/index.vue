@@ -115,9 +115,9 @@
 		</el-row>
 
 		<!-- 编辑商品dialog -->
-		<cl-dialog :visible.sync="editDialog" title="编辑商品" :props="{ width: '900px' }">
-			<product-edit :item="editing" @update="refresh" ref="editDialog"></product-edit>
-		</cl-dialog>
+		<el-dialog :visible.sync="editDialog" title="编辑商品" :props="{ width: '900px' }" @close="addDialogClose">
+			<product-edit v-if="editDialog" :item="editing" @update="refresh" :addDialogShow.sync="editDialog" ref="editDialog"></product-edit>
+		</el-dialog>
 	</cl-crud>
 </template>
 
@@ -366,6 +366,10 @@ export default {
 				prop: 'createTime',
 				order: 'desc'
 			});
+		},
+		addDialogClose() {
+			this.$refs.editDialog.resetForm('ruleForm');
+			this.$refs['crud'].refresh();
 		}
 	}
 };
