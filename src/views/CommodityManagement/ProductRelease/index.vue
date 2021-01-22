@@ -4,10 +4,10 @@
 		<el-divider></el-divider> -->
 		<el-tabs v-model="activeName" type="card">
 			<el-tab-pane label="商城商品" name="1">
-				<mall-form v-if="activeName == 1"></mall-form>
+				<mall-form v-permission="$service.app.commodity.shopping.permission.add" v-if="activeName == 1"></mall-form>
 			</el-tab-pane>
 			<el-tab-pane label="积分商品" name="2">
-				<integral-form v-if="activeName == 2"></integral-form>
+				<integral-form v-permission="$service.app.commodity.score.permission.add" v-if="activeName == 2"></integral-form>
 			</el-tab-pane>
 		</el-tabs>
 	</el-card>

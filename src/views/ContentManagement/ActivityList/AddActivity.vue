@@ -220,6 +220,7 @@ export default {
 			vipLevelDict,
 			ticketPackageUserDict,
 			zhiyunCardStatusDict,
+
 			ruleForm: {
 				activityCover: '',
 				activityBanner: '',
@@ -537,8 +538,12 @@ export default {
 
 						delete params.activityTime;
 						delete params.applyTime;
+						if (params.id) {
+							await this.$service.app.activity.update(params);
+						} else {
+							await this.$service.app.activity.add(params);
+						}
 
-						await this.$service.app.activity.add(params);
 						this.$emit('update:addDialogShow', false);
 						this.$message({
 							message: '创建成功',

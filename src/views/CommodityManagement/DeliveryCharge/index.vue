@@ -32,22 +32,25 @@
 			<div class="w-32 text-right text-gray-700">套票购买：</div>
 			<div class="pl-5 flex items-center"><el-input v-model="globalConfig.packageTicketscoreRewardRatio" class="w-10 mr-2"></el-input> %</div>
 		</div>
-		<el-row type="flex" align="middle">
-			<h4>运费设置</h4>
-			<cl-refresh-btn></cl-refresh-btn>
-			<el-button size="mini" @click="dialog = true">新增</el-button>
-		</el-row>
+		<el-row
+			v-permission="{
+				or: [$service.app.commodity.deliveryCharge.permission.add, $service.app.commodity.deliveryCharge.permission.update, $service.app.commodity.deliveryCharge.permission.delete]
+			}"
+		>
+			<div style="display: flex; align-items: center；margin-bottom: 10px;">
+				<h4>运费设置</h4>
+				<cl-refresh-btn style="margin-left: 10px"></cl-refresh-btn>
+				<el-button size="mini" @click="dialog = true">新增</el-button>
+			</div>
 
-		<el-form>
-			<el-form-item label="配送方式：">
-				<el-checkbox-group v-model="deliveryMethod">
-					<el-checkbox label="0" name="type">普通快递</el-checkbox>
-					<el-checkbox label="1" name="type">到店自提</el-checkbox>
-				</el-checkbox-group>
-			</el-form-item>
-		</el-form>
-
-		<el-row>
+			<el-form style="width: 100%">
+				<el-form-item label="配送方式：" style="margin-bottom: 0">
+					<el-checkbox-group v-model="deliveryMethod">
+						<el-checkbox label="0" name="type">普通快递</el-checkbox>
+						<el-checkbox label="1" name="type">到店自提</el-checkbox>
+					</el-checkbox-group>
+				</el-form-item>
+			</el-form>
 			<cl-table
 				:props="{
 					'span-method': objectSpanMethod
@@ -85,8 +88,10 @@
 			</cl-table>
 		</el-row>
 
+		<el-row> </el-row>
+
 		<el-row type="flex">
-			<el-button @click="updateGlobalConfig">确定</el-button>
+			<el-button v-permission="$service.app.commodity.globalConfig.info" @click="updateGlobalConfig">确定</el-button>
 			<cl-flex1></cl-flex1>
 		</el-row>
 
@@ -238,7 +243,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-::v-deep .cl-crud {
-	overflow-y: auto;
+::v-deep.cl-crud {
+	overflow-y: auto !important;
 }
 </style>

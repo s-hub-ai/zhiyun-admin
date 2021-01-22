@@ -1,45 +1,48 @@
 <template>
-    <cl-dialog :visible.sync="editDialog" title="编辑商品" :props="{width:'75%'}">
-			<el-form v-if="!!item" :model="ruleForm" :rules="rules" ref="ruleForm"   >
-				<el-form-item label="商品分类"  v-if="item.goodsType!=2">
-					<el-select v-model="ruleForm.commodityTypeId" placeholder="请选择">
-						<el-option v-for="item in commodityTypeList" :key="item.id" :label="item.commodityTypeName" :value="item.id"></el-option>
-					</el-select>
-				</el-form-item>
-				<el-form-item label="商品名称" prop="commodityName">
-					<el-input v-model="ruleForm.commodityName"></el-input>
-				</el-form-item>
-				<el-form-item label="商品封面" prop="commodityCover">
-					<cl-upload 
-                    v-model="ruleForm.commodityCover" 
-                    class="avatar-uploader" 
-                    :size="[150, 150]" 
-                    icon="el-icon-plus" 
-                    accept="*" 
-                    :on-success="commodityCoverUploadSuccess"></cl-upload>
-				</el-form-item>
-				<el-form-item label="商品图片" prop="commodityBannerImg">
-						<!-- :filePath="ruleForm.commodityBannerImg" -->
-					<cl-upload
-						multiple
-						:limit="5"
-						listType="picture-card"
-                        v-model="ruleForm.commodityBannerImg"
-						class="avatar-uploader"
-						:size="[150, 150]"
-						icon="el-icon-plus"
-						accept="*"
-						:on-success="commodityBannerImgUploadSuccess"
-					></cl-upload>
-				</el-form-item>
+	<el-form v-if="!!item" :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" v-loading="loading">
+		<el-form-item label="商品分类" v-if="item.goodsType != 2">
+			<el-select v-model="ruleForm.commodityTypeId" placeholder="请选择">
+				<el-option v-for="item in commodityTypeList" :key="item.id" :label="item.commodityTypeName" :value="item.id"></el-option>
+			</el-select>
+		</el-form-item>
+		<el-form-item label="商品名称" prop="commodityName">
+			<el-input v-model="ruleForm.commodityName"></el-input>
+		</el-form-item>
+		<el-form-item label="商品封面" prop="commodityCover">
+			<cl-upload
+				:value="ruleForm.commodityCover"
+				multiple
+				:limit="5"
+				listType="picture-card"
+				class="avatar-uploader"
+				:size="[150, 150]"
+				icon="el-icon-plus"
+				accept="*"
+				:on-success="commodityCoverUploadSuccess"
+			></cl-upload>
+		</el-form-item>
+		<el-form-item label="商品图片" prop="commodityBannerImg">
+			<!-- :filePath="ruleForm.commodityBannerImg" -->
+			<cl-upload
+				multiple
+				:limit="5"
+				listType="picture-card"
+				:value="ruleForm.commodityBannerImg"
+				class="avatar-uploader"
+				:size="[150, 150]"
+				icon="el-icon-plus"
+				accept="*"
+				:on-success="commodityBannerImgUploadSuccess"
+			></cl-upload>
+		</el-form-item>
 
-				<el-form-item label="是否促销" required v-if="item.goodsType==0">
-					<el-radio-group v-model="ruleForm.salePromotionShow">
-						<el-radio :label="0">否</el-radio>
-						<el-radio :label="1">是</el-radio>
-					</el-radio-group>
-				</el-form-item>
-<!-- 
+		<el-form-item label="是否促销" required v-if="item.goodsType == 0">
+			<el-radio-group v-model="ruleForm.salePromotionShow">
+				<el-radio :label="0">否</el-radio>
+				<el-radio :label="1">是</el-radio>
+			</el-radio-group>
+		</el-form-item>
+		<!-- 
 				<el-form-item v-if="ruleForm.salePromotionShow == 1" label="促销方式" required>
 					<el-checkbox-group v-model="ruleForm.salePromotionMethod" @change="salePromotionMethodChange">
 						<el-checkbox :label="1">价格优惠</el-checkbox>
@@ -60,21 +63,21 @@
 					</el-date-picker>
 				</el-form-item> -->
 
-				<!-- 添加规格 -->
-				<el-form-item label="规格" prop="specification">
-					<GoodsSpecSelect ref="GoodsSpecSelect" v-if="ruleForm.specData"  :data="ruleForm.specData"></GoodsSpecSelect>
-				</el-form-item>
+		<!-- 添加规格 -->
+		<el-form-item label="规格" prop="specification">
+			<goods-spec-select ref="goods-spec-select" :type="ruleForm.specType" :data="ruleForm.specData"></goods-spec-select>
+		</el-form-item>
 
-				<el-form-item label="积分奖励"  v-if="item.goodsType!=2">
-					<el-radio-group v-model="ruleForm.isScoreReward">
-						<el-radio :label="0">否</el-radio>
-						<el-radio :label="1">是</el-radio>
-					</el-radio-group>
-				</el-form-item>
-				<!-- <el-form-item v-if="ruleForm.scopeRewardShow == 1 && item.goodsType!=2" label="奖励积分">
+		<el-form-item label="积分奖励" v-if="item.goodsType != 2">
+			<el-radio-group v-model="ruleForm.isScoreReward">
+				<el-radio :label="0">否</el-radio>
+				<el-radio :label="1">是</el-radio>
+			</el-radio-group>
+		</el-form-item>
+		<!-- <el-form-item v-if="ruleForm.scopeRewardShow == 1 && item.goodsType!=2" label="奖励积分">
 					每消费100元得 <el-input-number v-model="ruleForm.scopeReward" controls-position="right" :min="0"></el-input-number> 积分</el-form-item
 				> -->
-<!-- 
+		<!-- 
 				<el-form-item label="配送方式">
 					<el-radio-group v-model="ruleForm.deliveryMethod">
 						<el-radio :label="0">普通快递</el-radio>
@@ -82,30 +85,29 @@
 					</el-radio-group>
 				</el-form-item> -->
 
-				<el-form-item label="是否包邮" v-if="ruleForm.deliveryMethod == 0 && item.goodsType!=2">
-					<el-radio-group v-model="ruleForm.isFreeShipping">
-						<el-radio :label="0">否</el-radio>
-						<el-radio :label="1">是</el-radio>
-					</el-radio-group>
-				</el-form-item>
+		<el-form-item label="是否包邮" v-if="ruleForm.deliveryMethod == 0 && item.goodsType != 2">
+			<el-radio-group v-model="ruleForm.isFreeShipping">
+				<el-radio :label="0">否</el-radio>
+				<el-radio :label="1">是</el-radio>
+			</el-radio-group>
+		</el-form-item>
 
-				<el-form-item label="商品详情" prop="detailImage">
-					<cl-editor-quill height="300" v-model="ruleForm.detailImage"></cl-editor-quill>
-				</el-form-item>
+		<el-form-item label="商品详情" prop="detailImage">
+			<cl-editor-quill height="300" v-model="ruleForm.detailImage"></cl-editor-quill>
+		</el-form-item>
 
-				<el-form-item label="商品排序" prop="commodityOrder">
-					<el-input-number v-model="ruleForm.commodityOrder"></el-input-number>
-				</el-form-item>
+		<el-form-item label="商品排序" prop="commodityOrder">
+			<el-input-number v-model="ruleForm.commodityOrder"></el-input-number>
+		</el-form-item>
 
-				<el-form-item label="状态" prop="commodityStatus">
-					<el-switch v-model="ruleForm.commodityStatus" active-text="上架" inactive-text="下架" :active-value="1" :inactive-value="0"></el-switch>
-				</el-form-item>
+		<el-form-item label="状态" prop="commodityStatus">
+			<el-switch v-model="ruleForm.commodityStatus" active-text="上架" inactive-text="下架" :active-value="1" :inactive-value="0"></el-switch>
+		</el-form-item>
 
-				<el-form-item>
-					<el-button type="primary" @click="submitForm('ruleForm')">修改</el-button>
-				</el-form-item>
-			</el-form>
-		</cl-dialog>
+		<el-form-item>
+			<el-button type="primary" @click="submitForm('ruleForm')">修改</el-button>
+		</el-form-item>
+	</el-form>
 </template>
 <script>
 import GoodsSpecSelect from '@/components/goods/spec/select';
@@ -296,17 +298,17 @@ const specColumnScore = [
 	}
 ];
 export default {
-    name:'productEdit',
-    props:{'item':{
-		default:{}
-	}},
-    components: {
-		GoodsSpecSelect
-    },
-    data() {
+	props: {
+		item: {
+			default: {}
+		}
+	},
+	components: {
+		'goods-spec-select': GoodsSpecSelect
+	},
+	data() {
 		return {
-            editDialog:false,
-
+			loading: true,
 			defaultColumn: [],
 			commodityTypeList: [],
 			salePromotionMethod: 0, //促销类型
@@ -318,7 +320,7 @@ export default {
 				commodityTypeId: '',
 				commodityName: '',
 				commodityCover: '',
-				commodityBannerImg: [],
+				commodityBannerImg: '',
 				salePromotionTime: '',
 				salePromotionStartTime: new Date(),
 				salePromotionEndTime: new Date(),
@@ -329,7 +331,7 @@ export default {
 				commodityStatus: 1,
 				scopeRewardShow: 0,
 				scopeReward: 0,
-				isScoreReward:0
+				isScoreReward: 0
 			},
 			rules: {
 				commodityName: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
@@ -339,8 +341,7 @@ export default {
 				commodityOrderg: [{ required: true, message: '请填写商品排序', trigger: 'blur' }],
 				commodityStatus: [{ required: true, message: '', trigger: 'blur' }]
 				//specification: [{ required: true, message: '请填写规格', trigger: 'blur' }]
-            },
-            
+			}
 		};
 	},
 	watch: {
@@ -354,20 +355,13 @@ export default {
 				this.ruleForm.salePromotionMethod = 0;
 				this.salePromotionMethod = 0;
 				//this.$store.dispatch('setDefaultcolumn', specColumn);
-				this.$store.dispatch('setDefaultcolumn', this.item.goodsType==2?specColumnScore:specColumn);
-			}else{
+				this.$store.dispatch('setDefaultcolumn', this.item.goodsType == 2 ? specColumnScore : specColumn);
+			} else {
 				this.ruleForm.salePromotionMethod = 1;
 				this.salePromotionMethod = 0;
-				this.$store.dispatch('setDefaultcolumn', this.item.goodsType==2?specColumnScore:specColumnOnsale );
+				this.$store.dispatch('setDefaultcolumn', this.item.goodsType == 2 ? specColumnScore : specColumnOnsale);
 			}
-        },
-        editDialog(v){
-            if(v){
-                this.getProductInfo()
-            }else{
-                this.$emit('cancel')
-            }
-        }
+		}
 		/* 		'ruleForm.deliveryMethod': function (val, oldval) {
 			console.log(val);
 			val.map((value, index, array) => {
@@ -383,28 +377,30 @@ export default {
 			});
 		} */
 	},
-	created() {
-
-		this.$store.dispatch('setDefaultcolumn', this.item?.goodsType==2?specColumnScore:specColumn);
+	async created() {
+		await this.$store.dispatch('setDefaultcolumn', this.item?.goodsType == 2 ? specColumnScore : specColumn);
+		await this.getProductInfo();
 		this.getCommodityTypeList();
 	},
 	methods: {
-        async getProductInfo(){
-            try{
-                let { goodsType , id } = this.item;
-                let methods = ['shopping','ticket','score','event'];
-                let res = await this.$service.app.commodity?.[methods[goodsType]].info({
-                   id
-                });
-                Object.assign(this.ruleForm,res);
-				this.ruleForm.salePromotionShow = res.salePromotionMethod
-                this.ruleForm.commodityTypeId = String(res.commodityTypeId)
-                
-                this.ruleForm.specData = JSON.parse(res.specification)
-            }catch(err){
-                this.$message.error(err);
-            }
-        },
+		async getProductInfo() {
+			try {
+				let { goodsType, id } = this.item;
+				let methods = ['shopping', 'ticket', 'score', 'event'];
+				let res = await this.$service.app.commodity?.[methods[goodsType]].info({
+					id
+				});
+				res.commodityBannerImg = res.commodityBannerImg.toString();
+				Object.assign(this.ruleForm, res);
+				this.ruleForm.salePromotionShow = res.salePromotionMethod;
+				this.ruleForm.commodityTypeId = String(res.commodityTypeId);
+
+				this.ruleForm.specData = JSON.parse(res.specification);
+				this.loading = false;
+			} catch (err) {
+				this.$message.error(err);
+			}
+		},
 		//获取商品分类
 		async getCommodityTypeList() {
 			try {
@@ -476,36 +472,37 @@ export default {
 				this.ruleForm.commodityCover = res;
 			}
 		},
-		//商品轮播主图
-		commodityCoverBeforeUpload() {},
 		commodityBannerImgUploadSuccess(res, file, fileList) {
 			console.log(res, fileList);
 			if (res) {
-				this.ruleForm.commodityBannerImg = fileList.map((value) => {
+				let arr = fileList.map((value) => {
 					return value.url;
 				});
+				this.ruleForm.commodityBannerImg = arr.toString();
 			}
 			console.log(this.ruleForm.commodityBannerImg);
 		},
-	 	async submitForm(formName) {
+		async submitForm(formName) {
 			this.$refs[formName].validate(async (valid) => {
-				const { type, spec } = this.$refs['GoodsSpecSelect'].validate();
+				const { type, spec } = this.$refs['goods-spec-select'].validate();
 				this.ruleForm.specificationType = type;
 				this.ruleForm.specification = JSON.stringify(spec);
 				if (valid) {
 					let params = {
 						...this.ruleForm
 					};
+					console.log(params);
 					params.salePromotionMethod = this.salePromotionMethod;
-					console.log(JSON.stringify(params));
-                    let { goodsType , id } = this.item;
-                    let methods = ['shopping','ticket','score','event'];
-                    let res = await this.$service.app.commodity?.[methods[goodsType]].update({
-                        id,
-                        ...this.ruleForm
-                    })
-                    this.editDialog = false;
-                    this.$emit('update')
+					params.commodityBannerImg = params.commodityBannerImg.split(',');
+
+					let { goodsType, id } = this.item;
+					let methods = ['shopping', 'ticket', 'score', 'event'];
+					let res = await this.$service.app.commodity?.[methods[goodsType]].update({
+						id,
+						...params
+					});
+					this.editDialog = false;
+					this.$emit('update');
 				} else {
 					console.log('error submit!!');
 					return false;
@@ -517,5 +514,5 @@ export default {
 			this.$refs[formName].resetFields();
 		}
 	}
-}
+};
 </script>

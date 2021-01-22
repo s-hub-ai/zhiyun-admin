@@ -30,7 +30,9 @@
 			<cl-table :columns="tableColumn">
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
-					<el-button v-if="d.applyAudit == 1 && scope.row.auditStatus == 2" size="mini" type="text" @click="auditFn(scope.row.id)">审核</el-button>
+					<el-button v-permission="$service.app.applyActivity.permission.audit" v-if="d.applyAudit == 1 && scope.row.auditStatus == 2" size="mini" type="text" @click="auditFn(scope.row.id)"
+						>审核</el-button
+					>
 					<el-button size="mini" type="text" @click="$router.push({ name: '全部用户', params: { userId: scope.row.userId } })">详情</el-button>
 				</template>
 			</cl-table>

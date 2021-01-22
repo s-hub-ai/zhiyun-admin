@@ -227,7 +227,7 @@ export default {
 	methods: {
 		async checkTicketNum() {
 			try {
-				await this.$service.app.commodity.ticket.ticketNumCheck({ ticketPackageNum: this.ruleForm.ticketPackageNum });
+				await this.$service.app.commodity.ticket.ticketNumCheck({ ticketPackageNum: this.ruleForm.ticketPackageNum, userId: this.id });
 			} catch (error) {
 				this.$message.error(error);
 			}
@@ -283,7 +283,7 @@ export default {
 			this.$refs[formName].validate(async (valid) => {
 				if (valid) {
 					try {
-						await this.$service.app.commodity.ticket.ticketNumCheck({ ticketPackageNum: this.ruleForm.ticketPackageNum });
+						await this.$service.app.commodity.ticket.ticketNumCheck({ ticketPackageNum: this.ruleForm.ticketPackageNum, userId: this.id });
 						let params = {
 							...this.ruleForm
 						};

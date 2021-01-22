@@ -3,7 +3,15 @@
 		<el-row type="flex" align="middle">
 			<cl-search-key placeholder="请输入轮播图名称"></cl-search-key>
 			<cl-flex1></cl-flex1>
-			<el-button size="mini" type="primary" @click="(addDialogTitle = '新增轮播图'), (addDialogShow = true)">新增轮播</el-button>
+			<el-button
+				v-permission="{
+					or: [$service.app.carousel.permission.add]
+				}"
+				size="mini"
+				type="primary"
+				@click="(addDialogTitle = '新增轮播图'), (addDialogShow = true)"
+				>新增轮播</el-button
+			>
 		</el-row>
 
 		<el-row>
@@ -14,17 +22,35 @@
 				</template>
 				<!-- 状态-->
 				<template #column-enableStauts="{ scope }">
-					<el-switch v-model="scope.row.enableStatus" :active-value="1" :inactive-value="0" @change="updateTableRow(scope.row)"></el-switch>
+					<el-switch v-if="checkPermFn($service.app.carousel.permission.update)" v-model="scope.row.enableStatus" :active-value="1" :inactive-value="0" @change="updateTableRow(scope.row)"></el-switch>
+					<el-switch v-else :value="scope.row.enableStatus" :active-value="1" :inactive-value="0"></el-switch>
 				</template>
 				<!-- 排序 -->
 				<template #column-sort="{ scope }">
-					<el-input-number style="width: 100px" size="mini" v-model="scope.row.sort" @change="updateTableRow(scope.row)"></el-input-number>
+					<el-input-number v-if="checkPermFn($service.app.carousel.permission.update)" style="width: 100px" size="mini" v-model="scope.row.sort" @change="updateTableRow(scope.row)"></el-input-number>
+					<el-input-number v-else style="width: 100px" size="mini" :value="scope.row.sort"></el-input-number>
 				</template>
 
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
-					<el-button size="mini" type="text" @click="editDialog(scope.row.id)">编辑</el-button>
-					<el-button size="mini" type="text" @click="deleteFn(scope.row.id)">删除</el-button>
+					<el-button
+						v-permission="{
+							or: [$service.app.carousel.permission.update]
+						}"
+						size="mini"
+						type="text"
+						@click="editDialog(scope.row.id)"
+						>编辑</el-button
+					>
+					<el-button
+						v-permission="{
+							or: [$service.app.carousel.permission.delete]
+						}"
+						size="mini"
+						type="text"
+						@click="deleteFn(scope.row.id)"
+						>删除</el-button
+					>
 				</template>
 			</cl-table>
 		</el-row>
@@ -44,6 +70,7 @@
 
 <script>
 import addDialog from './AddBanner';
+import { checkPerm } from '@/cool';
 export default {
 	components: {
 		addDialog
@@ -121,6 +148,10 @@ export default {
 	},
 
 	methods: {
+		//check
+		checkPermFn(o) {
+			return checkPerm(o);
+		},
 		//
 		async updateTableRow(params) {
 			try {

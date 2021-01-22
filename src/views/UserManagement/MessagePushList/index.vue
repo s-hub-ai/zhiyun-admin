@@ -1,9 +1,9 @@
 <template>
 	<cl-crud @load="onLoad" ref="crud">
 		<el-row type="flex" align="middle">
-			<cl-search-key placeholder="请输入消息标题"></cl-search-key>
+			<cl-search-key v-permission="$service.app.message.permission.page" placeholder="请输入消息标题"></cl-search-key>
 			<cl-flex1></cl-flex1>
-			<el-button size="mini" type="primary" @click="addDialogShow = true">新增消息</el-button>
+			<el-button v-permission="$service.app.message.permission.add" size="mini" type="primary" @click="addDialogShow = true">新增消息</el-button>
 		</el-row>
 
 		<el-row>
@@ -13,7 +13,7 @@
 				</template>
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
-					<el-button size="mini" type="text" @click="editDialog(scope.row.id)">查看详情</el-button>
+					<el-button v-permission="$service.app.message.permission.info" size="mini" type="text" @click="editDialog(scope.row.id)">查看详情</el-button>
 				</template>
 			</cl-table>
 		</el-row>

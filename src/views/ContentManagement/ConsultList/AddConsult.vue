@@ -66,8 +66,11 @@ export default {
 						let params = {
 							...this.ruleForm
 						};
+						if(params.id){
+await this.$service.app.consult.update(params)
+						}else{
 						await this.$service.app.consult.add(params);
-
+						}
 						this.$emit('update:addDialogShow', false);
 					} catch (error) {
 						this.$message.error(error);

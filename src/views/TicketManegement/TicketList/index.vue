@@ -3,8 +3,16 @@
 		<el-row type="flex" align="middle">
 			<cl-search-key placeholder="请输入票务名称"></cl-search-key>
 			<cl-flex1></cl-flex1>
-			<el-button type="text" size="mini" icon="el-icon-setting" @click="$router.push({ path: 'DeliveryCharge' })">全局设置</el-button>
-			<el-button size="mini" type="primary" @click="addDialog()">新增票务</el-button>
+			<!-- 			<el-button type="text" size="mini" icon="el-icon-setting" @click="$router.push({ path: 'DeliveryCharge' })">全局设置</el-button> -->
+			<el-button
+				v-permission="{
+					or: [$service.app.commodity.ticket.permission.add]
+				}"
+				size="mini"
+				type="primary"
+				@click="addDialog()"
+				>新增票务</el-button
+			>
 		</el-row>
 
 		<el-row>
@@ -16,6 +24,7 @@
 				<!-- 状态 -->
 				<template #column-commodityStatus="{ scope }">
 					<el-switch
+						v-if="checkPermFn($service.app.commodity.ticket.permission.update)"
 						v-model="scope.row.commodityStatus"
 						@change="updateStatus(scope.row)"
 						:active-value="1"
@@ -26,15 +35,39 @@
 						inactive-text="下架"
 					>
 					</el-switch>
+					<el-switch v-else :value="scope.row.commodityStatus" :active-value="1" :inactive-value="0" active-color="#13ce66" inactive-color="#ff4949" active-text="上架" inactive-text="下架">
+					</el-switch>
 				</template>
 				<!-- 排序 -->
 				<template #column-commodityOrder="{ scope }">
-					<el-input-number style="width: 100px" size="mini" v-model="scope.row.commodityOrder" @change="updateCommodityOrder(scope.row)" :min="1"></el-input-number>
+					<el-input-number
+						v-if="checkPermFn($service.app.commodity.ticket.permission.update)"
+						style="width: 100px"
+						size="mini"
+						v-model="scope.row.commodityOrder"
+						@change="updateCommodityOrder(scope.row)"
+						:min="1"
+					></el-input-number>
+					<el-input-number v-else style="width: 100px" size="mini" :value="scope.row.commodityOrder" :min="1"></el-input-number>
 				</template>
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
-					<el-button type="text" @click="editDialog(scope.row.id)">编辑</el-button>
-					<el-button type="text" @click="deleteFn(scope.row.id)">删除</el-button>
+					<el-button
+						v-permission="{
+							or: [$service.app.commodity.ticket.permission.update]
+						}"
+						type="text"
+						@click="editDialog(scope.row.id)"
+						>编辑</el-button
+					>
+					<el-button
+						v-permission="{
+							or: [$service.app.commodity.ticket.permission.delete]
+						}"
+						type="text"
+						@click="deleteFn(scope.row.id)"
+						>删除</el-button
+					>
 				</template>
 			</cl-table>
 		</el-row>
@@ -54,6 +87,7 @@
 <script>
 import { ticketTypeDict } from '@/dict/index.js';
 import addDialog from './AddTicket';
+import { checkPerm } from '@/cool';
 export default {
 	components: {
 		addDialog
@@ -131,6 +165,10 @@ export default {
 	},
 
 	methods: {
+		//check
+		checkPermFn(o) {
+			return checkPerm(o);
+		},
 		//新增
 		addDialog() {
 			this.addDialogTitle = '新增';

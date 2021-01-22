@@ -1,9 +1,9 @@
 <template>
 	<cl-crud @load="onLoad" ref="crud">
 		<el-row type="flex" align="middle">
-			<cl-search-key placeholder="请输入球迷会名称"></cl-search-key>
+			<cl-search-key v-permission="$service.app.fanClub.permission.page" placeholder="请输入球迷会名称"></cl-search-key>
 			<cl-flex1></cl-flex1>
-			<el-button size="mini" type="primary" @click="(addDialogTitle = '新增球迷会'), (addDialogShow = true)">新增球迷会</el-button>
+			<el-button v-permission="$service.app.fanClub.permission.add" size="mini" type="primary" @click="(addDialogTitle = '新增球迷会'), (addDialogShow = true)">新增球迷会</el-button>
 		</el-row>
 
 		<el-row>
@@ -18,8 +18,8 @@
 				</template>
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
-					<el-button size="mini" type="text" @click="editDialog(scope.row.id)">编辑</el-button>
-					<el-button size="mini" type="text" @click="deleteFn(scope.row.id)">删除</el-button>
+					<el-button v-permission="$service.app.fanClub.permission.update" size="mini" type="text" @click="editDialog(scope.row.id)">编辑</el-button>
+					<el-button v-permission="$service.app.fanClub.permission.delete" size="mini" type="text" @click="deleteFn(scope.row.id)">删除</el-button>
 				</template>
 			</cl-table>
 		</el-row>
@@ -153,7 +153,7 @@ export default {
 			ctx.service(this.$service.app.fanClub).done();
 			app.refresh({
 				// prop:'sort',
-				order:'createTime'
+				order: 'createTime'
 			});
 		},
 		addDialogClose() {

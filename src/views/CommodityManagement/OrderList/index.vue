@@ -33,7 +33,7 @@
 					<cl-search-key v-model="search" placeholder="请输入订单编号或收件人手机号"></cl-search-key>
 				</el-form-item>
 				<el-form-item>
-					<el-button size="mini" type="primary" @click="exportExcelAll">导出</el-button>
+					<el-button v-permission="$service.app.order.permission.export" size="mini" type="primary" @click="exportExcelAll">导出</el-button>
 				</el-form-item>
 			</el-form>
 		</el-row>
@@ -63,13 +63,26 @@
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
 					<template v-if="scope.row.orderType != 3">
-						<el-button type="text" v-if="scope.row.orderStatus == 1" @click="(deliveryForm.orderId = scope.row.id), (deliveDialogShow = true)">发货</el-button>
-						<el-button type="text" v-if="scope.row.orderStatus == 2" @click="(deliveryForm.orderId = scope.row.id), (deliveDialogShow = true)">修改快递</el-button>
-						<el-button v-if="scope.row.orderStatus == 7" type="text" @click="orderComplete(scope.row.id)">出库 </el-button>
-						<el-button type="text" v-if="scope.row.orderStatus == 2" @click="(deliveryForm.orderId = scope.row.id), getLogistics()">物流</el-button>
+						<el-button v-permission="$service.system.delivery.permission.add" type="text" v-if="scope.row.orderStatus == 1" @click="(deliveryForm.orderId = scope.row.id), (deliveDialogShow = true)"
+							>发货</el-button
+						>
+						<el-button v-permission="$service.system.delivery.permission.add" type="text" v-if="scope.row.orderStatus == 2" @click="(deliveryForm.orderId = scope.row.id), (deliveDialogShow = true)"
+							>修改快递</el-button
+						>
+						<el-button v-permission="$service.app.order.permission.orderComplete" v-if="scope.row.orderStatus == 7" type="text" @click="orderComplete(scope.row.id)">出库 </el-button>
+						<el-button v-permission="$service.app.order.permission.delivery" type="text" v-if="scope.row.orderStatus == 2" @click="(deliveryForm.orderId = scope.row.id), getLogistics()"
+							>物流</el-button
+						>
 					</template>
-					<el-button type="text" v-if="scope.row.orderStatus == 4" @click="(deliveryForm.orderId = scope.row.id), (drawbackAuditShow = true), getEditInfo(scope.row.id)"> 退款审核</el-button>
-					<el-button type="text" @click="(detailDialogShow = true), getEditInfo(scope.row.id)">详情</el-button>
+					<el-button
+						v-permission="$service.app.order.permission.updateOfferRefund"
+						type="text"
+						v-if="scope.row.orderStatus == 4"
+						@click="(deliveryForm.orderId = scope.row.id), (drawbackAuditShow = true), getEditInfo(scope.row.id)"
+					>
+						退款审核</el-button
+					>
+					<el-button v-permission="$service.app.order.permission.info" type="text" @click="(detailDialogShow = true), getEditInfo(scope.row.id)">详情</el-button>
 				</template>
 			</cl-table>
 		</el-row>
@@ -79,8 +92,8 @@
 			<cl-pagination></cl-pagination>
 		</el-row>
 		<!-- 发货弹出框 -->
-		<el-dialog title="商品发货" :visible.sync="deliveDialogShow" width="400px">
-			<el-form :model="deliveryForm" label-width="90px">
+		<el-dialog title="商品发货" :visible.sync="deliveDialogShow" width="400px" @close="$refs['deliveryForm'].resetFields()">
+			<el-form :model="deliveryForm" label-width="90px" ref="deliveryForm">
 				<el-form-item label="快递单号" required>
 					<el-input v-model="deliveryForm.deliverySN" @blur="getDelivery()"></el-input>
 				</el-form-item>
@@ -418,7 +431,7 @@ export default {
 				keyWord: this.search
 			};
 			console.log(params);
-			let res = await this.$service.app.order.page(params);
+			let res = await this.$service.app.order.export(params);
 			let data = [];
 			res.list.forEach((e) => {
 				let orderType = _.find(orderTypeDict, function (o) {

@@ -75,8 +75,11 @@ export default {
 						let params = {
 							...this.ruleForm
 						};
-						await this.$service.app.fanClub.add(params);
-
+						if (params.id) {
+							await this.$service.app.fanClub.update(params);
+						} else {
+							await this.$service.app.fanClub.add(params);
+						}
 						this.$emit('update:addDialogShow', false);
 					} catch (error) {
 						this.$message.error(error);

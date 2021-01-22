@@ -67,11 +67,17 @@
 				</template>
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
-					<el-link type="primary" @click="editDialog(scope.row.id)">详情</el-link>
+					<el-link v-permission="$service.app.user.info.permission.info" type="primary" @click="editDialog(scope.row.id)">详情</el-link>
 				</template>
 				<!-- 可用积分 -->
 				<template #column-availablePoints="{ scope }">
-					<el-link type="primary" @click="$router.push({ path: 'PointsUseDetails', query: { id: scope.row.id } })">{{scope.row.availablePoints|default}}</el-link>
+					<el-link
+						type="primary"
+						v-if="checkPermFn($service.app.score.permission.page)"
+						@click="$router.push({ path: 'PointsUseDetails', query: { id: scope.row.id } })"
+						>{{scope.row.availablePoints|default}}</el-link
+					>
+					<el-link type="primary" v-else>{{scope.row.availablePoints|default}}</el-link>
 				</template>
 			</cl-table>
 		</el-row>
@@ -95,6 +101,7 @@ import FileSaver from 'file-saver';
 import XLSX from 'xlsx';
 import { ticketPackageUserDict, useCcertificationDict, vipLevelDict, zhiyunCardStatusDict } from '@/dict/index.js';
 import addDialog from './detail';
+import { checkPerm } from '@/cool';
 export default {
 	components: {
 		addDialog
@@ -273,6 +280,10 @@ export default {
 		}
 	},
 	methods: {
+		//check
+		checkPermFn(o) {
+			return checkPerm(o);
+		},
 		tableSelectFn() {
 			let params = {
 				...this.tableFlters

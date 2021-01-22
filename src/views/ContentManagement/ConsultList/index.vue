@@ -2,7 +2,15 @@
 	<cl-crud @load="onLoad" ref="crud">
 		<el-row type="flex" align="middle">
 			<cl-flex1></cl-flex1>
-			<el-button size="mini" type="primary" @click="(addDialogTitle = '新增咨询'), (addDialogShow = true)">新增</el-button>
+			<el-button
+				v-permission="{
+					or: [$service.app.consult.permission.add]
+				}"
+				size="mini"
+				type="primary"
+				@click="(addDialogTitle = '新增咨询'), (addDialogShow = true)"
+				>新增</el-button
+			>
 		</el-row>
 
 		<el-row>
@@ -14,6 +22,7 @@
 				<!-- 状态-->
 				<template #column-enableStatus="{ scope }">
 					<el-switch
+						v-if="checkPermFn($service.app.consult.permission.update)"
 						size="large"
 						active-text="启用"
 						inactive-text="停用"
@@ -24,11 +33,38 @@
 						inactive-color="#ff4949"
 						@change="updateTableRow(scope.row)"
 					></el-switch>
+					<el-switch
+						v-else
+						size="large"
+						active-text="启用"
+						inactive-text="停用"
+						:value="scope.row.enableStatus"
+						:active-value="1"
+						:inactive-value="0"
+						active-color="#13ce66"
+						inactive-color="#ff4949"
+					></el-switch>
 				</template>
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
-					<el-button size="mini" type="text" @click="editDialog(scope.row.id)">编辑</el-button>
-					<el-button size="mini" type="text" @click="deleteFn(scope.row.id)">删除</el-button>
+					<el-button
+						v-permission="{
+							or: [$service.app.consult.permission.update]
+						}"
+						size="mini"
+						type="text"
+						@click="editDialog(scope.row.id)"
+						>编辑</el-button
+					>
+					<el-button
+						v-permission="{
+							or: [$service.app.consult.permission.delete]
+						}"
+						size="mini"
+						type="text"
+						@click="deleteFn(scope.row.id)"
+						>删除</el-button
+					>
 				</template>
 			</cl-table>
 		</el-row>
@@ -47,6 +83,7 @@
 
 <script>
 import addDialog from './AddConsult';
+import { checkPerm } from '@/cool';
 export default {
 	components: {
 		addDialog
@@ -88,6 +125,10 @@ export default {
 	},
 
 	methods: {
+		//check
+		checkPermFn(o) {
+			return checkPerm(o);
+		},
 		//
 		async updateTableRow(params) {
 			try {

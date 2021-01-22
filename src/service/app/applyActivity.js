@@ -6,10 +6,10 @@ import {
 
 @Service("app/applyActivity")
 export default class extends BaseService {
- @Permission("audit")
+ @Permission("updateAudit")
  audit(params) {
   return this.request({
-   url: "/audit",
+   url: "/updateAudit",
    params
   });
  }

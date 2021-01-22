@@ -9,40 +9,15 @@
 			}"
 		>
 			<div class="goods-spec-upsert__item-label">
-				<el-input
-					size="mini"
-					v-model="item.label"
-					clearable
-					maxlength="20"
-					placeholder="规格名称（颜色）"
-				></el-input>
+				<el-input size="mini" v-model="item.label" clearable maxlength="20" placeholder="规格名称（颜色）"></el-input>
 			</div>
 
 			<div class="goods-spec-upsert__item-list">
-				<el-tag
-					v-for="(child, cIndex) in item.children"
-					:key="cIndex"
-					size="small"
-					effect="dark"
-					closable
-					@close="itemRemove(item, cIndex)"
-					>{{ child }}</el-tag
-				>
+				<el-tag v-for="(child, cIndex) in item.children" :key="cIndex" size="small" effect="dark" closable @close="itemRemove(item, cIndex)">{{ child }}</el-tag>
 
 				<div class="goods-spec-upsert__item-add">
-					<el-input
-						size="mini"
-						v-model="item.text"
-						placeholder="规格属性（白色）"
-						@keydown.enter.native="itemAdd(item)"
-					></el-input>
-					<el-button
-						size="mini"
-						type="success"
-						:disabled="!item.text"
-						@click="itemAdd(item)"
-						>添加</el-button
-					>
+					<el-input size="mini" v-model="item.text" placeholder="规格属性（白色）" @keydown.enter.native="itemAdd(item)"></el-input>
+					<el-button size="mini" type="success" :disabled="!item.text" @click="itemAdd(item)">添加</el-button>
 				</div>
 			</div>
 
@@ -51,25 +26,18 @@
 
 		<div class="goods-spec-upsert__append">
 			<el-button size="mini" @click="append">添加规格</el-button>
-			<el-button
-				v-if="createBtn"
-				:disabled="list.length == 0"
-				size="mini"
-				type="success"
-				@click="onCreate"
-				>立即生成</el-button
-			>
+			<el-button v-if="createBtn" :disabled="list.length == 0" size="mini" type="success" @click="onCreate">立即生成</el-button>
 		</div>
 	</div>
 </template>
 
 <script>
-import _ from "lodash";
+import _ from 'lodash';
 
 export default {
-	name: "goods-spec-edit",
-	ref: "goods-spec-edit",
-	props: ["createBtn", "value"],
+	name: 'goods-spec-edit',
+	ref: 'goods-spec-edit',
+	props: ['createBtn', 'value'],
 
 	data() {
 		return {
@@ -100,9 +68,9 @@ export default {
 		itemAdd(item) {
 			if (!item.children.includes(item.text)) {
 				item.children.push(item.text);
-				item.text = "";
+				item.text = '';
 			} else {
-				this.$message.warning("属性已存在");
+				this.$message.warning('属性已存在');
 			}
 		},
 
@@ -113,8 +81,8 @@ export default {
 
 		// 移除规格
 		remove(index) {
-			this.$confirm("确认要移除该条规格码？", "提示", {
-				type: "warning"
+			this.$confirm('确认要移除该条规格码？', '提示', {
+				type: 'warning'
 			})
 				.then(() => {
 					this.list.splice(index, 1);
@@ -125,9 +93,9 @@ export default {
 		// 追加数据
 		append() {
 			this.list.push({
-				label: "",
-				value: "",
-				text: "",
+				label: '',
+				value: '',
+				text: '',
 				children: [],
 				error: null
 			});
@@ -157,6 +125,7 @@ export default {
 
 			return pass
 				? this.list.map((e, i) => {
+						console.log('e', e);
 						return {
 							label: e.label,
 							value: `spec_${i}`,
@@ -171,10 +140,10 @@ export default {
 			const d = this.validate();
 
 			if (d) {
-				this.$message.success("生成成功");
-				this.$emit("create", d);
+				this.$message.success('生成成功');
+				this.$emit('create', d);
 			} else {
-				this.$message.warning("请填写完整");
+				this.$message.warning('请填写完整');
 			}
 		}
 	}

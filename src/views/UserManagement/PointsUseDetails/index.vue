@@ -8,8 +8,8 @@
 
 		<el-row>
 			<cl-refresh-btn></cl-refresh-btn>
-			<el-button size="mini" @click="visible = true">增加积分</el-button>
-			<el-button size="mini" @click="visible2 = true">减少积分</el-button>
+			<el-button v-permission="$service.app.user.info.permission.updateScore" size="mini" @click="visible = true">增加积分</el-button>
+			<el-button v-permission="$service.app.user.info.permission.updateScore" size="mini" @click="visible2 = true">减少积分</el-button>
 		</el-row>
 		<el-row>
 			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">

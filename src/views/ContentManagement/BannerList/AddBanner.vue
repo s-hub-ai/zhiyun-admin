@@ -109,7 +109,12 @@ export default {
 						let params = {
 							...this.ruleForm
 						};
-						await this.$service.app.carousel.add(params);
+						if (params.id) {
+							await this.$service.app.carousel.update(params);
+						} else {
+							await this.$service.app.carousel.add(params);
+						}
+
 						this.$emit('update:addDialogShow', false);
 					} catch (error) {
 						this.$message.error(error);

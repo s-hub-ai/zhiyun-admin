@@ -13,7 +13,15 @@
 			</el-form>
 
 			<cl-flex1></cl-flex1>
-			<el-button type="primary" size="mini" @click="addDialogShow = true">新增卡券</el-button>
+			<el-button
+				v-permission="{
+					or: [$service.app.coupon.permission.add]
+				}"
+				type="primary"
+				size="mini"
+				@click="addDialogShow = true"
+				>新增卡券</el-button
+			>
 		</el-row>
 
 		<el-row>
@@ -26,9 +34,23 @@
 				</template>
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
-					<el-button type="text" @click="editDialog(scope.row.id)">详情</el-button>
+					<el-button
+						v-permission="{
+							or: [$service.app.coupon.permission.info]
+						}"
+						type="text"
+						@click="editDialog(scope.row.id)"
+						>详情</el-button
+					>
 					<!-- <el-button type="text" @click="editDialog(scope.row.id)">编辑</el-button> -->
-					<el-button type="text" @click="deleteFn(scope.row.id)">删除</el-button>
+					<el-button
+						v-permission="{
+							or: [$service.app.coupon.permission.delete]
+						}"
+						type="text"
+						@click="deleteFn(scope.row.id)"
+						>删除</el-button
+					>
 				</template>
 			</cl-table>
 		</el-row>
@@ -144,7 +166,7 @@ export default {
 				type: 'warning'
 			})
 				.then(async () => {
-					await this.$service.app.coupon.update({ id, isDeleted: 1 });
+					await this.$service.app.coupon.delete({ ids: id });
 					this.$message({
 						type: 'success',
 						message: '删除成功!'

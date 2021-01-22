@@ -6,6 +6,16 @@ import {
 
 @Service("app/order")
 export default class extends BaseService {
+ //导出数据
+ @Permission("export")
+ export (data) {
+  return this.request({
+   url: "/export",
+   method: "POST",
+   data
+  })
+ }
+
  @Permission("delivery")
  delivery(data) {
   return this.request({
@@ -14,10 +24,10 @@ export default class extends BaseService {
    data
   });
  }
- @Permission("offerRefund")
+ @Permission("updateOfferRefund")
  offerRefund(data) {
   return this.request({
-   url: "/offerRefund",
+   url: "/updateOfferRefund",
    method: "POST",
    data
   });
@@ -33,10 +43,10 @@ export default class extends BaseService {
  }
 
 
- @Permission("orderComplete")
+ @Permission("updateOrderComplete")
  orderComplete(data) {
   return this.request({
-   url: "/orderComplete",
+   url: "/updateOrderComplete",
    method: "POST",
    data
   });

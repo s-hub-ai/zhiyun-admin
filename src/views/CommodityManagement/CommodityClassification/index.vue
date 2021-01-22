@@ -10,11 +10,25 @@
 			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
 				<!-- 状态-->
 				<template #column-commodityTypeStatus="{ scope }">
-					<el-switch v-model="scope.row.commodityTypeStatus" @change="updateTableRow(scope.row)" :active-value="1" :inactive-value="0"></el-switch>
+					<el-switch
+						v-if="checkPermFn($service.app.commodityType.permission.update)"
+						v-model="scope.row.commodityTypeStatus"
+						@change="updateTableRow(scope.row)"
+						:active-value="1"
+						:inactive-value="0"
+					></el-switch>
+					<el-switch v-else :value="scope.row.commodityTypeStatus" :active-value="1" :inactive-value="0"></el-switch>
 				</template>
 				<!-- 排序 -->
 				<template #column-commodityTypeOrder="{ scope }">
-					<el-input-number style="width: 100px" size="mini" v-model="scope.row.commodityTypeOrder" @change="updateTableRow(scope.row)"></el-input-number>
+					<el-input-number
+						v-if="checkPermFn($service.app.commodityType.permission.update)"
+						style="width: 100px"
+						size="mini"
+						v-model="scope.row.commodityTypeOrder"
+						@change="updateTableRow(scope.row)"
+					></el-input-number>
+					<el-input-number v-else style="width: 100px" size="mini" :value="scope.row.commodityTypeOrder"></el-input-number>
 				</template>
 			</cl-table>
 		</el-row>
@@ -30,6 +44,7 @@
 </template>
 
 <script>
+import { checkPerm } from '@/cool';
 export default {
 	data() {
 		return {
@@ -158,6 +173,10 @@ export default {
 	},
 
 	methods: {
+		//check
+		checkPermFn(o) {
+			return checkPerm(o);
+		},
 		//
 		async updateTableRow(params) {
 			try {

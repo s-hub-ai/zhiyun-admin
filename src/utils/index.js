@@ -14,10 +14,12 @@ export function calcDescartes(array) {
 }
 
 export function getSpec(d) {
-	return _.keys(d)
-		.filter((e) => e.includes("spec_"))
+	let res = _.keys(d)
+		.filter((e) =>
+			e.includes("spec_"))
 		.map((e) => d[e])
 		.join();
+	return res;
 }
 
 export function deepMerge(a, b) {

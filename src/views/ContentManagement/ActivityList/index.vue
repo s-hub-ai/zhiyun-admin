@@ -1,7 +1,7 @@
 <template>
 	<cl-crud @load="onLoad" ref="crud">
 		<el-row type="flex" align="middle">
-			<el-form class="table-form" :inline="true" :model="tableFlters" size="mini">
+			<el-form v-permission="$service.app.activity.permission.page" class="table-form" :inline="true" :model="tableFlters" size="mini">
 				<el-form-item label="是否打卡">
 					<el-select style="width: 120px" v-model="tableFlters.isClockin" placeholder="请选择" @change="$refs['crud'].refresh({ ...tableFlters })">
 						<el-option label="全部" value=""></el-option>
@@ -22,7 +22,7 @@
 				</el-form-item>
 			</el-form>
 			<cl-flex1></cl-flex1>
-			<el-button size="mini" type="primary" @click="(addDialogTitle = '新增活动'), (addDialogShow = true)">新增活动</el-button>
+			<el-button v-permission="$service.app.activity.permission.add" size="mini" type="primary" @click="(addDialogTitle = '新增活动'), (addDialogShow = true)">新增活动</el-button>
 		</el-row>
 
 		<el-row>
@@ -41,10 +41,17 @@
 				</template>
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
-					<el-button size="mini" type="text" @click="$router.push({ path: 'ApplyDetail', query: { id: scope.row.id } })">查看报名</el-button>
-					<el-button v-if="scope.row.isClockin == 1" size="mini" type="text" @click="$router.push({ path: 'ClockinList', query: { id: scope.row.id } })">打卡记录</el-button>
-					<el-button size="mini" type="text" @click="editDialog(scope.row.id)">编辑</el-button>
-					<el-button size="mini" type="text" @click="deleteFn(scope.row.id)">删除</el-button>
+					<el-button v-permission="$service.app.applyActivity.permission.page" size="mini" type="text" @click="$router.push({ path: 'ApplyDetail', query: { id: scope.row.id } })">查看报名</el-button>
+					<el-button
+						v-permission="$service.app.activity.permission.clockinList"
+						v-if="scope.row.isClockin == 1"
+						size="mini"
+						type="text"
+						@click="$router.push({ path: 'ClockinList', query: { id: scope.row.id } })"
+						>打卡记录</el-button
+					>
+					<el-button v-permission="$service.app.activity.permission.update" size="mini" type="text" @click="editDialog(scope.row.id)">编辑</el-button>
+					<el-button v-permission="$service.app.activity.permission.delete" size="mini" type="text" @click="deleteFn(scope.row.id)">删除</el-button>
 				</template>
 			</cl-table>
 		</el-row>
@@ -195,7 +202,7 @@ export default {
 			})
 				.then(async () => {
 					try {
-						await this.$service.app.activity.update({ id, isDeleted: 1 });
+						await this.$service.app.activity.delete({ ids: id });
 						this.$message({
 							type: 'success',
 							message: '删除成功!'

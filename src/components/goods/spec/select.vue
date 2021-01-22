@@ -136,7 +136,6 @@ export default {
 		onCreated(spec) {
 			if (this.selects.type == 1) {
 				let sku = [];
-
 				// 合并规格
 				calcDescartes(spec.map((e) => e.children)).forEach((a) => {
 					let d = {};
@@ -146,27 +145,34 @@ export default {
 						});
 					} else {
 						d[`spec_0`] = a;
+						console.log('object', d[`spec_0`]);
+						console.log(d);
 					}
 					sku.push(d);
 				});
-
-				this.onUpdate({ sku, spec });
+				let obj = { sku, spec };
+				this.onUpdate(obj);
 			}
 		},
 
 		// 更新sku、spec
-		onUpdate({ sku, spec }) {
+		onUpdate(obj) {
+			let { sku, spec } = obj;
+			let formSku = { ...this.form };
 			if (sku) {
-				const specs = this.form.sku.map(getSpec);
-
+				const specs = formSku.sku.map(getSpec);
+				/* 				for (let index = 0; index < sku.length; index++) {
+					const e = sku[index];
+					Object.assign(e, formSku.sku[index]);
+				} */
 				sku.forEach((e) => {
-					let index = specs.findIndex((s) => getSpec(e).includes(s));
+					let index = specs.findIndex((s) => getSpec(e) == s);
 
+					console.log(index);
 					if (index >= 0) {
-						Object.assign(e, this.form.sku[index]);
+						Object.assign(e, formSku.sku[index]);
 					}
 				});
-
 				this.form.sku = sku;
 			}
 

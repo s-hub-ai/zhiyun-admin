@@ -2,7 +2,7 @@
 	<cl-crud @load="onLoad">
 		<el-row type="flex" align="middle">
 			<cl-refresh-btn></cl-refresh-btn>
-			<cl-search-key placeholder="请输入用户姓名、手机号"></cl-search-key>
+			<cl-search-key v-permission="$service.app.user.info.permission.page" placeholder="请输入用户姓名、手机号"></cl-search-key>
 			<cl-flex1></cl-flex1>
 			<!-- 	<el-button size="mini" type="primary" @click="openForm">导出</el-button> -->
 		</el-row>
