@@ -177,13 +177,13 @@ export default {
 						emptyText: '无',
 						'min-width': 200
 					},
-					{
+					/* 			{
 						prop: 'fanClubName',
 						label: '管辖球迷会',
 						'header-align': 'center',
 						emptyText: '无',
 						'min-width': 200
-					},
+					}, */
 					{
 						prop: 'phone',
 						label: '手机号码',
@@ -329,7 +329,7 @@ export default {
 								message: '角色不能为空'
 							}
 						},
-						{
+						/* 						{
 							prop: 'fanClubId',
 							label: '管辖球迷会',
 							span: 24,
@@ -341,7 +341,7 @@ export default {
 								required: true,
 								message: '球迷会不能为空'
 							}
-						},
+						}, */
 						{
 							prop: 'phone',
 							label: '手机号码',
