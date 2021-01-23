@@ -115,7 +115,7 @@
 		</el-row>
 
 		<!-- 编辑商品dialog -->
-		<el-dialog :visible.sync="editDialog" title="编辑商品" :props="{ width: '900px' }" @close="addDialogClose">
+		<el-dialog :visible.sync="editDialog" title="编辑商品" width="900px" @close="addDialogClose">
 			<product-edit v-if="editDialog" :item="editing" @update="refresh" :addDialogShow.sync="editDialog" ref="editDialog"></product-edit>
 		</el-dialog>
 	</cl-crud>

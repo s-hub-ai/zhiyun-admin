@@ -59,12 +59,6 @@ export default {
 							minWidth: '150'
 						},
 						{
-							prop: 'urlName',
-							label: '操作名称',
-							minWidth: '150',
-							align: 'center'
-						},
-						{
 							prop: 'createTime',
 							label: '请求时间',
 							minWidth: '150',
