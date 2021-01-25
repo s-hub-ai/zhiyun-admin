@@ -7,7 +7,7 @@ function resolve(dir) {
 }
 
 module.exports = {
-	publicPath: "/",
+	publicPath: "/admin/",
 	lintOnSave: true,
 	productionSourceMap: false,
 	parallel: require("os").cpus().length > 1,
@@ -33,8 +33,8 @@ module.exports = {
 
 		proxy: {
 			"/dev": {
-				//	target: "https://paytest.ryyes.com",
-				target: "http://127.0.0.1:9004",
+				target: "https://paytest.ryyes.com",
+				//target: "http://127.0.0.1:9004",
 				changeOrigin: true,
 				pathRewrite: {
 					"^/dev": "/",
