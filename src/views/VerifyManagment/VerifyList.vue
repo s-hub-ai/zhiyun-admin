@@ -8,7 +8,7 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item>
-					<cl-search-key placeholder="请输入订单编号或者用户ID"></cl-search-key>
+					<cl-search-key placeholder="请输入订单编号或用户手机号"></cl-search-key>
 				</el-form-item>
 			</el-form>
 		</el-row>
@@ -53,11 +53,15 @@ export default {
 					}
 				},
 				{
-					label: '订单编号/用户ID',
+					label: '订单编号/手机号',
 					align: 'center',
-					prop: 'orderSN',
+					prop: 'phone',
 					formatter(row) {
-						return row.orderSN || row.userId;
+						if (row.verifyType != 4) {
+							return row.orderSN || row.phone;
+						} else {
+							return row.phone;
+						}
 					}
 				},
 				{
