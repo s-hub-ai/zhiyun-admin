@@ -10,11 +10,7 @@
 			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
 				<!-- 封面 -->
 				<template #column-fanClubCover="{ scope }">
-					<el-image style="width: 100px; height: 100px" :src="scope.row.fanClubCover" :preview-src-list="scope.row.fanClubCover"> </el-image>
-				</template>
-				<!-- 成员人数 -->
-				<template #column-peopleNum="{ scope }">
-					<span>{{ scope.row.userList.length }}</span>
+					<el-image style="width: 100px; height: 100px" :src="scope.row.fanClubCover"> </el-image>
 				</template>
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
@@ -26,7 +22,7 @@
 
 		<el-row type="flex">
 			<cl-flex1></cl-flex1>
-			<cl-pagination></cl-pagination>
+			<!-- 	<cl-pagination></cl-pagination> -->
 		</el-row>
 
 		<!-- 新增编辑弹出框 -->
@@ -106,6 +102,11 @@ export default {
 					align: 'center'
 				},
 				{
+					label: '积分总数',
+					prop: 'accumulatedPoints',
+					align: 'center'
+				},
+				{
 					label: '操作',
 					prop: 'op',
 					align: 'center'
@@ -152,8 +153,7 @@ export default {
 		onLoad({ ctx, app }) {
 			ctx.service(this.$service.app.fanClub).done();
 			app.refresh({
-				// prop:'sort',
-				order: 'createTime'
+				order: 'ASC'
 			});
 		},
 		addDialogClose() {
