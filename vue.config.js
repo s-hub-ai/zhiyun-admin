@@ -30,14 +30,21 @@ module.exports = {
 			warnings: false,
 			errors: true
 		},
-
 		proxy: {
 			"/dev": {
 				target: "https://paytest.ryyes.com",
-				//target: "http://127.0.0.1:9004",
+				// target: "http://127.0.0.1:9004",
 				changeOrigin: true,
 				pathRewrite: {
-					"^/dev": "/",
+					"^/dev": "/api",
+				}
+			},
+			"/training": {
+				target: "http://test2.junxing-tech.net:7003",
+				// target: "http://127.0.0.1:8000",
+				changeOrigin: true,
+				pathRewrite: {
+					"^/training": "/admin",
 				}
 			},
 			"/pro": {
