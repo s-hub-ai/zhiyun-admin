@@ -254,3 +254,63 @@ export const deliveryMethodDict = [{
     value: 1
   }
 ];
+//性别 
+export const sexDict=[
+  {
+    text: "男",
+    value: 0
+  },
+  {
+    text: "女",
+    value: 1
+  }
+]
+//惯用脚 
+export const footDict=[
+  {
+    text: "左脚",
+    value: 0
+  },
+  {
+    text: "右脚",
+    value: 1
+  },
+  {
+    text: "双脚",
+    value: 2
+  },
+]
+//位置 
+export const positionDict=[
+  {
+    text: "守门员",
+    value: 0
+  },
+  {
+    text: "防守",
+    value: 1
+  },
+  {
+    text: "进攻",
+    value: 2
+  },
+]
+//归属地
+export const addressDict=[
+  {
+    text: "南通",
+    value: 0
+  },
+  {
+    text: "海安",
+    value: 1
+  },
+  {
+    text: "如皋",
+    value: 2
+  },
+  {
+    text: "未设置",
+    value: 3
+  },
+]
