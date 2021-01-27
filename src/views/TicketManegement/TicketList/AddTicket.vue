@@ -29,12 +29,21 @@
 				<el-radio :label="1">是</el-radio>
 			</el-radio-group>
 		</el-form-item>
-		<el-form-item label="积分奖励" required>
-			<el-radio-group v-model="ruleForm.isScoreReward">
-				<el-radio :label="0">否</el-radio>
-				<el-radio :label="1">是</el-radio>
-			</el-radio-group>
-		</el-form-item>
+		<div style="display: flex">
+			<el-form-item label="积分奖励" required>
+				<el-radio-group v-model="ruleForm.isScoreReward">
+					<el-radio :label="0">否</el-radio>
+					<el-radio :label="1">是</el-radio>
+				</el-radio-group>
+			</el-form-item>
+			<el-form-item style="margin-left: 30px" label="支云卡积分奖励" required>
+				<el-radio-group v-model="ruleForm.isscoreRewardZy">
+					<el-radio :label="0">否</el-radio>
+					<el-radio :label="1">是</el-radio>
+				</el-radio-group>
+			</el-form-item>
+		</div>
+
 		<!-- 添加规格 -->
 		<el-form-item v-if="specification.sku" label="规格" prop="specification">
 			<goods-spec-select ref="goods-spec-select" :type="ruleForm.specType" :specShow="false" :data="specification"></goods-spec-select>
@@ -185,7 +194,8 @@ export default {
 				isScoreReward: 1,
 				detailImage: '',
 				commodityStatus: 1,
-				commodityOrder: 1
+				commodityOrder: 1,
+				isscoreRewardZy: 0
 			},
 			salePromotionMethod: 0,
 			rules: {

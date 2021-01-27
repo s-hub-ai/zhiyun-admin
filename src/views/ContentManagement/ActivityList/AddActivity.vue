@@ -1,5 +1,5 @@
 <template>
-	<el-form :model="ruleForm" :inline="false" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+	<el-form :model="ruleForm" :inline="false" :rules="rules" ref="ruleForm" label-width="140px" class="demo-ruleForm">
 		<h3>活动信息</h3>
 		<el-form-item label="活动封面" prop="activityCover">
 			<cl-upload :value="ruleForm.activityCover" accept="image/*" class="avatar-uploader" :size="[150, 150]" icon="el-icon-plus" :on-success="activityCoverUploadSuccess"></cl-upload>
@@ -89,28 +89,34 @@
 			<el-form-item label="奖励积分" prop="awardIntegral">
 				<el-input-number v-model="ruleForm.awardIntegral" :min="0"></el-input-number>
 			</el-form-item>
-			<el-form-item label="经度" required>
+			<el-form-item label="经度" label-width="90px" required>
 				<el-input disabled v-model="ruleForm.longitude"></el-input>
 			</el-form-item>
-			<el-form-item label="纬度" required>
+			<el-form-item label="纬度" required label-width="90px">
 				<el-input disabled v-model="ruleForm.latitude"></el-input>
 			</el-form-item>
-			<el-form-item label="半径" prop="radius">
+			<el-form-item label="半径" prop="radius" label-width="90px">
 				<el-input-number v-model="ruleForm.radius" :min="0"></el-input-number>
 			</el-form-item>
 		</div>
-		<h3>选择用户</h3>
-		<el-form-item label="选择用户" required>
-			<el-select v-model="ruleForm.userType" placeholder="请选择" @change="userTypeChange">
-				<el-option label="全部" :value="0"></el-option>
-				<el-option label="指定用户" :value="1"></el-option>
-				<el-option label="分组用户" :value="2"></el-option>
-			</el-select>
-			<el-button v-if="ruleForm.userType == 1" type="primary" style="margin-left: 15px; position: relative">
-				<input class="import-btn" type="file" @change="importXlsx($event)" />
-				导入</el-button
-			>
+		<el-form-item class="awardIntegralZy" v-if="ruleForm.isClockin == 1" label="支云卡用户额外奖励积分" label-width="140px" prop="awardIntegralZy">
+			<el-input-number v-model="ruleForm.awardIntegralZy" :min="0"></el-input-number>
 		</el-form-item>
+		<h3>选择用户</h3>
+		<div style="display: flex">
+			<el-form-item label="选择用户" required>
+				<el-select v-model="ruleForm.userType" placeholder="请选择" @change="userTypeChange">
+					<el-option label="全部" :value="0"></el-option>
+					<el-option label="指定用户" :value="1"></el-option>
+					<el-option label="分组用户" :value="2"></el-option>
+				</el-select>
+				<el-button v-if="ruleForm.userType == 1" type="primary" style="margin-left: 15px; position: relative">
+					<input class="import-btn" type="file" @change="importXlsx($event)" />
+					导入</el-button
+				>
+			</el-form-item>
+		</div>
+
 		<el-form-item v-if="ruleForm.userType == 1" prop="userArgs">
 			<el-transfer v-loading="loading" filterable filter-placeholder="请输入用户手机号" :titles="['用户列表', '已选用户']" v-model="ruleForm.userArgs" :data="userList">
 				<span slot-scope="{ option }">{{ option.label }} - {{ option.nickName }}</span>
@@ -240,7 +246,8 @@ export default {
 				longitude: '',
 				latitude: '',
 				infoField: [],
-				addressName: null
+				addressName: null,
+				awardIntegralZy: 0
 			},
 			infoFieldDialog: false,
 			infoFieldList: [
@@ -337,6 +344,13 @@ export default {
 					{
 						required: true,
 						message: '请填写活动标题',
+						trigger: 'blur'
+					}
+				],
+				awardIntegralZy: [
+					{
+						required: true,
+						message: '请填支云卡奖励积分',
 						trigger: 'blur'
 					}
 				],
@@ -754,5 +768,10 @@ export default {
 
 ::v-deep .el-checkbox.is-bordered + .el-checkbox.is-bordered {
 	margin-left: 0;
+}
+.awardIntegralZy {
+	::v-deep .el-form-item__label {
+		line-height: 20px;
+	}
 }
 </style>

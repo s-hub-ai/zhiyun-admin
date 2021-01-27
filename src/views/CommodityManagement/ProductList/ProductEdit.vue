@@ -501,8 +501,8 @@ export default {
 						id,
 						...params
 					});
-					this.editDialog = false;
-					this.$emit('update');
+					this.$message.success('修改成功');
+					this.$emit('update:addDialogShow', false);
 				} else {
 					console.log('error submit!!');
 					return false;

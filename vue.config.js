@@ -33,8 +33,8 @@ module.exports = {
 
 		proxy: {
 			"/dev": {
-				//	target: "https://paytest.ryyes.com",
-				target: "http://127.0.0.1:9004",
+				target: "https://paytest.ryyes.com",
+				//target: "http://127.0.0.1:9004",
 				changeOrigin: true,
 				pathRewrite: {
 					"^/dev": "/",
