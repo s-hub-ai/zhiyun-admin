@@ -1,13 +1,7 @@
 <template>
 	<div class="cl-upload__wrap">
 		<!-- 文件空间 -->
-		<cl-upload-space
-			ref="space"
-			:accept="accept"
-			:limit="limit"
-			@confirm="onSpaceConfirm"
-			v-if="isSpace"
-		>
+		<cl-upload-space ref="space" :accept="accept" :limit="limit" @confirm="onSpaceConfirm" v-if="isSpace">
 			<slot></slot>
 		</cl-upload-space>
 
@@ -66,9 +60,7 @@
 					</template>
 
 					<template v-else-if="listType == 'file'">
-						<el-button size="mini" type="primary" :loading="loading"
-							>点击上传</el-button
-						>
+						<el-button size="mini" type="primary" :loading="loading">点击上传</el-button>
 					</template>
 
 					<template v-else>
@@ -90,23 +82,23 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import _ from "lodash";
+import { mapGetters } from 'vuex';
+import _ from 'lodash';
 
 export default {
 	props: {
 		value: [Array, String],
 		size: {
 			type: [Array, String, Number],
-			default: "128px"
+			default: '128px'
 		},
 		icon: {
 			type: String,
-			default: "el-icon-upload"
+			default: 'el-icon-upload'
 		},
 		text: {
 			type: String,
-			default: "选择文件"
+			default: '选择文件'
 		},
 		accept: String,
 		multiple: Boolean,
@@ -115,12 +107,12 @@ export default {
 		isSpace: Boolean,
 		name: {
 			type: String,
-			default: "file"
+			default: 'file'
 		},
 		drag: Boolean,
 		listType: {
 			type: String,
-			default: "default"
+			default: 'default'
 		},
 		showFileList: Boolean,
 		autoUpload: {
@@ -149,12 +141,12 @@ export default {
 	},
 
 	computed: {
-		...mapGetters(["token"]),
+		...mapGetters(['token']),
 
 		_showFileList() {
 			switch (this.listType) {
-				case "picture-card":
-				case "file":
+				case 'picture-card':
+				case 'file':
 					return true;
 				default:
 					return false;
@@ -162,27 +154,35 @@ export default {
 		},
 
 		_accept() {
-			switch (this.listType) {
-				case "picture-card":
-					return "image/*";
-				default:
-					return "*";
+			console.log(this.listType);
+			console.log(this.accept);
+			if (this.accept) {
+				return this.accept;
+			} else {
+				switch (this.listType) {
+					case 'picture-card':
+						return 'image/*';
+					case 'image':
+						return 'image/*';
+					default:
+						return '*';
+				}
 			}
 		},
 
 		_loading() {
-			return this.listType == "default" ? this.loading : false;
+			return this.listType == 'default' ? this.loading : false;
 		},
 
 		_urls() {
 			const format = {
-				image: ["bmp", "jpg", "png", "tif", "gif", "svg"]
+				image: ['bmp', 'jpg', 'png', 'tif', 'gif', 'svg']
 			};
 
 			return this.urls.map((e) => {
-				let arr = e.url.split(".");
+				let arr = e.url.split('.');
 				let suf = _.last(arr);
-				e.type = format.image.includes(suf) ? "image" : null;
+				e.type = format.image.includes(suf) ? 'image' : 'image';
 				return e;
 			});
 		},
@@ -198,7 +198,7 @@ export default {
 
 			const [height, width] = arr.map((e) => (_.isNumber(e) ? `${e}px` : e));
 
-			return this.listType == "default"
+			return this.listType == 'default'
 				? {
 						height,
 						width
@@ -210,7 +210,7 @@ export default {
 	watch: {
 		value: {
 			immediate: true,
-			handler: "parseValue"
+			handler: 'parseValue'
 		}
 	},
 
@@ -223,7 +223,7 @@ export default {
 				if (value instanceof Array) {
 					list = value;
 				} else {
-					list = (value || "").split(",");
+					list = (value || '').split(',');
 				}
 			} else {
 				if (value) {
@@ -232,7 +232,7 @@ export default {
 			}
 
 			// 比较数据，避免重复动画
-			if (list.join(",") !== this.urls.map((e) => e.url).join(",")) {
+			if (list.join(',') !== this.urls.map((e) => e.url).join(',')) {
 				this.fileList = list.filter(Boolean).map((url) => {
 					return {
 						url,
@@ -242,6 +242,7 @@ export default {
 
 				// 设置 URLS
 				this.urls = _.clone(this.fileList);
+				console.log(this.urls);
 			}
 		},
 
@@ -250,10 +251,10 @@ export default {
 			const urls = this.urls
 				.map((e) => e.url)
 				.filter(Boolean)
-				.join(",");
+				.join(',');
 
-			this.$emit("input", urls);
-			this.$emit("change", urls);
+			this.$emit('input', urls);
+			this.$emit('change', urls);
 		},
 
 		// 移除文件
@@ -294,7 +295,7 @@ export default {
 					}
 				})
 				.catch((err) => {
-					console.error("upload error", err);
+					console.error('upload error', err);
 					this.$message.error(err);
 
 					// 上传失败钩子
@@ -309,13 +310,13 @@ export default {
 
 		// 打开文件空间
 		openSpace() {
-			this.$refs["space"].open();
+			this.$refs['space'].open();
 		},
 
 		// 确认图片
 		onSpaceConfirm(urls) {
-			this.$emit("input", urls);
-			this.$emit("change", urls);
+			this.$emit('input', urls);
+			this.$emit('change', urls);
 		}
 	}
 };
@@ -338,7 +339,7 @@ export default {
 	}
 
 	&--default {
-		/deep/.el-upload {
+		::v-deep.el-upload {
 			display: flex;
 			align-items: center;
 			justify-content: center;
@@ -369,7 +370,7 @@ export default {
 	}
 
 	&--picture-card {
-		/deep/.el-upload {
+		::v-deep.el-upload {
 			.cl-upload__icon {
 				position: relative;
 				top: 4px;

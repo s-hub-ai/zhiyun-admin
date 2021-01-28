@@ -112,7 +112,7 @@ export default {
 	&__tools {
 		margin-right: 20px;
 
-		/deep/li {
+		::v-deepli {
 			list-style: none;
 			height: 45px;
 			width: 45px;

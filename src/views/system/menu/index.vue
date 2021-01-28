@@ -8,49 +8,29 @@
 
 			<cl-table ref="table" v-bind="table.props" v-on="table.on">
 				<!-- 名称 -->
-				<template #column-name="{scope}">
+				<template #column-name="{ scope }">
 					<span>{{ scope.row.name }}</span>
-					<el-tag
-						size="mini"
-						effect="dark"
-						type="danger"
-						v-if="!scope.row.isShow"
-						style="margin-left: 10px;"
-						>隐藏</el-tag
-					>
+					<el-tag size="mini" effect="dark" type="danger" v-if="!scope.row.isShow" style="margin-left: 10px">隐藏</el-tag>
 				</template>
 
 				<!-- 图标 -->
-				<template #column-icon="{scope}">
-					<icon-svg
-						:name="scope.row.icon"
-						size="16px"
-						style="margin-top: 5px;"
-					></icon-svg>
+				<template #column-icon="{ scope }">
+					<icon-svg :name="scope.row.icon" size="16px" style="margin-top: 5px"></icon-svg>
 				</template>
 
 				<!-- 权限 -->
-				<template #column-perms="{scope}">
-					<el-tag
-						v-for="(item, index) in scope.row.permList"
-						:key="index"
-						size="mini"
-						effect="dark"
-						style="margin: 2px; letter-spacing: 0.5px;"
-						>{{ item }}</el-tag
-					>
+				<template #column-perms="{ scope }">
+					<el-tag v-for="(item, index) in scope.row.permList" :key="index" size="mini" effect="dark" style="margin: 2px; letter-spacing: 0.5px">{{ item }}</el-tag>
 				</template>
 
 				<!-- 路由 -->
-				<template #column-router="{scope}">
-					<el-link type="primary" :href="scope.row.router" v-if="scope.row.type == 1">{{
-						scope.row.router
-					}}</el-link>
+				<template #column-router="{ scope }">
+					<el-link type="primary" :href="scope.row.router" v-if="scope.row.type == 1">{{ scope.row.router }}</el-link>
 					<span v-else>{{ scope.row.router }}</span>
 				</template>
 
 				<!-- 路由缓存 -->
-				<template #column-keepAlive="{scope}">
+				<template #column-keepAlive="{ scope }">
 					<template v-if="scope.row.type == 1">
 						<i class="el-icon-check" v-if="scope.row.keepAlive"></i>
 						<i class="el-icon-close" v-else></i>
@@ -58,14 +38,8 @@
 				</template>
 
 				<!-- 行新增 -->
-				<template #slot-add="{scope}">
-					<el-button
-						type="text"
-						size="mini"
-						@click="upsertAppend(scope.row)"
-						v-if="scope.row.type != 2"
-						>新增</el-button
-					>
+				<template #slot-add="{ scope }">
+					<el-button type="text" size="mini" @click="upsertAppend(scope.row)" v-if="scope.row.type != 2">新增</el-button>
 				</template>
 			</cl-table>
 
@@ -79,7 +53,7 @@
 </template>
 
 <script>
-import { deepTree } from "@/cool/utils";
+import { deepTree } from '@/cool/utils';
 
 export default {
 	data() {
@@ -87,117 +61,118 @@ export default {
 			table: {
 				props: {
 					props: {
-						"row-key": "id"
+						'row-key': 'id'
 					},
 
 					columns: [
 						{
-							prop: "name",
-							label: "名称",
+							prop: 'name',
+							label: '名称',
 							width: 200
 						},
 						{
-							prop: "icon",
-							label: "图标",
-							align: "center",
+							prop: 'icon',
+							label: '图标',
+							align: 'center',
 							width: 80
 						},
 						{
-							prop: "type",
-							label: "类型",
-							align: "center",
+							prop: 'type',
+							label: '类型',
+							align: 'center',
 							width: 100,
 							dict: [
 								{
-									label: "目录",
+									label: '目录',
 									value: 0
 								},
 								{
-									label: "菜单",
+									label: '菜单',
 									value: 1
 								},
 								{
-									label: "权限",
+									label: '权限',
 									value: 2
 								}
 							]
 						},
 						{
-							prop: "router",
-							label: "节点路由",
-							align: "center",
-							"min-width": 160
+							prop: 'router',
+							label: '节点路由',
+							align: 'center',
+							'min-width': 160
 						},
 						{
-							prop: "keepAlive",
-							label: "路由缓存",
-							align: "center",
+							prop: 'keepAlive',
+							label: '路由缓存',
+							align: 'center',
 							width: 100
 						},
 						{
-							prop: "viewPath",
-							label: "文件路径",
-							align: "center",
-							"min-width": 200,
-							"show-overflow-tooltip": true
+							prop: 'viewPath',
+							label: '文件路径',
+							align: 'center',
+							'min-width': 200,
+							'show-overflow-tooltip': true
 						},
 						{
-							prop: "perms",
-							label: "权限",
-							"header-align": "center",
-							"min-width": 300
+							prop: 'perms',
+							label: '权限',
+							'header-align': 'center',
+							'min-width': 300
 						},
 						{
-							prop: "orderNum",
-							label: "排序号",
-							align: "center",
+							prop: 'orderNum',
+							label: '排序号',
+							align: 'center',
 							width: 90
 						},
 						{
-							prop: "updateTime",
-							label: "更新时间",
-							align: "center",
+							prop: 'updateTime',
+							label: '更新时间',
+							align: 'center',
 							sortable: true,
 							width: 180
 						},
 						{
-							label: "操作",
-							align: "center",
-							type: "op",
-							layout: ["slot-add", "edit", "delete"]
+							label: '操作',
+							align: 'center',
+							fixed: 'left',
+							type: 'op',
+							layout: ['slot-add', 'edit', 'delete']
 						}
 					]
 				},
 				on: {
-					"row-click": this.onRowClick,
-					"row-contextmenu": this.onRowContextMenu
+					'row-click': this.onRowClick,
+					'row-contextmenu': this.onRowContextMenu
 				}
 			},
 
 			upsert: {
 				props: {
 					props: {
-						width: "800px"
+						width: '800px'
 					},
 					items: [
 						{
-							prop: "type",
+							prop: 'type',
 							value: 0,
-							label: "节点类型",
+							label: '节点类型',
 							span: 24,
 							component: {
-								name: "el-radio-group",
+								name: 'el-radio-group',
 								options: [
 									{
-										label: "目录",
+										label: '目录',
 										value: 0
 									},
 									{
-										label: "菜单",
+										label: '菜单',
 										value: 1
 									},
 									{
-										label: "权限",
+										label: '权限',
 										value: 2
 									}
 								],
@@ -209,109 +184,109 @@ export default {
 							}
 						},
 						{
-							prop: "name",
-							label: "节点名称",
+							prop: 'name',
+							label: '节点名称',
 							span: 24,
 							component: {
-								name: "el-input",
+								name: 'el-input',
 								attrs: {
-									placeholder: "请输入节点名称"
+									placeholder: '请输入节点名称'
 								}
 							},
 
 							rules: {
 								required: true,
-								message: "名称不能为空"
+								message: '名称不能为空'
 							}
 						},
 						{
-							prop: "parentId",
-							label: "上级节点",
+							prop: 'parentId',
+							label: '上级节点',
 							span: 24,
 							component: {
-								name: "cl-menu-tree"
+								name: 'cl-menu-tree'
 							}
 						},
 						{
-							prop: "router",
-							label: "节点路由",
+							prop: 'router',
+							label: '节点路由',
 							span: 24,
 							hidden: true,
 							component: {
-								name: "el-input",
+								name: 'el-input',
 								attrs: {
-									placeholder: "请输入节点路由"
+									placeholder: '请输入节点路由'
 								}
 							}
 						},
 						{
-							prop: "keepAlive",
+							prop: 'keepAlive',
 							value: true,
-							label: "路由缓存",
+							label: '路由缓存',
 							span: 24,
 							component: {
-								name: "el-radio-group",
+								name: 'el-radio-group',
 								options: [
 									{
-										label: "开启",
+										label: '开启',
 										value: true
 									},
 									{
-										label: "关闭",
+										label: '关闭',
 										value: false
 									}
 								]
 							}
 						},
 						{
-							prop: "isShow",
-							label: "是否显示",
+							prop: 'isShow',
+							label: '是否显示',
 							span: 24,
 							value: true,
 							hidden: false,
 							component: {
-								name: "el-switch"
+								name: 'el-switch'
 							}
 						},
 						{
-							prop: "viewPath",
-							label: "文件路径",
+							prop: 'viewPath',
+							label: '文件路径',
 							span: 24,
 							hidden: true,
 							component: {
-								name: "cl-menu-file-path"
+								name: 'cl-menu-file-path'
 							}
 						},
 						{
-							prop: "icon",
-							label: "节点图标",
+							prop: 'icon',
+							label: '节点图标',
 							span: 24,
 							component: {
-								name: "cl-menu-icons"
+								name: 'cl-menu-icons'
 							}
 						},
 
 						{
-							prop: "orderNum",
-							label: "排序号",
+							prop: 'orderNum',
+							label: '排序号',
 							span: 24,
 							component: {
-								name: "el-input-number",
+								name: 'el-input-number',
 								props: {
-									placeholder: "请填写排序号",
+									placeholder: '请填写排序号',
 									min: 0,
 									max: 99,
-									"controls-position": "right"
+									'controls-position': 'right'
 								}
 							}
 						},
 						{
-							prop: "perms",
-							label: "权限",
+							prop: 'perms',
+							label: '权限',
 							span: 24,
 							hidden: true,
 							component: {
-								name: "cl-menu-perms"
+								name: 'cl-menu-perms'
 							}
 						}
 					]
@@ -322,8 +297,9 @@ export default {
 
 	methods: {
 		onLoad({ ctx, app }) {
-			ctx.service(this.$service.system.menu)
-				.set("dict", { api: { page: "list" } })
+			ctx
+				.service(this.$service.system.menu)
+				.set('dict', { api: { page: 'list' } })
 				.done();
 
 			app.refresh();
@@ -332,7 +308,7 @@ export default {
 		onRefresh(params, { next, render }) {
 			this.$service.system.menu.list().then((list) => {
 				list.map((e) => {
-					e.permList = e.perms ? e.perms.split(",") : [];
+					e.permList = e.perms ? e.perms.split(',') : [];
 				});
 
 				render(deepTree(list));
@@ -341,23 +317,23 @@ export default {
 
 		onRowClick(row, column) {
 			if (column.property && row.children) {
-				this.$refs["table"].toggleRowExpansion(row);
+				this.$refs['table'].toggleRowExpansion(row);
 			}
 		},
 
 		onRowContextMenu(row, column, event) {
-			const { rowEdit, rowDelete } = this.$refs["crud"];
+			const { rowEdit, rowDelete } = this.$refs['crud'];
 
 			let list = [
 				{
-					label: "编辑",
+					label: '编辑',
 					callback: (e, close) => {
 						rowEdit(row);
 						close();
 					}
 				},
 				{
-					label: "删除",
+					label: '删除',
 					callback: (e, close) => {
 						rowDelete(row);
 						close();
@@ -367,7 +343,7 @@ export default {
 
 			if (row.type != 2) {
 				list.unshift({
-					label: "新增",
+					label: '新增',
 					callback: (e, close) => {
 						this.upsertAppend(row);
 						close();
@@ -377,7 +353,7 @@ export default {
 
 			if (row.type == 1) {
 				list.push({
-					label: "权限",
+					label: '权限',
 					callback: (e, close) => {
 						this.setPermission(row);
 						close();
@@ -385,7 +361,7 @@ export default {
 				});
 			}
 
-			this.$refs["context-menu"].open(event, {
+			this.$refs['context-menu'].open(event, {
 				list
 			});
 
@@ -397,24 +373,24 @@ export default {
 		},
 
 		upsertAppend({ type, id }) {
-			this.$refs["crud"].rowAppend({
+			this.$refs['crud'].rowAppend({
 				parentId: id,
 				type: type + 1
 			});
 		},
 
 		changeType(index) {
-			const { toggleItem } = this.$refs["upsert"];
-			toggleItem("router", index == 1);
-			toggleItem("viewPath", index == 1);
-			toggleItem("keepAlive", index == 1);
-			toggleItem("icon", index != 2);
-			toggleItem("perms", index == 2);
-			toggleItem("isShow", index != 2);
+			const { toggleItem } = this.$refs['upsert'];
+			toggleItem('router', index == 1);
+			toggleItem('viewPath', index == 1);
+			toggleItem('keepAlive', index == 1);
+			toggleItem('icon', index != 2);
+			toggleItem('perms', index == 2);
+			toggleItem('isShow', index != 2);
 		},
 
 		setPermission({ id }) {
-			this.$refs["crud"].rowAppend({
+			this.$refs['crud'].rowAppend({
 				parentId: id,
 				type: 2
 			});

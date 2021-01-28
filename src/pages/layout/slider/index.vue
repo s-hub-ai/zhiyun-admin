@@ -133,7 +133,7 @@ export default {
 			height: 0;
 		}
 
-		/deep/.el-menu {
+		::v-deep.el-menu {
 			border-right: 0;
 			background-color: $color-main;
 

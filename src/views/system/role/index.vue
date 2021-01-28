@@ -17,7 +17,7 @@
 			<cl-pagination />
 		</el-row>
 
-		<cl-upsert v-bind="upsert.props"></cl-upsert>
+		<cl-upsert v-bind="upsert.props" ref="upsert"></cl-upsert>
 	</cl-crud>
 </template>
 
@@ -28,70 +28,70 @@ export default {
 			upsert: {
 				props: {
 					props: {
-						width: "800px"
+						width: '800px'
 					},
 					items: [
 						{
-							prop: "name",
-							label: "名称",
+							prop: 'name',
+							label: '名称',
 							span: 12,
 							component: {
-								name: "el-input"
+								name: 'el-input'
 							},
 							rules: {
 								required: true,
-								message: "名称不能为空"
+								message: '名称不能为空'
 							}
 						},
 						{
-							prop: "label",
-							label: "标识",
+							prop: 'label',
+							label: '标识',
 							span: 12,
 							component: {
-								name: "el-input",
+								name: 'el-input',
 								props: {
-									placeholder: "请填写标识"
+									placeholder: '请填写标识'
 								}
 							},
 							rules: {
 								required: true,
-								message: "标识不能为空"
+								message: '标识不能为空'
 							}
 						},
 						{
-							prop: "remark",
-							label: "备注",
+							prop: 'remark',
+							label: '备注',
 							span: 24,
 							component: {
-								name: "el-input",
+								name: 'el-input',
 								props: {
-									type: "textarea",
+									type: 'textarea',
 									rows: 4
 								}
 							}
 						},
 						{
-							prop: "menuIdList",
+							prop: 'menuIdList',
 							span: 12,
 							value: [],
 							component: {
-								name: "cl-role-tree",
+								name: 'cl-role-tree',
 								props: {
-									title: "功能权限"
+									title: '功能权限'
 								}
 							}
 						},
 						{
-							prop: "departmentIdList",
+							prop: 'departmentIdList',
 							value: [],
 							span: 12,
 							props: {
-								"label-width": "0px"
+								'label-width': '0px'
 							},
 							component: {
-								name: "cl-dept-tree",
+								name: 'cl-dept-tree',
 								props: {
-									title: "数据权限"
+									title: '数据权限'
 								}
 							}
 						}
@@ -101,48 +101,48 @@ export default {
 			table: {
 				props: {
 					props: {
-						"default-sort": {
-							prop: "createTime",
-							order: "descending"
+						'default-sort': {
+							prop: 'createTime',
+							order: 'descending'
 						}
 					},
 					columns: [
 						{
-							type: "selection",
-							align: "center",
-							width: "60"
+							type: 'selection',
+							align: 'center',
+							width: '60'
 						},
 						{
-							prop: "name",
-							label: "名称",
-							align: "center"
+							prop: 'name',
+							label: '名称',
+							align: 'center'
 						},
 						{
-							prop: "label",
-							label: "标识",
-							align: "center"
+							prop: 'label',
+							label: '标识',
+							align: 'center'
 						},
 						{
-							prop: "remark",
-							label: "备注",
-							align: "center"
+							prop: 'remark',
+							label: '备注',
+							align: 'center'
 						},
 						{
-							prop: "createTime",
-							label: "创建时间",
-							align: "center",
+							prop: 'createTime',
+							label: '创建时间',
+							align: 'center',
 							sortable: true
 						},
 						{
-							prop: "updateTime",
-							label: "更新时间",
-							align: "center",
+							prop: 'updateTime',
+							label: '更新时间',
+							align: 'center',
 							sortable: true
 						},
 						{
-							label: "操作",
-							align: "center",
-							type: "op"
+							label: '操作',
+							align: 'center',
+							type: 'op'
 						}
 					]
 				}

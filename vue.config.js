@@ -7,7 +7,7 @@ function resolve(dir) {
 }
 
 module.exports = {
-	publicPath: "/",
+	publicPath: "/admin/",
 	lintOnSave: true,
 	productionSourceMap: false,
 	parallel: require("os").cpus().length > 1,
@@ -30,18 +30,25 @@ module.exports = {
 			warnings: false,
 			errors: true
 		},
-
 		proxy: {
 			"/dev": {
-				target: "http://127.0.0.1:7003",
+				target: "https://paytest.ryyes.com",
+				// target: "http://127.0.0.1:9004",
 				changeOrigin: true,
 				pathRewrite: {
-					"^/dev": ""
+					"^/dev": "/api",
 				}
 			},
-
+			"/training": {
+				target: "http://test2.junxing-tech.net:7003",
+				// target: "http://127.0.0.1:8000",
+				changeOrigin: true,
+				pathRewrite: {
+					"^/training": "/admin",
+				}
+			},
 			"/pro": {
-				target: "https://show.cool-admin.com",
+				target: "https://mb.ntzycm.cn",
 				changeOrigin: true,
 				pathRewrite: {
 					"^/pro": "/api"

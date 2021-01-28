@@ -87,7 +87,7 @@ export default {
 			letter-spacing: 1px;
 		}
 
-		/deep/.el-form {
+		::v-deep.el-form {
 			width: 300px;
 			border-radius: 3px;
 

@@ -15,3 +15,6 @@ Vue.component("cl-scroll", () => import("./scroll/index.vue"));
 Vue.component("cl-context-menu", () => import("./context-menu/index.js"));
 Vue.component("cl-code", () => import("./code/index.vue"));
 Vue.component("icon-svg", () => import("./icon-svg/index.vue"));
+
+//自定义模块
+Vue.component("cl-fanClub-select", () => import("../../components/fanClub/select.vue"));

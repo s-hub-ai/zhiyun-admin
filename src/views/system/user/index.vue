@@ -20,12 +20,8 @@
 						</li>
 
 						<li class="no" v-show="dept.isDrag">
-							<el-button type="text" size="mini" @click="deptOrder(true)"
-								>保存</el-button
-							>
-							<el-button type="text" size="mini" @click="deptOrder(false)"
-								>取消</el-button
-							>
+							<el-button type="text" size="mini" @click="deptOrder(true)">保存</el-button>
+							<el-button type="text" size="mini" @click="deptOrder(false)">取消</el-button>
 						</li>
 					</ul>
 				</div>
@@ -62,72 +58,37 @@
 				</div>
 
 				<div class="container">
-					<cl-crud ref="crud" @load="onLoad" @refresh="onRefresh">
+					<cl-crud ref="crud" @load="onLoad" :on-refresh="onRefresh">
 						<el-row type="flex">
 							<cl-refresh-btn></cl-refresh-btn>
 							<cl-add-btn></cl-add-btn>
 							<cl-multi-delete-btn></cl-multi-delete-btn>
-							<el-button
-								v-permission="$service.system.user.permission.move"
-								size="mini"
-								type="success"
-								:disabled="selects.ids.length == 0"
-								@click="toMove()"
-								>转移</el-button
-							>
+							<el-button v-permission="$service.system.user.permission.move" size="mini" type="success" :disabled="selects.ids.length == 0" @click="toMove()">转移</el-button>
 							<cl-flex1></cl-flex1>
 							<cl-search-key></cl-search-key>
 						</el-row>
 
 						<el-row>
-							<cl-table ref="table" v-bind="table.props" v-on="table.on">
+							<cl-table ref="table" :props="table.props" v-on="table.on" :columns="table.columns">
 								<!-- 头像 -->
-								<template #column-headImg="{scope}">
-									<cl-avatar
-										shape="square"
-										size="medium"
-										:src="scope.row.headImg | default_avatar"
-										:style="{ margin: 'auto' }"
-									>
-									</cl-avatar>
+								<template #column-headImg="{ scope }">
+									<cl-avatar shape="square" size="medium" :src="scope.row.headImg | default_avatar" :style="{ margin: 'auto' }"> </cl-avatar>
 								</template>
 
 								<!-- 状态 -->
-								<template #column-status="{scope}">
-									<el-tag
-										v-if="scope.row.status == 1"
-										size="small"
-										effect="dark"
-										type="success"
-										>启用</el-tag
-									>
-									<el-tag v-else size="small" effect="dark" type="danger"
-										>禁用</el-tag
-									>
+								<template #column-status="{ scope }">
+									<el-tag v-if="scope.row.status == 1" size="small" effect="dark" type="success">启用</el-tag>
+									<el-tag v-else size="small" effect="dark" type="danger">禁用</el-tag>
 								</template>
 
 								<!-- 权限 -->
-								<template #column-roleName="{scope}">
-									<el-tag
-										v-for="(item, index) in scope.row.roleNameList"
-										:key="index"
-										disable-transitions
-										size="small"
-										effect="dark"
-										style="margin: 2px;"
-										>{{ item }}</el-tag
-									>
+								<template #column-roleName="{ scope }">
+									<el-tag v-for="(item, index) in scope.row.roleNameList" :key="index" disable-transitions size="small" effect="dark" style="margin: 2px">{{ item }}</el-tag>
 								</template>
 
 								<!-- 单个转移 -->
 								<template #slot-move-btn="{ scope }">
-									<el-button
-										v-permission="$service.system.user.permission.move"
-										type="text"
-										size="mini"
-										@click="toMove(scope.row)"
-										>转移</el-button
-									>
+									<el-button v-permission="$service.system.user.permission.move" type="text" size="mini" @click="toMove(scope.row)">转移</el-button>
 								</template>
 							</cl-table>
 						</el-row>
@@ -155,7 +116,7 @@
 </template>
 
 <script>
-import { deepTree, isArray, revDeepTree } from "@/cool/utils";
+import { deepTree, isArray, revDeepTree } from '@/cool/utils';
 
 export default {
 	data() {
@@ -171,96 +132,101 @@ export default {
 				ids: []
 			},
 			table: {
-				props: {
-					props: {
-						"default-sort": {
-							prop: "createTime",
-							order: "descending"
-						}
+				columns: [
+					{
+						type: 'selection',
+						align: 'center',
+						width: '60',
+						fixed: 'left'
 					},
-					columns: [
-						{
-							type: "selection",
-							align: "center",
-							width: "60",
-							fixed: "left"
-						},
-						{
-							prop: "headImg",
-							label: "头像",
-							align: "center",
-							slot: true
-						},
-						{
-							prop: "name",
-							label: "姓名",
-							align: "center",
-							"min-width": 150
-						},
-						{
-							prop: "username",
-							label: "用户名",
-							align: "center",
-							"min-width": 150
-						},
-						{
-							prop: "nickName",
-							label: "昵称",
-							align: "center",
-							"min-width": 150
-						},
-						{
-							prop: "departmentName",
-							label: "部门名称",
-							align: "center",
-							emptyText: "无",
-							"min-width": 150
-						},
-						{
-							prop: "roleName",
-							label: "角色",
-							"header-align": "center",
-							emptyText: "无",
-							"min-width": 200
-						},
-						{
-							prop: "phone",
-							label: "手机号码",
-							align: "center",
-							"min-width": 150,
-							emptyText: "无"
-						},
-						{
-							prop: "remark",
-							label: "备注",
-							align: "center",
-							"min-width": 150,
-							emptyText: "无"
-						},
-						{
-							prop: "status",
-							label: "状态",
-							align: "center",
-							"min-width": 150
-						},
-						{
-							prop: "createTime",
-							label: "创建时间",
-							align: "center",
-							sortable: true,
-							width: 150
-						},
-						{
-							align: "center",
-							type: "op",
-							layout: ["slot-move-btn", "edit", "delete"],
-							fixed: "right",
-							width: "160px"
-						}
-					]
+					{
+						prop: 'headImg',
+						label: '头像',
+						align: 'center',
+						slot: true
+					},
+					{
+						prop: 'name',
+						label: '姓名',
+						align: 'center',
+						'min-width': 150
+					},
+					{
+						prop: 'username',
+						label: '用户名',
+						align: 'center',
+						'min-width': 150
+					},
+					{
+						prop: 'nickName',
+						label: '昵称',
+						align: 'center',
+						'min-width': 150
+					},
+					{
+						prop: 'departmentName',
+						label: '部门名称',
+						align: 'center',
+						emptyText: '无',
+						'min-width': 150
+					},
+					{
+						prop: 'roleName',
+						label: '角色',
+						'header-align': 'center',
+						emptyText: '无',
+						'min-width': 200
+					},
+					/* 			{
+						prop: 'fanClubName',
+						label: '管辖球迷会',
+						'header-align': 'center',
+						emptyText: '无',
+						'min-width': 200
+					}, */
+					{
+						prop: 'phone',
+						label: '手机号码',
+						align: 'center',
+						'min-width': 150,
+						emptyText: '无'
+					},
+					{
+						prop: 'remark',
+						label: '备注',
+						align: 'center',
+						'min-width': 150,
+						emptyText: '无'
+					},
+					{
+						prop: 'status',
+						label: '状态',
+						align: 'center',
+						'min-width': 150
+					},
+					{
+						prop: 'createTime',
+						label: '创建时间',
+						align: 'center',
+						sortable: true,
+						width: 150
+					},
+					{
+						align: 'center',
+						type: 'op',
+						layout: ['slot-move-btn', 'edit', 'delete'],
+						fixed: 'right',
+						width: '160px'
+					}
+				],
+				props: {
+					'default-sort': {
+						prop: 'createTime',
+						order: 'descending'
+					}
 				},
 				on: {
-					"selection-change": (selection) => {
+					'selection-change': (selection) => {
 						this.selects.ids = selection.map((e) => e.id);
 					}
 				}
@@ -269,154 +235,167 @@ export default {
 				props: {
 					items: [
 						{
-							prop: "headImg",
-							label: "头像",
+							prop: 'headImg',
+							label: '头像',
 							span: 24,
 							component: {
-								name: "cl-upload"
+								name: 'cl-upload'
 							}
 						},
 						{
-							prop: "name",
-							label: "姓名",
+							prop: 'name',
+							label: '姓名',
 							span: 24,
 							component: {
-								name: "el-input",
+								name: 'el-input',
 								attrs: {
-									placeholder: "请填写姓名"
+									placeholder: '请填写姓名'
 								}
 							},
 							rules: {
 								required: true,
-								message: "姓名不能为空"
+								message: '姓名不能为空'
 							}
 						},
 						{
-							prop: "nickName",
-							label: "昵称",
+							prop: 'nickName',
+							label: '昵称',
 							span: 12,
 							component: {
-								name: "el-input",
+								name: 'el-input',
 								attrs: {
-									placeholder: "请填写昵称"
+									placeholder: '请填写昵称'
 								}
 							},
 							rules: {
 								required: true,
-								message: "昵称不能为空"
+								message: '昵称不能为空'
 							}
 						},
 						{
-							prop: "username",
-							label: "用户名",
+							prop: 'username',
+							label: '用户名',
 							span: 12,
 							component: {
-								name: "el-input",
+								name: 'el-input',
 								attrs: {
-									placeholder: "请填写用户名"
+									placeholder: '请填写用户名'
 								}
 							},
 							rules: [
 								{
 									required: true,
-									message: "用户名不能为空"
+									message: '用户名不能为空'
 								}
 							]
 						},
 						{
-							prop: "password",
-							label: "密码",
+							prop: 'password',
+							label: '密码',
 							span: 12,
-							hidden: ":isAdd",
+							hidden: ':isAdd',
 							component: {
-								name: "el-input",
+								name: 'el-input',
 								props: {
-									type: "password"
+									type: 'password'
 								},
 								attrs: {
-									placeholder: "请填写密码"
+									placeholder: '请填写密码'
 								}
 							},
 							rules: [
 								{
 									min: 6,
 									max: 16,
-									message: "密码长度在 6 到 16 个字符"
+									message: '密码长度在 6 到 16 个字符'
 								}
 							]
 						},
 						{
-							prop: "roleIdList",
-							label: "角色",
+							prop: 'roleIdList',
+							label: '角色',
 							span: 24,
 							value: [],
 							component: {
-								name: "cl-role-select",
+								name: 'cl-role-select',
 								props: {
 									props: {
-										"multiple-limit": 3
+										'multiple-limit': 3
 									}
 								}
 							},
 							rules: {
 								required: true,
-								message: "角色不能为空"
+								message: '角色不能为空'
 							}
 						},
+						/* 						{
+							prop: 'fanClubId',
+							label: '管辖球迷会',
+							span: 24,
+							value: [],
+							component: {
+								name: 'cl-fanClub-select'
+							},
+							rules: {
+								required: true,
+								message: '球迷会不能为空'
+							}
+						}, */
 						{
-							prop: "phone",
-							label: "手机号码",
+							prop: 'phone',
+							label: '手机号码',
 							span: 12,
 							component: {
-								name: "el-input",
+								name: 'el-input',
 								attrs: {
-									placeholder: "请填写手机号码"
+									placeholder: '请填写手机号码'
 								}
 							}
 						},
 						{
-							prop: "email",
-							label: "邮箱",
+							prop: 'email',
+							label: '邮箱',
 							span: 12,
 							component: {
-								name: "el-input",
+								name: 'el-input',
 								attrs: {
-									placeholder: "请填写邮箱"
+									placeholder: '请填写邮箱'
 								}
 							}
 						},
 						{
-							prop: "remark",
-							label: "备注",
+							prop: 'remark',
+							label: '备注',
 							span: 24,
 							component: {
-								name: "el-input",
+								name: 'el-input',
 								props: {
-									type: "textarea",
+									type: 'textarea',
 									rows: 4
 								}
 							}
 						},
 						{
-							prop: "status",
-							label: "状态",
+							prop: 'status',
+							label: '状态',
 							value: 1,
 							component: {
-								name: "el-radio-group",
+								name: 'el-radio-group',
 								options: [
 									{
-										label: "开启",
+										label: '开启',
 										value: 1
 									},
 									{
-										label: "关闭",
+										label: '关闭',
 										value: 0
 									}
 								]
 							}
 						},
 						{
-							prop: "tips",
+							prop: 'tips',
 							hidden: true,
 							component: (
 								<div>
@@ -426,7 +405,7 @@ export default {
 							)
 						}
 					],
-					"on-submit": this.onUpsertSubmit
+					'on-submit': this.onUpsertSubmit
 				}
 			}
 		};
@@ -438,7 +417,7 @@ export default {
 
 	methods: {
 		refresh(params) {
-			this.$refs["crud"].refresh(params);
+			this.$refs['crud'].refresh(params);
 		},
 
 		onLoad({ ctx, app }) {
@@ -449,12 +428,12 @@ export default {
 
 		async onRefresh(params, { next, render }) {
 			let { list } = await next(params);
-
+			console.log(list);
 			list.map((e) => {
 				if (e.roleName) {
-					this.$set(e, "roleNameList", e.roleName.split(","));
+					this.$set(e, 'roleNameList', e.roleName.split(','));
 				}
-
+				console.log(e);
 				e.status = Boolean(e.status);
 			});
 
@@ -463,7 +442,7 @@ export default {
 
 		onUpsertSubmit(isEdit, data, { next }) {
 			let departmentId = this.selects.dept.id;
-
+			console.log(data);
 			if (!departmentId) {
 				departmentId = this.dept.list[0].id;
 			}
@@ -491,11 +470,11 @@ export default {
 		deptCM(e, d) {
 			let list = [
 				{
-					label: "新增",
-					"suffix-icon": "el-icon-plus",
+					label: '新增',
+					'suffix-icon': 'el-icon-plus',
 					callback: (item, done) => {
 						this.deptEdit({
-							name: "",
+							name: '',
 							parentName: d.name,
 							parentId: d.id
 						});
@@ -503,8 +482,8 @@ export default {
 					}
 				},
 				{
-					label: "编辑",
-					"suffix-icon": "el-icon-edit",
+					label: '编辑',
+					'suffix-icon': 'el-icon-edit',
 					callback: (item, done) => {
 						this.deptEdit(d);
 						done();
@@ -518,8 +497,8 @@ export default {
 
 			if (d.parentId) {
 				list.push({
-					label: "删除",
-					"suffix-icon": "el-icon-delete",
+					label: '删除',
+					'suffix-icon': 'el-icon-delete',
 					callback: (item, done) => {
 						this.deptDel(d);
 						done();
@@ -528,15 +507,15 @@ export default {
 			}
 
 			list.push({
-				label: "新增成员",
-				"suffix-icon": "el-icon-user",
+				label: '新增成员',
+				'suffix-icon': 'el-icon-user',
 				callback: (item, done) => {
 					this.crud.append();
 					done();
 				}
 			});
 
-			this.$refs["context-menu"].open(e, {
+			this.$refs['context-menu'].open(e, {
 				list
 			});
 		},
@@ -546,7 +525,7 @@ export default {
 		},
 
 		deptClick(e) {
-			this.$refs["context-menu"].close();
+			this.$refs['context-menu'].close();
 
 			this.selects.dept = e;
 
@@ -554,7 +533,7 @@ export default {
 
 			ids.unshift(e.id);
 
-			this.refresh({ departmentIds: ids.join(",") });
+			this.refresh({ departmentIds: ids.join(',') });
 		},
 
 		deptAllowDrag({ data }) {
@@ -566,49 +545,49 @@ export default {
 		},
 
 		deptEdit(e) {
-			const method = e.id ? "update" : "add";
+			const method = e.id ? 'update' : 'add';
 
-			this.$refs["dept-upsert"].open({
+			this.$refs['dept-upsert'].open({
 				props: {
-					title: "编辑部门",
-					width: "550px",
-					"label-width": "100px"
+					title: '编辑部门',
+					width: '550px',
+					'label-width': '100px'
 				},
 				items: [
 					{
-						label: "部门名称",
-						prop: "name",
+						label: '部门名称',
+						prop: 'name',
 						value: e.name,
 						component: {
-							name: "el-input",
+							name: 'el-input',
 							attrs: {
-								placeholder: "请填写部门名称"
+								placeholder: '请填写部门名称'
 							}
 						},
 						rules: {
 							required: true,
-							message: "部门名称不能为空"
+							message: '部门名称不能为空'
 						}
 					},
 					{
-						label: "上级部门",
-						prop: "parentId",
-						value: e.parentName || "...",
+						label: '上级部门',
+						prop: 'parentId',
+						value: e.parentName || '...',
 						component: {
-							name: "el-input",
+							name: 'el-input',
 							attrs: {
 								disabled: true
 							}
 						}
 					},
 					{
-						label: "排序",
-						prop: "orderNum",
+						label: '排序',
+						prop: 'orderNum',
 						value: e.orderNum || 0,
 						component: {
-							name: "el-input-number",
+							name: 'el-input-number',
 							props: {
-								"controls-position": "right",
+								'controls-position': 'right',
 								min: 0,
 								max: 100
 							}
@@ -646,9 +625,9 @@ export default {
 					})
 					.then(() => {
 						if (f) {
-							this.$message.success("删除成功");
+							this.$message.success('删除成功');
 						} else {
-							this.$confirm("该部门用户已移动到部门顶级", "删除成功");
+							this.$confirm('该部门用户已移动到部门顶级', '删除成功');
 						}
 					})
 					.done(() => {
@@ -656,17 +635,17 @@ export default {
 					});
 			};
 
-			this.$confirm("该操作会删除部门下的所有用户，是否确认？", "提示", {
-				type: "warning",
-				confirmButtonText: "直接删除",
-				cancelButtonText: "保留用户",
+			this.$confirm('该操作会删除部门下的所有用户，是否确认？', '提示', {
+				type: 'warning',
+				confirmButtonText: '直接删除',
+				cancelButtonText: '保留用户',
 				distinguishCancelAndClose: true
 			})
 				.then(() => {
 					del(true);
 				})
 				.catch((action) => {
-					if (action == "cancel") {
+					if (action == 'cancel') {
 						del(false);
 					}
 				});
@@ -674,8 +653,8 @@ export default {
 
 		deptOrder(f) {
 			if (f) {
-				this.$confirm("部门架构已发生改变，是否保存？", "提示", {
-					type: "warning"
+				this.$confirm('部门架构已发生改变，是否保存？', '提示', {
+					type: 'warning'
 				})
 					.then(() => {
 						const deep = (list, pid) => {
@@ -704,7 +683,7 @@ export default {
 								})
 							)
 							.then(() => {
-								this.$message.success("更新排序成功");
+								this.$message.success('更新排序成功');
 							})
 							.catch((err) => {
 								this.$message.error(err);
@@ -731,22 +710,22 @@ export default {
 
 			let that = this;
 
-			this.$refs["dept-move"].open({
+			this.$refs['dept-move'].open({
 				props: {
-					title: "部门转移",
-					width: "600px",
-					"label-width": "80px"
+					title: '部门转移',
+					width: '600px',
+					'label-width': '80px'
 				},
 				items: [
 					{
-						label: "选择部门",
-						prop: "dept",
+						label: '选择部门',
+						prop: 'dept',
 						component: {
-							name: "system-user__dept-move",
+							name: 'system-user__dept-move',
 
 							methods: {
 								selectRow(e) {
-									this.$emit("input", e);
+									this.$emit('input', e);
 								}
 							},
 
@@ -754,22 +733,24 @@ export default {
 								return (
 									<div
 										style={{
-											border: "1px solid #eee",
-											"border-radius": "3px",
-											padding: "2px"
-										}}>
+											border: '1px solid #eee',
+											'border-radius': '3px',
+											padding: '2px'
+										}}
+									>
 										<el-tree
 											data={that.dept.list}
 											{...{
 												props: {
 													props: {
-														label: "name"
+														label: 'name'
 													}
 												}
 											}}
 											node-key="id"
 											highlight-current
-											on-node-click={this.selectRow}></el-tree>
+											on-node-click={this.selectRow}
+										></el-tree>
 									</div>
 								);
 							}
@@ -779,14 +760,14 @@ export default {
 				on: {
 					submit: (data, { done, close }) => {
 						if (!data.dept) {
-							this.$message.warning("请选择部门");
+							this.$message.warning('请选择部门');
 							return done();
 						}
 
 						const { name, id } = data.dept;
 
-						this.$confirm(`是否将用户转移到部门 ${name} 下`, "提示", {
-							type: "warning"
+						this.$confirm(`是否将用户转移到部门 ${name} 下`, '提示', {
+							type: 'warning'
 						})
 							.then(() => {
 								this.$service.system.user
@@ -795,7 +776,7 @@ export default {
 										userIds: ids
 									})
 									.then(() => {
-										this.$message.success("转移成功");
+										this.$message.success('转移成功');
 										close();
 										this.refresh();
 									})
@@ -868,7 +849,7 @@ export default {
 			}
 		}
 
-		/deep/.el-tree-node__content {
+		::v-deep.el-tree-node__content {
 			height: 36px;
 		}
 

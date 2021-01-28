@@ -1,7 +1,6 @@
 // 视图路由，用于中间区域展示
 
-export default [
-	{
+export default [{
 		path: "/",
 		name: "数据统计",
 		component: () => import("@/Home.vue")

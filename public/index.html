@@ -1,102 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-		<meta name="referer" content="never" />
-		<meta name="renderer" content="webkit" />
-		<meta name="viewport" content />
-		<link rel="icon" href="<%= BASE_URL %>favicon.ico" />
-		<title>COOL-ADMIN</title>
-		<% for (var i in htmlWebpackPlugin.options.cdn && htmlWebpackPlugin.options.cdn.css) { %>
-		<link href="<%= htmlWebpackPlugin.options.cdn.css[i] %>" rel="stylesheet" />
-		<% } %>
-		<style>
-			html,
-			body,
-			#app {
-				height: 100%;
-				margin: 0;
-				padding: 0;
-			}
 
-			.preload {
-				display: flex;
-				flex-direction: column;
-				height: 100%;
-				letter-spacing: 1px;
-				background-color: #2f3447;
-			}
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="0" />
+	<meta name="referer" content="never" />
+	<meta name="renderer" content="webkit" />
+	<meta name="viewport" content />
+	<link rel="icon" href="<%= BASE_URL %>favicon.ico" />
+	<title>COOL-ADMIN</title>
+	<% for (var i in htmlWebpackPlugin.options.cdn && htmlWebpackPlugin.options.cdn.css) { %>
+	<link href="<%= htmlWebpackPlugin.options.cdn.css[i] %>" rel="stylesheet" />
+	<% } %>
+	<script type="text/javascript" src="//api.map.baidu.com/api?type=webgl&v=1.0&&ak=ZRFqpARGGpX5WLS7boZucs9Bd4Bo9Eme">
+	</script>
+	<style>
+		html,
+		body,
+		#app {
+			height: 100%;
+			margin: 0;
+			padding: 0;
+		}
 
-			.preload .container {
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				flex-direction: column;
-				width: 100%;
-				user-select: none;
-				flex-grow: 1;
-			}
+		.preload {
+			display: flex;
+			flex-direction: column;
+			height: 100%;
+			letter-spacing: 1px;
+			background-color: #2f3447;
+		}
 
-			.preload .name {
-				font-size: 30px;
-				color: #fff;
-				letter-spacing: 5px;
-				font-weight: bold;
-			}
+		.preload .container {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			flex-direction: column;
+			width: 100%;
+			user-select: none;
+			flex-grow: 1;
+		}
 
-			.preload .title {
-				color: #fff;
-				font-size: 14px;
-				margin-bottom: 10px;
-			}
+		.preload .name {
+			font-size: 30px;
+			color: #fff;
+			letter-spacing: 5px;
+			font-weight: bold;
+		}
 
-			.preload .sub-title {
-				color: #ababab;
-				font-size: 12px;
-			}
+		.preload .title {
+			color: #fff;
+			font-size: 14px;
+			margin-bottom: 10px;
+		}
 
-			.preload .footer {
-				text-align: center;
-				padding: 10px 0 20px 0;
-			}
+		.preload .sub-title {
+			color: #ababab;
+			font-size: 12px;
+		}
 
-			.preload .footer a {
-				font-size: 12px;
-				color: #ababab;
-				text-decoration: none;
-			}
-		</style>
-	</head>
-	<body>
-		<noscript>
-			<strong
-				>We're sorry but cool-admin doesn't work properly without JavaScript enabled. Please
-				enable it to continue.</strong
-			>
-		</noscript>
-		<div id="app">
-			<div class="preload">
-				<div class="container">
-					<p class="name">COOL-ADMIN</p>
-					<p class="title">
-						正在加载资源...
-					</p>
-					<p class="sub-title">
-						初次加载资源可能需要较多时间 请耐心等待
-					</p>
-				</div>
+		.preload .footer {
+			text-align: center;
+			padding: 10px 0 20px 0;
+		}
 
-				<div class="footer">
-					<a href="https://www.cool-admin.com/" target="_blank">
-						https://www.cool-admin.com/
-					</a>
-				</div>
+		.preload .footer a {
+			font-size: 12px;
+			color: #ababab;
+			text-decoration: none;
+		}
+	</style>
+</head>
+
+<body>
+	<noscript>
+		<strong>We're sorry but cool-admin doesn't work properly without JavaScript enabled. Please
+			enable it to continue.</strong>
+	</noscript>
+	<div id="app">
+		<div class="preload">
+			<div class="container">
+				<p class="name">COOL-ADMIN</p>
+				<p class="title">
+					正在加载资源...
+				</p>
+				<p class="sub-title">
+					初次加载资源可能需要较多时间 请耐心等待
+				</p>
+			</div>
+
+			<div class="footer">
+				<a href="https://www.cool-admin.com/" target="_blank">
+					https://www.cool-admin.com/
+				</a>
 			</div>
 		</div>
+	</div>
 
-		<% for (var i in htmlWebpackPlugin.options.cdn && htmlWebpackPlugin.options.cdn.js) { %>
-		<script src="<%= htmlWebpackPlugin.options.cdn.js[i] %>"></script>
-		<% } %>
-	</body>
+	<% for (var i in htmlWebpackPlugin.options.cdn && htmlWebpackPlugin.options.cdn.js) { %>
+	<script src="<%= htmlWebpackPlugin.options.cdn.js[i] %>"></script>
+	<% } %>
+</body>
+
 </html>
