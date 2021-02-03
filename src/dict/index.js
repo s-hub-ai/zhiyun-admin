@@ -257,6 +257,10 @@ export const deliveryMethodDict = [{
 //性别 
 export const sexDict=[
   {
+    text: "未设置",
+    value: -1
+  },
+  {
     text: "男",
     value: 0
   },
@@ -267,6 +271,10 @@ export const sexDict=[
 ]
 //惯用脚 
 export const footDict=[
+  {
+    text: "未设置",
+    value: -1
+  },
   {
     text: "左脚",
     value: 0
@@ -282,6 +290,10 @@ export const footDict=[
 ]
 //位置 
 export const positionDict=[
+  {
+    text: "未设置",
+    value: -1
+  },
   {
     text: "守门员",
     value: 0

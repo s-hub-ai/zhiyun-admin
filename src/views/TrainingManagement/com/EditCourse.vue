@@ -157,7 +157,7 @@ export default {
             let t = time.getTime();
             let min = new Date(this.range.start).getTime(),
                 max = new Date(this.range.end).getTime();
-            return t<=max && t>=min
+            return t>max || t<min
         },
         async submitAppend(){
             this.$refs['appendForm'].validate(async (valid) => {	
@@ -168,6 +168,8 @@ export default {
 					};
                     params.courseDate = this.appendForm.courseDate.join(',');
                     params.classEndTimeStr = this.classEndTimeStr;
+                    params.courseExpirationStartDateStr = this.appendForm.courseExpirationStartDateStr + ' 00:00'
+                    params.courseExpirationEndDateStr = this.appendForm.courseExpirationEndDateStr + ' 23:59'
                     try{
                         if(params.classroomCourseId){
                             await this.$service.training.classroom.updateCourse(params);

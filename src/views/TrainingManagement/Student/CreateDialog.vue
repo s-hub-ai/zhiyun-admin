@@ -119,8 +119,8 @@ export default {
 				address:"",
 				school:"",
 				identityCardNumber:"",
-				foot:"",
-				position:"",
+				foot:-1,
+				position:-1,
 				portrait:"",
             },
             rules: {

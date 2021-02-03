@@ -15,6 +15,7 @@
 			>
 		</el-row>
 		<el-row type="flex" align="middle">
+			<span class="text-sm">班级/球队：</span>
 			<el-select class="ml-2" size="mini" v-model="classOrTeamId" @change="refresh" clearable placeholder="请选择">
 				<el-option
 				v-for="item in classOrTeamList"
@@ -23,6 +24,19 @@
 				:value="item.id">
 				</el-option>
 			</el-select>
+			<span class="ml-5">筛选生日：</span>
+			 	<el-date-picker
+				 size="mini"
+				v-model="birthdayFilter"
+				type="daterange"
+				value-format="yyyy-MM-dd"
+				range-separator="至"
+				start-placeholder="开始日期"
+				end-placeholder="结束日期"
+				clearable
+				@change="refresh"
+				>
+				</el-date-picker>
 			<cl-flex1></cl-flex1>
 			<StudentExport :classOrTeamId="classOrTeamId" :studentName="studentName"/>
 		</el-row>
@@ -69,6 +83,7 @@
 <script>
 import addDialog from './CreateDialog';
 import { sexDict , footDict, positionDict, addressDict} from '@/dict'
+const moment = require('moment');
 export default {
 	components: {
 		addDialog,
@@ -77,6 +92,7 @@ export default {
 	},
 	data() {
 		return {
+			birthdayFilter:null,
 			addDialogShow:false,
 			addDialogTitle:'新增学员',
 			studentName:"",
@@ -205,15 +221,15 @@ export default {
 				});
 		},
 		refresh() {
-			this.$refs.crud.refresh({
-				...(()=>{
-					if(this.classOrTeamId){
-						return {classOrTeamId:Number(this.classOrTeamId)}
-					}else{
-						return {classOrTeamId:""}
-					}
-				})()
-			});
+			const query = {};
+			if(this.classOrTeamId){
+				query.classOrTeamId = Number(this.classOrTeamId)
+			}
+			if(this.birthdayFilter){
+				query.birthdayStart=this.birthdayFilter[0];
+				query.birthdayEnd=this.birthdayFilter[1]
+			}
+			this.$refs.crud.refresh(query);
         },
         addDialog() {
 			this.addDialogTitle = '新增学员';

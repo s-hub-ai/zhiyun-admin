@@ -257,7 +257,7 @@ export default {
 			app.refresh({
 				prop: 'createTime',
 				order: 'desc',
-				type:2
+				type:1
 			});
 		}
 	}

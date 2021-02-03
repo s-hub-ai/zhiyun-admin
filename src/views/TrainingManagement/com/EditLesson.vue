@@ -19,32 +19,10 @@
                         <span>{{dateWithWeek(scope.row.lessonDate)}}</span>
                     </template>
                     <template #column-coachStatus="{ scope }">
-                         <el-popover
-                          v-if="scope.row.coachStatus>0"
-                            placement="top-start"
-                            title="考勤详细"
-                            width="200"
-                            trigger="hover" >
-                            <div>
-                                11231
-                            </div>
-                            <el-button slot="reference" size="mini" type="text">{{scope.row.coachStatus}}</el-button>
-                        </el-popover>
-                        <span v-else>暂无考勤</span>
+                        <AbsenceDetail :lessonId="scope.row.lessonId" :status="scope.row.coachStatus" type="coach"/>
                     </template>
                     <template #column-studentStatus="{ scope }">
-                         <el-popover
-                             v-if="scope.row.studentStatus>0"
-                            placement="top-start"
-                            title="考勤详细"
-                            width="200"
-                            trigger="hover" >
-                            <div>
-                                213123
-                            </div>
-                            <el-button slot="reference" size="mini" type="text">{{scope.row.studentStatus}}</el-button>
-                        </el-popover>
-                        <span v-else>暂无考勤</span>
+                        <AbsenceDetail :lessonId="scope.row.lessonId" :status="scope.row.studentStatus" type="student"/>
                     </template>
                     <template #column-op="{ scope }">
                         <el-button
@@ -71,7 +49,8 @@
                         v-for="item in list"
                         :key="item.classroomCourseId"
                         :label="item.courseName"
-                        :value="item.classroomCourseId">
+                        :value="item.classroomCourseId"
+                        no-data-text="无课程，请先添加">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -99,6 +78,9 @@ moment.locale('zh-cn');
 export default {
     name:"EditLesson",
     props:['id','crrtList'],
+    components:{
+        AbsenceDetail:()=>import('./AbsenceDetail')
+    },
     data:(vm)=>({
         show:false,
         tableColumn:[

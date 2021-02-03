@@ -260,7 +260,7 @@ export default {
 			app.refresh({
 				prop: 'createTime',
 				order: 'desc',
-				type:1
+				type:0
 			});
 		}
 	}
