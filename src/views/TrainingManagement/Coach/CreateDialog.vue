@@ -24,7 +24,7 @@
 			</el-select>
 		</el-form-item>
 		<el-form-item label="手机号码：" prop="phoneNum">
-			<el-input v-model="ruleForm.phoneNum"></el-input>
+			<el-input maxlength="11" show-word-limit v-model="ruleForm.phoneNum"></el-input>
 		</el-form-item>
 		<el-form-item>
 			<el-button type="primary" @click="submitForm('ruleForm')">{{ruleForm.id?'修改':'新增'}}</el-button>
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-
+import { floatFix1 , phoneRule} from '../com/rules'
 export default {
 	data() {
 		return {
@@ -45,7 +45,9 @@ export default {
 				portrait:"",
             },
             rules: {
-
+				name:[{required: true, message: '请填写姓名'}],
+				level:[{required: true, message: '请选择等级'}],
+				phoneNum:[{required: true, message: '请填写手机号'},{trigger:'blur',validator:phoneRule}]
             }
 		};
 	},

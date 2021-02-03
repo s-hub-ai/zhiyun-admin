@@ -36,7 +36,7 @@
 						:on-success="imgUploadSuccess"
 					></cl-upload>
 				</el-form-item>
-				<el-form-item label="学员姓别" prop="sex">
+				<el-form-item label="学员性别" prop="sex">
 					<el-select  v-model="ruleForm.sex">
 						<el-option
 							v-for="item in sexDict"
@@ -100,7 +100,8 @@
 </template>
 
 <script>
-import {sexDict , footDict, positionDict, addressDict} from '@/dict'
+import { sexDict , footDict, positionDict, addressDict} from '@/dict'
+import { floatFix1 , phoneArrayRule} from '../com/rules'
 export default {
 	components:{
 		MultiPhone:()=>import('./MultiPhone')
@@ -123,14 +124,24 @@ export default {
 				portrait:"",
             },
             rules: {
-
+				name:[{required: true, message: '请填写姓名'}],
+				sex:[{required: true, message: '请填写性别'}],
+				height:[{required: true, message: '请填写身高'},{trigger:'blur',validator:floatFix1}],
+				weight:[{required: true, message: '请填写体重'},{trigger:'blur',validator:floatFix1}],
+				birthday:[{required: true, message: '请填写出生日期'}],
+				trainDate:[{required: true, message: '请填写开始训练日期'}],
+				phoneNumArray:[{required: true, message: '请填写家长手机号'},{trigger:'blur',validator:phoneArrayRule}],
+				address:[{required: true, message: '请填写归属地'}],
+				school:[{required: true, message: '请填写学籍'}],
+				identityCardNumber:[{required: true, message: '请填写家长手机号'}],
+				
 			},
-			...{sexDict , footDict, positionDict, addressDict}
+			...{sexDict , footDict, positionDict, addressDict},
 		};
 	},
 	methods: {
 		submitForm(formName) {
-			this.$refs[formName].validate(async (valid) => {				 
+			this.$refs[formName].validate(async (valid) => {		 
 				if (valid) {
 					let params = {
 						...this.ruleForm

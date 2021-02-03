@@ -13,7 +13,7 @@
 						value: 'coachName'
 					},
 					{
-						label: '班级',
+						label: '球队',
 						value: 'classroomName'
 					},
 				]"
@@ -31,7 +31,7 @@
 				size="mini"
 				type="primary"
 				@click="addDialog()"
-				>新增班级</el-button
+				>新增球队</el-button
 			>
 		</el-row>
 
@@ -46,17 +46,14 @@
 					:loading="coachListLoading"/>
 				</template>
 				<template #column-course="{ scope }">
-					<EditCourse  
+					<EditCourse 
 					:range="{start:scope.row.trainingStartTime,end:scope.row.trainingEndTime}" 
 					:id="scope.row.id" @freash="refresh" :crrtList="scope.row.course" :courseList="courseList" 
 					:loading="courseListLoading"/>
 				</template>
 				<template #column-lessons="{ scope }">
-					<EditLesson  :id="scope.row.id" @freash="refresh" :crrtList="scope.row.lesson">
-						<template slot="btnConent"> 
-							<span>{{scope.row.lesson>0?scope.row.lesson:'暂无课程'}}</span>
-						</template>						
-					</EditLesson>
+					<EditLesson 
+					:id="scope.row.id" @freash="refresh" :crrtList="scope.row.lesson"/>
 				</template>
 				<template #column-trainingTime="{ scope }">
 					<span>{{scope.row.trainingStartTime.slice(0,10)}}</span>~
@@ -91,7 +88,7 @@
 		</el-row>
 
 		<!-- 新增编辑弹出框 -->
-		<el-dialog title="新增班级" :visible.sync="addDialogShow" width="1000px" @close="addDialogClose">
+		<el-dialog title="新增球队" :visible.sync="addDialogShow" width="1000px" @close="addDialogClose">
 			<add-dialog v-if="addDialogShow" ref="editDialog" :addDialogShow.sync="addDialogShow"></add-dialog>
 		</el-dialog>
 	</cl-crud>
@@ -115,13 +112,13 @@ export default {
 			studentListDialog:false,
             tableColumn: [
 				{
-					label: '班级ID',
+					label: '球队ID',
 					prop: 'id',
 					align: 'center',
 					width: 100
 				},
 				{
-					label: '班级名称',
+					label: '球队名称',
 					prop: 'name',
 					align: 'center',
 					width: 125
@@ -198,7 +195,7 @@ export default {
 		},
 		//删除
 		deleteFn(ids) {
-			this.$confirm('是否确定删除班级？', '提示', {
+			this.$confirm('是否确定删除球队？', '提示', {
 				confirmButtonText: '确定',
 				cancelButtonText: '取消',
 				type: 'warning'
@@ -260,7 +257,7 @@ export default {
 			app.refresh({
 				prop: 'createTime',
 				order: 'desc',
-				type:1
+				type:2
 			});
 		}
 	}

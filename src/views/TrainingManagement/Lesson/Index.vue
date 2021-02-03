@@ -15,7 +15,7 @@
 			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
 				
 				<template #column-op="{ scope }">
-					<el-button
+					<el-button size="mini"
 						v-permission="{
 							or: [$service.training.course.permission.add]
 						}"
@@ -23,7 +23,7 @@
 						@click="editDialog(scope.row.id)"
 						>编辑</el-button
 					>
-					<el-button
+					<el-button size="mini"
 						v-permission="{
 							or: [$service.training.course.permission.add]
 						}" 
@@ -130,9 +130,6 @@ export default {
         addDialog() {
 			this.addDialogTitle = '新增';
 			this.addDialogShow = true;
-			this.$nextTick(() => {
-				this.$refs.editDialog.createSpec();
-			});
         },
         addDialogClose() {
 			this.$refs.editDialog.resetForm('ruleForm');

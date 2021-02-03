@@ -1,9 +1,9 @@
 <template>
 	<el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="120px" class="demo-ruleForm">
-		<el-form-item label="班级名称" prop="name">
+		<el-form-item label="球队名称" prop="name">
 			<el-input v-model="ruleForm.name"></el-input>
 		</el-form-item>
-		<el-form-item label="训练时间"  >
+		<el-form-item label="训练时间"  prop="trainingStartTime">
 			<el-date-picker
 				v-model="ruleForm.trainingStartTime"
 				type="date"
@@ -18,6 +18,19 @@
 		</el-form-item>
 		<el-form-item label="训练地点" prop="trainingPosition">
 			<el-input v-model="ruleForm.trainingPosition"></el-input>
+		</el-form-item>
+		<el-form-item label="球队类型" prop="subType">
+			 <el-select size="mini" v-model="ruleForm.subType" placeholder="请选择">
+				<el-option
+				v-for="item in [
+					{value:0,text:'校队'},
+					{value:1,text:'精英梯队'}
+				]"
+				:key="item.value"
+				:label="item.text"
+				:value="item.value">
+				</el-option>
+			</el-select>
 		</el-form-item>
 		<el-form-item label="打卡位置" >
 			<Map v-bind:radius="ruleForm.checkRadius"  @setlngAndLat="setlngAndLat"/>
@@ -61,7 +74,7 @@ export default {
 				checkLatitude:"",
 				checkRadius:"300",
 				subType:"",
-				type:1,
+				type:2,
 
             },
             rules: {
@@ -70,6 +83,7 @@ export default {
 				trainingEndTime:[{required: true, message: '请填写'}],
 				trainingPosition:[{required: true, message: '请填写'}], 
 				checkRadius:[{required: true, message: '请填写'}],  
+				subType:[{required: true, message: '请填写'}]			
             }
 		};
 	},

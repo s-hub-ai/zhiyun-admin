@@ -1,11 +1,13 @@
 <template>
     <div>
-        <div class="mb-1 flex" v-for="(item, i) in arr" :key="i">
+        <div class="mb-1 flex" v-for="(item, i) in arr" :key="i"> 
             <el-input 
                 placeholder="请输入家长手机号"
                 @input="update"
                 v-model="item.text"
-            ></el-input>
+                show-word-limit
+                maxlength="11"
+            ></el-input> 
             <el-button size="mini"  @click="del(i)">
                 <i class="el-icon-delete" ></i>
             </el-button>

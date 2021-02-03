@@ -22,7 +22,20 @@ export default {
 				duration:''
 			},
             rules: {
-
+				name:[{required: true, message: '请填写'},{ validator:(rule, value, callback)=>{
+					if(value.length>20){
+						callback(new Error('不要超过20个字'))
+					}else{
+						callback()
+					}
+				}}],
+				duration:[{required: true, message: '请填写'},{ validator:(rule, value, callback)=>{
+					if(value<=0){
+						callback(new Error('请填写不为0的正整数'))
+					}else{
+						callback()
+					}
+				}}],
             }
 		};
 	},

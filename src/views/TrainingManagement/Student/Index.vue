@@ -1,7 +1,7 @@
 <template>
 	<cl-crud @load="onLoad" ref="crud">
 		<el-row type="flex" align="middle">
-			<cl-search-key field="studentName"  placeholder="请输入学员名称"></cl-search-key>
+			<cl-search-key field="studentName" v-model="studentName" placeholder="请输入学员名称"></cl-search-key>
 			<cl-flex1></cl-flex1>
 			<BatchAdd class="mr-2" @freash="$refs['crud'].refresh()"/>
 			<el-button
@@ -14,6 +14,18 @@
 				>新增学员</el-button
 			>
 		</el-row>
+		<el-row type="flex" align="middle">
+			<el-select class="ml-2" size="mini" v-model="classOrTeamId" @change="refresh" clearable placeholder="请选择">
+				<el-option
+				v-for="item in classOrTeamList"
+				:key="item.id"
+				:label="item.name"
+				:value="item.id">
+				</el-option>
+			</el-select>
+			<cl-flex1></cl-flex1>
+			<StudentExport :classOrTeamId="classOrTeamId" :studentName="studentName"/>
+		</el-row>
 
 		<el-row>
 			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
@@ -25,7 +37,7 @@
 						v-permission="{
 							or: [$service.training.student.permission.add]
 						}"
-						type="text"
+						type="text" size="mini"
 						@click="editDialog(scope.row.id)"
 						>编辑</el-button
 					>
@@ -33,7 +45,7 @@
 						v-permission="{
 							or: [$service.training.student.permission.add]
 						}" 
-						type="text"
+						type="text" size="mini"
 						@click="deleteFn(scope.row.id)"
 						>删除</el-button
 					>
@@ -60,12 +72,16 @@ import { sexDict , footDict, positionDict, addressDict} from '@/dict'
 export default {
 	components: {
 		addDialog,
-		BatchAdd:()=>import('./BathchAdd')
+		BatchAdd:()=>import('./BathchAdd'),
+		StudentExport:()=>import('./StudentExport')
 	},
 	data() {
 		return {
 			addDialogShow:false,
 			addDialogTitle:'新增学员',
+			studentName:"",
+			classOrTeamId:"",
+			classOrTeamList:[],
 			tableColumn:[
 				{
 					label: '学员ID',
@@ -151,7 +167,9 @@ export default {
 			]
         }
 	},
-
+	mounted(){
+		this.getClassOrTeam()
+	},
 	methods: {
 		//编辑
 		editDialog(id) {
@@ -188,15 +206,18 @@ export default {
 		},
 		refresh() {
 			this.$refs.crud.refresh({
-				...this.tableFlters
+				...(()=>{
+					if(this.classOrTeamId){
+						return {classOrTeamId:Number(this.classOrTeamId)}
+					}else{
+						return {classOrTeamId:""}
+					}
+				})()
 			});
         },
         addDialog() {
 			this.addDialogTitle = '新增学员';
 			this.addDialogShow = true;
-			this.$nextTick(() => {
-				this.$refs.editDialog.createSpec();
-			});
         },
         addDialogClose() {
 			this.$refs.editDialog.resetForm('ruleForm');
@@ -209,7 +230,21 @@ export default {
 				prop: 'createTime',
 				order: 'desc'
 			});
+		},
+		async getClassOrTeam(){
+			const res = await this.$service.training.classroom.list();
+			this.classOrTeamList = res.map(el=>({
+				name:el.name,
+				id:el.id
+			}))
 		}
 	}
 };
 </script>
+<style lang="scss">
+	.table-form {
+	::v-deep .el-form-item {
+		margin: 0 10px 0 0;
+	}
+}
+</style>

@@ -1,7 +1,7 @@
 <template>
 	<cl-crud @load="onLoad"  ref="crud">
 		<el-row type="flex" align="middle">
-			<cl-search-key placeholder="请输入教练名字"></cl-search-key>
+			<cl-search-key field="name" v-model="searchName" placeholder="请输入教练名字"></cl-search-key>
 			<cl-flex1></cl-flex1>
 			<el-button
 				v-permission="{
@@ -13,6 +13,11 @@
 				>新增教练</el-button
 			>
 		</el-row>
+		<el-row type="flex" align="middle">
+
+			<cl-flex1></cl-flex1>
+			<CoachExport :searchName="searchName"/>
+		</el-row>
 
 		<el-row>
 			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
@@ -21,6 +26,7 @@
 				</template>
 				 <template #column-op="{ scope }">
 					<el-button
+						size="mini"
 						v-permission="{
 							or: [$service.training.coach.permission.add]
 						}"
@@ -29,6 +35,7 @@
 						>编辑</el-button
 					>
 					<el-button
+					size="mini"
 						v-permission="{
 							or: [$service.training.coach.permission.add]
 						}"
@@ -46,7 +53,7 @@
 		</el-row>
 
 		<!-- 新增编辑弹出框 -->
-		<el-dialog :title="新增教练" :visible.sync="addDialogShow" width="1000px" @close="addDialogClose">
+		<el-dialog :title="addDialogTitle" :visible.sync="addDialogShow" width="1000px" @close="addDialogClose">
 			<add-dialog v-if="addDialogShow" ref="editDialog" :addDialogShow.sync="addDialogShow"></add-dialog>
 		</el-dialog>
 	</cl-crud>
@@ -56,15 +63,18 @@
 import addDialog from './CreateDialog';
 export default {
 	components: {
-		addDialog
+		addDialog,
+		CoachExport:()=>import('./CoachExport')
 	},
 	data() {
 		return {
-            addDialogShow:false,
+			addDialogShow:false,
+			addDialogTitle:"新增教练",
+			searchName:"",
 			tableColumn:[
 				{
 					label: '教练ID',
-					type: 'index',
+					prop:'id',
 					align: 'center',
 					width:100
 				},
@@ -142,9 +152,6 @@ export default {
         addDialog() {
 			this.addDialogTitle = '新增';
 			this.addDialogShow = true;
-			this.$nextTick(() => {
-				this.$refs.editDialog.createSpec();
-			});
         },
         addDialogClose() {
 			this.$refs.editDialog.resetForm('ruleForm');

@@ -17,4 +17,12 @@ export default class extends BaseService {
         data
         })
     }
+    @Permission("export")
+    export (data) {
+        return this.request({
+        url: "/export",
+        method: "POST",
+        data
+        })
+    }
 }   

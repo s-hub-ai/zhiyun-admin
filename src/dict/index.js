@@ -314,3 +314,35 @@ export const addressDict=[
     value: 3
   },
 ]
+
+//星期
+export const weekDict=[
+  {
+    text: "星期一",
+    value: '0'
+  },
+  {
+    text: "星期二",
+    value: '1'
+  },
+  {
+    text: "星期三",
+    value: '2'
+  },
+  {
+    text: "星期四",
+    value: '3'
+  },
+  {
+    text: "星期五",
+    value: '4',
+  },
+  {
+    text: "星期六",
+    value: '5',
+  },
+  {
+    text: "星期天",
+    value: '6',
+  }
+]

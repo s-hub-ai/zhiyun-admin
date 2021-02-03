@@ -1,0 +1,56 @@
+<template>
+    <div>
+        <el-button v-if="crrtList.length==0" size="mini" type="text" @click="show=true">添加学员</el-button>
+        <el-button v-else size="mini" @click="show=true" type="text">{{crrtList.length}}</el-button>
+        <el-dialog title="编辑学员" :visible.sync="show" width="1000px" >
+            <el-form class="text-left">
+                <el-transfer v-loading="loading" filterable filter-placeholder="请输入用户手机号" :titles="['学生列表', '已选学生']" 
+                    v-model="list" :data="userList">
+                    <span slot-scope="{ option }">{{ option.label}}</span>
+                </el-transfer>
+                <div class="py-2 text-center">
+                    <el-button type="primary" @click="confirm()">确定</el-button>
+                    <el-button @click="show=false">取消</el-button>
+                </div>
+            </el-form>
+            
+        </el-dialog>
+    </div>
+</template>
+<script>
+export default {
+    name:"AppendStudent",
+    props:['crrtList','userList','loading','id'],
+    mounted(){
+        this.list = this.crrtList.map(el=>el.id)
+    },
+    data:()=>({
+        show:false,
+        list:[],
+    }),
+    methods:{
+        async confirm(){
+            await this.$service.training.classroom.addStudent({
+                classroomId:this.id,
+                studentIds:this.list.join(',')
+            });
+
+            this.$message.success('修改成功')
+            this.show = false
+            this.$emit('freash')
+        }     
+
+    }
+}
+</script>
+<style lang="scss" scoped>
+    ::v-deep .el-transfer{
+        display: flex;
+    }
+    ::v-deep .el-transfer-panel{
+        flex-grow: 1 !important;
+    }
+    ::v-deep .el-transfer__buttons{
+            align-self: center;
+    }
+</style>

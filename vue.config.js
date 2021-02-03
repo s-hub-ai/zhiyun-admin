@@ -40,11 +40,11 @@ module.exports = {
 				}
 			},
 			"/training": {
-				target: "http://test2.junxing-tech.net:7003",
-				// target: "http://127.0.0.1:8000",
+				target: "https://paytest.ryyes.com/training/admin",
+				// target: "http://127.0.0.1:7003",
 				changeOrigin: true,
 				pathRewrite: {
-					"^/training": "/admin",
+					"^/training": "/",
 				}
 			},
 			"/pro": {
