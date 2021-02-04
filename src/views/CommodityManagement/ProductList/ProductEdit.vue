@@ -358,7 +358,7 @@ export default {
 				this.$store.dispatch('setDefaultcolumn', this.item.goodsType == 2 ? specColumnScore : specColumn);
 			} else {
 				this.ruleForm.salePromotionMethod = 1;
-				this.salePromotionMethod = 0;
+				this.salePromotionMethod = 1;
 				this.$store.dispatch('setDefaultcolumn', this.item.goodsType == 2 ? specColumnScore : specColumnOnsale);
 			}
 		}
