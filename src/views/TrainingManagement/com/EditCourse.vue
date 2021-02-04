@@ -130,7 +130,7 @@ export default {
                     courseExpirationStartDateStr:"",
                     courseExpirationEndDateStr:"",
                     classStartTimeStr:"",
-                    classEndTimeStr:"",
+                    classEndTimeStr:""
                 })
             }
         }
@@ -146,14 +146,14 @@ export default {
             courseExpirationStartDateStr:"",
             courseExpirationEndDateStr:"",
             classStartTimeStr:"",
-            classEndTimeStr:"",
+            classEndTimeStr:""
         },
         rules:{
             courseId:[{required: true, message: '请填写'}],
             courseDate:[{required: true, message: '请填写'}],
             courseExpirationStartDateStr:[{required: true, message: '请填写'}],
             courseExpirationEndDateStr:[{required: true, message: '请填写'}],
-            classStartTimeStr:[{required: true, message: '请填写'}],
+            classStartTimeStr:[{required: true, message: '请填写'}]
         },
         appendLoading:false,
         ...{ weekDict }

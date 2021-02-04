@@ -35,7 +35,7 @@ export default {
     props:['lessonId','type','status'],
     data:()=>({
         list:[],
-        loading:false,
+        loading:false
     }),
     computed:{
         showTooltip(){
@@ -84,7 +84,7 @@ export default {
                 lessonId:this.lessonId
             });
             this.list=res;
-        },
+        }
 
     }
 

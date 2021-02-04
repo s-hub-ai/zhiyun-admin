@@ -1,7 +1,7 @@
 <template>
 	<cl-crud @load="onLoad"  ref="crud">
 		<el-row type="flex" align="middle">
-			<cl-search-key field="name" v-model="searchName" placeholder="请输入教练名字"></cl-search-key>
+			<cl-search-key  v-model="searchName" placeholder="请输入教练名字"></cl-search-key>
 			<cl-flex1></cl-flex1>
 			<el-button
 				v-permission="{
@@ -81,22 +81,22 @@ export default {
 				{
 					label: '头像',
 					prop:'portrait',
-					align: 'center',
+					align: 'center'
 				},
 				{
 					label: '姓名',
 					prop:'name',
-					align: 'center',
+					align: 'center'
 				},
 				{
 					label: '等级',
 					prop:'level',
-					align: 'center',
+					align: 'center'
 				},
 				{
 					label: '手机号',
 					prop: 'phoneNum',
-					align: 'center',
+					align: 'center'
 				},
 				{
 					label: '操作',

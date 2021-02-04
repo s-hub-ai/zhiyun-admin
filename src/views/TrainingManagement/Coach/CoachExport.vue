@@ -12,14 +12,14 @@ export default {
 	name: "coachExport",
 	props:['searchName'],
     data: () => ({
-        loading:false,
+        loading:false
     }),
     methods:{
         async exportExcel() {
 			this.loading = true
 			let query = {}
 			if(this.searchName){
-				query.name = this.searchName
+				query.keyWord = this.searchName
 			}
 			/* 从表生成工作簿对象 */
 			//var wb = XLSX.utils.table_to_book(document.querySelector("#out-table"));
@@ -36,7 +36,7 @@ export default {
 			XLSX.utils.book_append_sheet(wb, ws, '教练信息'); /* 生成xlsx文件(book,sheet数据,sheet命名) */
             XLSX.writeFile(wb, '教练信息.xlsx'); /*写文件(book,xlsx文件名称)*/
             this.loading = false
-		},
+		}
     }
 }
 </script>

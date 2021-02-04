@@ -1,7 +1,7 @@
 const floatFix1 = (rule, value, callback)=>{
     if(value<=0){
         callback(new Error('请输入大于0的数'))
-    } else if(value.toFixed(1) != value){
+    } else if(Number(value).toFixed(1) != Number(value)){
         callback(new Error('请输入最多1位小数'))
     } else{
         callback()

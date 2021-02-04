@@ -286,7 +286,7 @@ export const footDict=[
   {
     text: "双脚",
     value: 2
-  },
+  }
 ]
 //位置 
 export const positionDict=[
@@ -305,7 +305,7 @@ export const positionDict=[
   {
     text: "进攻",
     value: 2
-  },
+  }
 ]
 //归属地
 export const addressDict=[
@@ -324,7 +324,7 @@ export const addressDict=[
   {
     text: "未设置",
     value: 3
-  },
+  }
 ]
 
 //星期
@@ -347,14 +347,14 @@ export const weekDict=[
   },
   {
     text: "星期五",
-    value: '4',
+    value: '4'
   },
   {
     text: "星期六",
-    value: '5',
+    value: '5'
   },
   {
     text: "星期天",
-    value: '6',
+    value: '6'
   }
 ]

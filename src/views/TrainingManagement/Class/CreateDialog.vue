@@ -63,7 +63,7 @@ export default {
 				checkLatitude:"",
 				checkRadius:"300",
 				subType:"",
-				type:0,
+				type:0
 
             },
             rules: {
@@ -71,7 +71,7 @@ export default {
 				trainingStartTime:[{required: true, message: '请填写'}],
 				trainingEndTime:[{required: true, message: '请填写'}],
 				trainingPosition:[{required: true, message: '请填写'}], 
-				checkRadius:[{required: true, message: '请填写'}],  
+				checkRadius:[{required: true, message: '请填写'}] 
             }
 		};
 	},

@@ -12,9 +12,9 @@ import XLSX from "xlsx"
 import { sexDict , footDict, positionDict, addressDict} from '@/dict'
 export default {
 	name: "studentExport",
-	props:['classOrTeamId','studentName'],
+	props:['classOrTeamId','studentName','birthdayFilter'],
     data: () => ({
-        loading:false,
+        loading:false
     }),
     methods:{
         async exportExcel() {
@@ -29,6 +29,10 @@ export default {
 				query.studentName = this.studentName
 
 			}
+			if(this.birthdayFilter){
+				query.birthdayStart=this.birthdayFilter[0] + ' 00:00';
+				query.birthdayEnd=this.birthdayFilter[1] + ' 23:59'
+			}
 			const res = await this.$service.training.student.export(query)
 		    const data = res.map(el => ({
 				 '姓名':el.name,
@@ -42,7 +46,7 @@ export default {
 				 '家长手机号码':el.phoneNumArray,
 				 '归属地':addressDict.find( e=>e.value==el['address'])?.text || '未设置',
 				 '学籍':el.school,
-				 '身份证号':el.identityCardNumber,
+				 '身份证号':el.identityCardNumber
 			}));
 			var ws = XLSX.utils.json_to_sheet(data);
 			/* 获取二进制字符串作为输出 */
@@ -50,7 +54,7 @@ export default {
 			XLSX.utils.book_append_sheet(wb, ws, '学员信息'); /* 生成xlsx文件(book,sheet数据,sheet命名) */
             XLSX.writeFile(wb, '学员信息.xlsx'); /*写文件(book,xlsx文件名称)*/
             this.loading = false
-		},
+		}
     }
 }
 </script>

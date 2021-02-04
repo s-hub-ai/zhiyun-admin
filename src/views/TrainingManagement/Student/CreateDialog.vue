@@ -121,7 +121,7 @@ export default {
 				identityCardNumber:"",
 				foot:-1,
 				position:-1,
-				portrait:"",
+				portrait:""
             },
             rules: {
 				name:[{required: true, message: '请填写姓名'}],
@@ -133,10 +133,10 @@ export default {
 				phoneNumArray:[{required: true, message: '请填写家长手机号'},{trigger:'blur',validator:phoneArrayRule}],
 				address:[{required: true, message: '请填写归属地'}],
 				school:[{required: true, message: '请填写学籍'}],
-				identityCardNumber:[{required: true, message: '请填写'}],
+				identityCardNumber:[{required: true, message: '请填写'}]
 				
 			},
-			...{sexDict , footDict, positionDict, addressDict},
+			...{sexDict , footDict, positionDict, addressDict}
 		};
 	},
 	methods: {
@@ -146,18 +146,23 @@ export default {
 					let params = {
 						...this.ruleForm
 					};
-					if (params.id) {
-						await this.$service.training.student.update(params);
-					} else {
-						await this.$service.training.student.add(params);
-					}
-
-					this.$alert(params.id ? '修改成功' : '添加成功', '提示', {
-						confirmButtonText: '确定',
-						callback: (action) => {
-							this.$emit('update:addDialogShow', false);
+					try{
+						if (params.id) {
+							await this.$service.training.student.update(params);
+						} else {
+							await this.$service.training.student.add(params);
 						}
-					});
+	
+						this.$alert(params.id ? '修改成功' : '添加成功', '提示', {
+							confirmButtonText: '确定',
+							callback: (action) => {
+								this.$emit('update:addDialogShow', false);
+							}
+						});
+
+					}catch(err){
+						this.$message.error(err)
+					}
 				} else {
 					console.log('error submit!!');
 					return false;
@@ -179,7 +184,7 @@ export default {
 		imgUploadSuccess(res, file, fileList) {
 			console.log(res)
 			this.ruleForm.portrait = res
-		},
+		}
 	}
 };
 </script>

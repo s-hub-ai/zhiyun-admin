@@ -15,7 +15,7 @@
 					{
 						label: '球队',
 						value: 'classroomName'
-					},
+					}
 				]"
 				:key="item.value"
 				:label="item.label"
@@ -102,7 +102,7 @@ export default {
 		AppendStudent:()=>import('../com/AppendStudent'),
 		AppendCoach:()=>import('../com/AppendCoach'),
 		EditCourse:()=>import('../com/EditCourse'),
-		EditLesson:()=>import('../com/EditLesson'),
+		EditLesson:()=>import('../com/EditLesson')
 	},
 	data() {
 		return {
@@ -223,7 +223,7 @@ export default {
 			const res = await this.$service.training.student.list()
 			this.studentList = res.map(el=>({
 				key:el.id,
-				label:`${el.name}-${el.phoneNumArray}`,
+				label:`${el.name}-${el.phoneNumArray}`
 			}));
 			this.studentListLoading = false
 		},
@@ -233,7 +233,7 @@ export default {
 			this.coachList = res.map(el=>({
 				key:el.id,
 				label:`${el.name}-${el.phoneNum}`,
-				disabled:false,	
+				disabled:false	
 			}));
 			this.coachListLoading = false
 		},

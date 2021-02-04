@@ -38,7 +38,7 @@
 				>
 				</el-date-picker>
 			<cl-flex1></cl-flex1>
-			<StudentExport :classOrTeamId="classOrTeamId" :studentName="studentName"/>
+			<StudentExport :classOrTeamId="classOrTeamId" :studentName="studentName" :birthdayFilter="birthdayFilter"/>
 		</el-row>
 
 		<el-row>
@@ -108,12 +108,12 @@ export default {
 				{
 					label: '头像',
 					prop:'portrait',
-					align: 'center',
+					align: 'center'
 				},
 				{
 					label: '姓名',
 					prop:'name',
-					align: 'center',
+					align: 'center'
 				},
 				{
 					label: '性别',
@@ -121,7 +121,7 @@ export default {
 					align: 'center',
 					formatter({sex}) {	 
 						return sexDict.find(el=>el.value==sex)?.text || '未设置' 
-					},
+					}
 				},
 				{
 					label: '出生日期',
@@ -129,7 +129,7 @@ export default {
 					align: 'center',
 					formatter({birthday}) {	 
 						return birthday.slice(0,10);
-					},
+					}
 				},
 				{
 					label: '开始训练时间',
@@ -137,7 +137,7 @@ export default {
 					align: 'center',
 					formatter({trainDate}) {	 
 						return trainDate.slice(0,10);
-					},
+					}
 				},
 				{
 					label: '惯用脚',
@@ -149,7 +149,7 @@ export default {
 					filters: footDict ,
 					'filter-method': (value, row, column) => {
 						return row[column['property']] === value;
-					},
+					}
 				},
 				{
 					label: '位置',
@@ -157,7 +157,7 @@ export default {
 					align: 'center',
 					formatter({position}) {	 
 						return positionDict.find(el=>el.value==position)?.text || '未设置' 
-					},
+					}
 				},
 				{
 					label: '家长手机号',
@@ -171,7 +171,7 @@ export default {
 					align: 'center',
 					formatter({address}) {	 
 						return addressDict.find(el=>el.value==address)?.text || '未设置' 
-					},
+					}
 				},
 				{
 					label: '操作',

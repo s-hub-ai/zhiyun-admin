@@ -42,7 +42,7 @@ export default {
 				name:"",
 				level:"",
 				phoneNum:"",
-				portrait:"",
+				portrait:""
             },
             rules: {
 				name:[{required: true, message: '请填写姓名'}],
@@ -97,7 +97,7 @@ export default {
 		imgUploadSuccess(res, file, fileList) {
 			console.log(res)
 			this.ruleForm.portrait = res
-		},
+		}
 	}
 };
 </script>

@@ -62,12 +62,12 @@ export default {
 				{
 					label: '班级名称',
 					prop:'className',
-					align: 'center',
+					align: 'center'
 				},
 				{
 					label: '课程名称',
 					prop:'courseName',
-					align: 'center',
+					align: 'center'
 				},
 				{
 					label: '上课日期',
@@ -75,22 +75,22 @@ export default {
 					align: 'center', 
 					formatter({lessonStartTime}) {	 
 						return lessonStartTime.slice(0,10);
-					},
+					}
 				},
 				{
 					label: '课程时段',
 					prop:'lessonRange',
-					align: 'center',
+					align: 'center'
 				},
 				{
 					label: '教练姓名',
 					prop: 'coachName',
-					align: 'center',  
+					align: 'center' 
 				},
 				{
 					label: '考勤状态',
 					prop: 'status',
-					align: 'center', 
+					align: 'center'
 				},
 				{
 					label: '打卡时间',
@@ -104,7 +104,7 @@ export default {
 							return "-"
 						}							
 					}
-				},
+				}
 			]
         }
 	},

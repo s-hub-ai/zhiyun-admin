@@ -74,7 +74,7 @@ export default {
 				checkLatitude:"",
 				checkRadius:"300",
 				subType:"",
-				type:1,
+				type:1
 
             },
             rules: {

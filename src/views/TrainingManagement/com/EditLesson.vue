@@ -87,7 +87,7 @@ export default {
         {
             label: '上课日期',
             prop:'date',
-            align: 'center', 
+            align: 'center'
         },
         {
             label: '课程名称',
@@ -98,17 +98,17 @@ export default {
         {
             label: '课程时间段',
             prop:'lessonRange',
-            align: 'center', 
+            align: 'center'
         },
         {
             label: '教练考勤',
             prop:'coachStatus',
-            align: 'center', 
+            align: 'center'
         },
         {
             label: '学员考勤',
             prop:'studentStatus',
-            align: 'center', 
+            align: 'center'
         },
         {
             label: '操作',
@@ -123,7 +123,7 @@ export default {
         addForm:{
             classroomCourseId:'',
             classStartTimeStr:'',
-            duration:0,
+            duration:0
         },
         rules: {
             classroomCourseId:[{required: true, message: '选择'}],
@@ -134,9 +134,9 @@ export default {
                 }else{
                     callback()
                 }
-            }}],
+            }}]
         },
-        list:[],
+        list:[]
 
     }),
     methods:{

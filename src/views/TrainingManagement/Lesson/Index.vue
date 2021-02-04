@@ -68,12 +68,12 @@ export default {
 				{
 					label: '课程名称',
 					prop:'name',
-					align: 'center',
+					align: 'center'
 				},
 				{
 					label: '课程时长(min)',
 					prop:'duration',
-					align: 'center',
+					align: 'center'
 					
 				},
 				{

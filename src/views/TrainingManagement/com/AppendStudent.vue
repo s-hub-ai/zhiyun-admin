@@ -26,7 +26,7 @@ export default {
     },
     data:()=>({
         show:false,
-        list:[],
+        list:[]
     }),
     methods:{
         async confirm(){

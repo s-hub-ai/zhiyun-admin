@@ -36,7 +36,7 @@ module.exports = {
 				// target: "http://127.0.0.1:9004",
 				changeOrigin: true,
 				pathRewrite: {
-					"^/dev": "/api",
+					"^/dev": "/api"
 				}
 			},
 			"/training": {
@@ -44,7 +44,7 @@ module.exports = {
 				// target: "http://127.0.0.1:7003",
 				changeOrigin: true,
 				pathRewrite: {
-					"^/training": "/",
+					"^/training": "/"
 				}
 			},
 			"/pro": {

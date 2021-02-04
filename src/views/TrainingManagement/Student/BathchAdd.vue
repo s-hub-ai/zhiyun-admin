@@ -14,7 +14,7 @@ import { sexDict , addressDict} from '@/dict'
 export default {
     name: "batchAdd",
     data: () => ({
-		files:null,
+		files:null
 	}),
     methods:{
         importXlsx(e) {
@@ -46,9 +46,9 @@ export default {
 										birthday:el['出生日期'],
 										trainDate:el['开始训练时间'],
 										phoneNumArray:el['家长手机号码'],
-										address: addressDict.find( e=>e.text==el['归属地'],).value,
+										address: addressDict.find( e=>e.text==el['归属地'] ).value,
 										school: el['学籍'],
-										identityCardNumber:el['身份证号'],
+										identityCardNumber:el['身份证号']
 									}
 								})]
 							}
@@ -72,7 +72,7 @@ export default {
 			}
 
 			
-		},
+		}
     }
 }
 </script>

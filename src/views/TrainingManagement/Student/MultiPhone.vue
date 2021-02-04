@@ -25,7 +25,7 @@ export default {
         }
     },
     data: () => ({
-        arr: [],
+        arr: []
     }),
     methods: {
         addNew() {
@@ -38,8 +38,8 @@ export default {
         },
         update() {
             this.$emit("input", this.arr.map((el) => el.text).join(","))
-        },
-    },
+        }
+    }
 }
 </script>
 <style lang="scss" scoped>

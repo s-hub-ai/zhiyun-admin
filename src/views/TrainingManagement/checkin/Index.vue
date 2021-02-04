@@ -14,7 +14,7 @@ export default {
 	name:"checkinIndex",
 	components:{
 		CoachCheckin:()=>import('./CoachCheckin'),
-		StudentCheckin:()=>import('./StudentCheckin'),
+		StudentCheckin:()=>import('./StudentCheckin')
 	},
 	data() {
 		return {
@@ -35,7 +35,7 @@ export default {
 		async getCourseList(){
 			const res = await this.$service.training.course.list();
 			this.courseList = res
-		},
+		}
 	}
 };
 </script>
