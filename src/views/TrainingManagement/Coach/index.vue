@@ -112,9 +112,7 @@ export default {
 	methods: {
 		 
 		refresh() {
-			this.$refs.crud.refresh({
-				...this.tableFlters
-			});
+			this.$refs.crud.refresh( );
 		},
 		//编辑
 		editDialog(id) {

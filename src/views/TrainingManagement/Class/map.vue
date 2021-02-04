@@ -29,6 +29,9 @@ export default {
 		radius(v) {
 			console.log(v);
 			this.circle.setRadius(v);
+		},
+		addressName(val){
+			this.address = val
 		}
 	},
 	mounted() {

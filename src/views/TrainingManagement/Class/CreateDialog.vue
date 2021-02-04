@@ -20,7 +20,9 @@
 			<el-input v-model="ruleForm.trainingPosition"></el-input>
 		</el-form-item>
 		<el-form-item label="打卡位置" >
-			<Map v-bind:radius="ruleForm.checkRadius"  @setlngAndLat="setlngAndLat"/>
+			<Map v-bind:radius="ruleForm.checkRadius"  @setlngAndLat="setlngAndLat" 
+			
+			 :addressName="ruleForm.trainingPosition" />
 			<div class="flex">
 				<el-form-item label="经度" label-width="90px" required>
 					<el-input readonly v-model="ruleForm.checkLongitude"></el-input>

@@ -59,18 +59,23 @@ export default {
 					let params = {
 						...this.ruleForm
 					};
-					if (params.id) {
-						await this.$service.training.coach.update(params);
-					} else {
-						await this.$service.training.coach.add(params);
-					}
+					try{
 
-					this.$alert(params.id ? '修改成功' : '添加成功', '提示', {
-						confirmButtonText: '确定',
-						callback: (action) => {
-							this.$emit('update:addDialogShow', false);
+						if (params.id) {
+							await this.$service.training.coach.update(params);
+						} else {
+							await this.$service.training.coach.add(params);
 						}
-					});
+	
+						this.$alert(params.id ? '修改成功' : '添加成功', '提示', {
+							confirmButtonText: '确定',
+							callback: (action) => {
+								this.$emit('update:addDialogShow', false);
+							}
+						});
+					}catch(err){
+						this.$message.error(err)
+					}
 				} else {
 					console.log('error submit!!');
 					return false;

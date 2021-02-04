@@ -224,12 +224,18 @@ export default {
 			const query = {};
 			if(this.classOrTeamId){
 				query.classOrTeamId = Number(this.classOrTeamId)
+			}else{
+				delete this.$refs.crud.params.classOrTeamId
 			}
 			if(this.birthdayFilter){
-				query.birthdayStart=this.birthdayFilter[0];
-				query.birthdayEnd=this.birthdayFilter[1]
+				query.birthdayStart=this.birthdayFilter[0] + ' 00:00';
+				query.birthdayEnd=this.birthdayFilter[1] + ' 23:59'
+			}else{
+				delete this.$refs.crud.params.birthdayStart;
+				delete this.$refs.crud.params.birthdayEnd
 			}
-			this.$refs.crud.refresh(query);
+			console.log(query)
+			this.$refs.crud.refresh({...query});
         },
         addDialog() {
 			this.addDialogTitle = '新增学员';

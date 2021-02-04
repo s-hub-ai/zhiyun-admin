@@ -68,7 +68,7 @@
                 </el-form>
             </el-dialog>
             <el-table
-                :data="list"
+                :data="tableList"
                 border
                 style="width: 100%">
                 <el-table-column
@@ -120,11 +120,24 @@ export default {
             if(val){
                 this.listCourse()
             }
+        },
+        appendDialog(val){
+            if(!val){
+                Object.assign(this.appendForm,{
+                    courseId:"",
+                    classroomId:this.id,
+                    courseDate:"",
+                    courseExpirationStartDateStr:"",
+                    courseExpirationEndDateStr:"",
+                    classStartTimeStr:"",
+                    classEndTimeStr:"",
+                })
+            }
         }
     },
     data:(vm)=>({
         show:false,
-        list:[],
+        tableList:[],
         appendDialog:false,
         appendForm:{
             courseId:"",
@@ -147,7 +160,7 @@ export default {
     }),
     computed:{
         classEndTimeStr(){
-            let duration = this.list.find(el=>el.id == this.appendForm.courseId)?.duration
+            let duration = this.courseList.find(el=>el.id == this.appendForm.courseId)?.duration
             return moment(this.appendForm.classStartTimeStr,'HH:mm').
             add(duration||0, 'minutes').format('HH:mm')
         }
@@ -179,11 +192,11 @@ export default {
                         this.listCourse()
                         this.appendLoading = false;
                         this.appendDialog = false;
+                        this.$emit('refresh')
                         this.$alert('成功', '提示', {
                             confirmButtonText: '确定',
                             callback: (action) => {
-                                
-                                }
+                            }
                         });
                     }catch(err){
                         this.appendLoading = false;
@@ -195,6 +208,7 @@ export default {
         editCourse(row){
             Object.assign(this.appendForm,row);
             this.appendForm.courseDate = row.courseDate.split(',')
+            this.appendForm.courseId =String(row.courseId)
             this.appendDialog=true
         },
         async deleteCourse(id){
@@ -208,7 +222,7 @@ export default {
             const res = await this.$service.training.classroom.listCourse({
                 classroomId:this.id
             })
-            this.list = res;
+            this.tableList = res;
         },
         weekMap(str){
             return str.split(',').map(

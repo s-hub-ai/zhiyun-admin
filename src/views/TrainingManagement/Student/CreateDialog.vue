@@ -133,7 +133,7 @@ export default {
 				phoneNumArray:[{required: true, message: '请填写家长手机号'},{trigger:'blur',validator:phoneArrayRule}],
 				address:[{required: true, message: '请填写归属地'}],
 				school:[{required: true, message: '请填写学籍'}],
-				identityCardNumber:[{required: true, message: '请填写家长手机号'}],
+				identityCardNumber:[{required: true, message: '请填写'}],
 				
 			},
 			...{sexDict , footDict, positionDict, addressDict},

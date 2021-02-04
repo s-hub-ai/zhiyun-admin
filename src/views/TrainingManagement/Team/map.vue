@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<el-input placeholder="请输入xx市+详细地址" style="width: 300px; margin-right: 10px" v-model="address" size="mini"></el-input>
-		<el-button type="primary" size="mini" @click="getAddress()">确定</el-button>
+		<el-button type="primary" size="mini" @click="getAddress()">搜索</el-button>
 		<div id="allmap" style="height: 300px"></div>
 	</div>
 </template>
