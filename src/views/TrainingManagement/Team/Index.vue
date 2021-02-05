@@ -52,8 +52,13 @@
 					:loading="courseListLoading"/>
 				</template>
 				<template #column-lessons="{ scope }">
-					<EditLesson 
-					:id="scope.row.id" @freash="refresh" :crrtList="scope.row.lesson"/>
+					<EditLesson  
+					:range="{start:scope.row.trainingStartTime,end:scope.row.trainingEndTime}" 
+					:id="scope.row.id" @freash="refresh" :crrtList="scope.row.lesson">
+						<template slot="btnConent"> 
+							<span>{{scope.row.lesson>0?scope.row.lesson:'暂无课程'}}</span>
+						</template>						
+					</EditLesson>
 				</template>
 				<template #column-trainingTime="{ scope }">
 					<span>{{scope.row.trainingStartTime.slice(0,10)}}</span>~
@@ -122,6 +127,15 @@ export default {
 					prop: 'name',
 					align: 'center',
 					width: 125
+				},
+				{
+					label: '球队类型',
+					prop: 'subtype',
+					align: 'center',
+					width: 125,
+					formatter({subtype}) {	 
+						return ['校队','精英梯队'][subtype]
+					}
 				},
 				{
 					label: '训练时间',

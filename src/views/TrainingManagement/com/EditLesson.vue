@@ -42,9 +42,9 @@
 
         </el-dialog> 
         <el-dialog title="编辑课节" append-to-body :visible.sync="addDialog">
-            <el-form ref="editForm" class="text-left" :model="addForm" :rules="rules" label-width="120px">
+            <el-form ref="editForm" class="text-left" :model="addForm" :rules="rules" label-width="160px">
                 <el-form-item label="选择课程" prop="classroomCourseId" >
-                     <el-select size="mini" v-model="addForm.classroomCourseId" placeholder="请选择">
+                     <el-select size="mini" v-model="addForm.classroomCourseId" @change="handleCourseChange" placeholder="请选择">
                         <el-option
                         v-for="item in list"
                         :key="item.classroomCourseId"
@@ -54,15 +54,16 @@
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="上课时间" prop="classStartTimeStr" >
-                    <el-date-picker
+                <el-form-item label="上课时间"  prop="classStartTimeStr" >
+                    <el-date-picker size="mini"
                         v-model="addForm.classStartTimeStr"
                         type="datetime"
+                        :picker-options="{disabledDate:isDisabledDate}"
                         placeholder="选择日期时间">
                     </el-date-picker>
                 </el-form-item> 
                 <el-form-item label="课程时长（分钟）" prop="duration">
-                    <el-input type="number" v-model="addForm.duration"></el-input>
+                    <el-input style="width:10em" type="number" size="mini" v-model="addForm.duration"></el-input>
                 </el-form-item>
                 <div class="text-right pa-2">
                     <el-button type="primary" @click="submitAppend()" :loading="appendLoading">确定</el-button>
@@ -77,7 +78,7 @@ const moment = require('moment');
 moment.locale('zh-cn');
 export default {
     name:"EditLesson",
-    props:['id','crrtList'],
+    props:['id','crrtList','range'],
     components:{
         AbsenceDetail:()=>import('./AbsenceDetail')
     },
@@ -140,7 +141,16 @@ export default {
 
     }),
     methods:{
-        
+        handleCourseChange(){
+            let course = this.list.find(el=>el.classroomCourseId === this.addForm.classroomCourseId);
+            this.addForm.duration = course.courseDuration
+        },
+        isDisabledDate(time){
+            let t = time.getTime();
+            let min = new Date(this.range.start).getTime(),
+                max = new Date(this.range.end).getTime();
+            return t>max || t<min
+        },
         dateWithWeek(d){
             return moment(d).format('YYYY-MM-DD(dddd)')
         },
@@ -159,6 +169,7 @@ export default {
         },
         showAddDialog(){
             this.listCourse()
+            this.refresh()
             this.addDialog = true
         },
         async listCourse(){

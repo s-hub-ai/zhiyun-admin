@@ -1,11 +1,11 @@
 <template> 
         <el-button 
             v-permission="{
-				or: [$service.training.student.permission.detail]
+				or: [$service.training.coach.permission.detail]
 			}"
              :loading="loading"
             type="text" size="mini" @click="open">考核
-         <el-dialog title="学生考核" :visible.sync="show" width="700px" append-to-body>
+         <el-dialog title="教练考核" :visible.sync="show" width="700px" append-to-body>
             <div class="flex py-2 justify-between">
                 <span class="text-xl">考勤详情</span>
                 <el-select  size="mini" v-model="detailQuery.year" @change="getDetail">
@@ -57,12 +57,17 @@ export default {
     methods:{
         async open(){
             this.loading=true;
-            await this.getDetail()
+            try{
+                await this.getDetail()
+
+            }catch(err){
+                this.$message.error(err)
+            }
             this.show = true;
             this.loading = false
         },
         async getDetail(){
-            const res = await this.$service.training.student.detail(this.detailQuery)
+            const res = await this.$service.training.coach.detail(this.detailQuery)
             this.detail = res;
         }
     }

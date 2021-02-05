@@ -17,4 +17,12 @@ export default class extends BaseService {
         data
         })
     }
+    @Permission("detail")
+    detail (parmas) {
+        return this.request({
+        url: "/detail",
+        method: "get",
+        parmas
+        })
+    }
 }   

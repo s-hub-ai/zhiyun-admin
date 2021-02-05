@@ -47,6 +47,7 @@
 					<cl-avatar shape="square" size="medium" :src="scope.row.portrait | default_avatar" :style="{ margin: 'auto' }"> </cl-avatar>
 				</template>
 				<template #column-op="{ scope }">
+					<CheckinDialog :id="scope.row.id"/>
 					<el-button
 						v-permission="{
 							or: [$service.training.student.permission.add]
@@ -88,7 +89,8 @@ export default {
 	components: {
 		addDialog,
 		BatchAdd:()=>import('./BathchAdd'),
-		StudentExport:()=>import('./StudentExport')
+		StudentExport:()=>import('./StudentExport'),
+		CheckinDialog:()=>import('./CheckinDialog')
 	},
 	data() {
 		return {
@@ -178,7 +180,7 @@ export default {
 					prop: 'op',
 					align: 'center',
 					fixed: 'right',
-					width: 120
+					width: 180
 				}
 			]
         }

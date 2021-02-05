@@ -25,6 +25,7 @@
 					<cl-avatar shape="square" size="medium" :src="scope.row.portrait | default_avatar" :style="{ margin: 'auto' }"> </cl-avatar>
 				</template>
 				 <template #column-op="{ scope }">
+					<CheckinDialog :id="scope.row.id"/>
 					<el-button
 						size="mini"
 						v-permission="{
@@ -64,7 +65,8 @@ import addDialog from './CreateDialog';
 export default {
 	components: {
 		addDialog,
-		CoachExport:()=>import('./CoachExport')
+		CoachExport:()=>import('./CoachExport'),
+		CheckinDialog:()=>import('./CheckinDialog')
 	},
 	data() {
 		return {
@@ -103,7 +105,7 @@ export default {
 					prop: 'op',
 					align: 'center',
 					fixed: 'right',
-					width: 120
+					width: 180
 				}
 			]
         }

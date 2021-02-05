@@ -52,7 +52,9 @@
 					:loading="courseListLoading"/>
 				</template>
 				<template #column-lessons="{ scope }">
-					<EditLesson  :id="scope.row.id" @freash="refresh" :crrtList="scope.row.lesson">
+					<EditLesson  
+					:range="{start:scope.row.trainingStartTime,end:scope.row.trainingEndTime}" 
+					:id="scope.row.id" @freash="refresh" :crrtList="scope.row.lesson">
 						<template slot="btnConent"> 
 							<span>{{scope.row.lesson>0?scope.row.lesson:'暂无课程'}}</span>
 						</template>						
