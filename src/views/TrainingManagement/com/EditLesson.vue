@@ -163,13 +163,12 @@ export default {
 			});
         },
         refresh(){
-            this.$refs[`lesson-crud-${id}`].refresh({
+            this.$refs[`lesson-crud-${this.id}`].refresh({
                 classroomId:this.id
             });
         },
         showAddDialog(){
             this.listCourse()
-            this.refresh()
             this.addDialog = true
         },
         async listCourse(){
