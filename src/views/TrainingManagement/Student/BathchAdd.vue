@@ -38,6 +38,10 @@ export default {
 								console.log(sheet);
 								console.log(xlsxData);
 								excleList = [...excleList,...xlsxData.map(el=>{
+									let phoneNumArray = String( el['家长手机号码']);
+									if(/[^\d|\,]/.test(phoneNumArray)){
+										throw '手机号格式不正确'
+									}
 									return {
 										name:el['姓名'],
 										sex: sexDict.find( e=>e.text==el['性别'] ).value,
@@ -45,7 +49,7 @@ export default {
 										weight:el['体重'],
 										birthday:el['出生日期'],
 										trainDate:el['开始训练时间'],
-										phoneNumArray:el['家长手机号码'],
+										phoneNumArray:phoneNumArray,
 										address: addressDict.find( e=>e.text==el['归属地'] ).value,
 										school: el['学籍'],
 										identityCardNumber:el['身份证号']
@@ -59,9 +63,15 @@ export default {
 						});
 						this.$emit('freash')
 					}catch(err){
-						console.log(err)
+						console.log(err);
+						let msg = '';
+						if(typeof err == 'string'){
+							msg = err
+						}else{
+							msg = '导入失败，请检查表格格式'
+						}
 						this.$refs.input.value="";
-						this.$alert('导入失败，请检查表格格式', '提示', {
+						this.$alert(msg, {
 							confirmButtonText: '确定',
 							callback: (action) => {
 							}						

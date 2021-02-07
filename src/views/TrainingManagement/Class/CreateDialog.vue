@@ -19,7 +19,7 @@
 		<el-form-item label="训练地点" prop="trainingPosition">
 			<el-input v-model="ruleForm.trainingPosition"></el-input>
 		</el-form-item>
-		<el-form-item label="打卡位置" >
+		<el-form-item label="打卡位置" prop="checkLongitude">
 			<Map v-bind:radius="ruleForm.checkRadius"  @setlngAndLat="setlngAndLat" 
 			
 			 :addressName="ruleForm.trainingPosition" />
@@ -62,7 +62,7 @@ export default {
 				checkLongitude:"",
 				checkLatitude:"",
 				checkRadius:"300",
-				subType:"",
+				subtype:"",
 				type:0
 
             },
@@ -76,7 +76,7 @@ export default {
 					}
 				}}],
 				trainingPosition:[{required: true, message: '请填写'}], 
-				checkRadius:[{required: true, message: '请填写'}] 
+				checkLongitude:[{required: true, message: '请选取打卡位置'}] 
             }
 		};
 	},

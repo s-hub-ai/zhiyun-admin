@@ -9,7 +9,7 @@
 				<el-select size="mini" clearable v-model="searchQuery.classroomId" @change="refresh">
 					<el-option 
 						v-for="item in list.classOrTeamList"
-						:key="item.name"
+						:key="'class' + item.id"
 						:label="item.name"
 						:value="item.id">
 					</el-option>
@@ -19,7 +19,7 @@
 				<el-select size="mini" clearable v-model="searchQuery.courseId" @change="refresh">
 					<el-option
 						v-for="item in list.courseList"
-						:key="item.name"
+						:key="'course' + item.id"
 						:label="item.name"
 						:value="item.id">
 					</el-option>
@@ -30,8 +30,8 @@
 		<el-row>
 			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
 				<template #column-status="{ scope }">
-					<el-tooltip v-if="scope.row.absenceReason" class="item" effect="dark" 
-					:content="scope.row.absenceReason" placement="top-start"> 
+					<el-tooltip v-if="!scope.row.clockinTime" class="item" effect="dark" 
+					:content="scope.row.absenceReason || '暂无'" placement="top-start"> 
 						<span class="text-red-500" >缺勤</span>
 					</el-tooltip>					
 					<span v-else>出勤</span>
