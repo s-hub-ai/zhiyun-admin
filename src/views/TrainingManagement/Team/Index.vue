@@ -22,7 +22,9 @@
 				:value="item.value">
 				</el-option>
 			</el-select>
-			<cl-search-key  :field="searchField" :placeholder="'请输入'"></cl-search-key>
+			<el-input clearable class="cl-search-key__input mx-2" size="mini" v-model="searchString" placeholder="请输入"></el-input>
+			<el-button size="mini" type="primary" @click="search">搜索</el-button>
+			<!-- <cl-search-key  :field="searchField" :placeholder="'请输入'"></cl-search-key> -->
 			<cl-flex1></cl-flex1>
 			<el-button
 				v-permission="{
@@ -111,7 +113,8 @@ export default {
 	},
 	data() {
 		return {
-			searchField:"studentName",
+			searchField:"classroomName",
+			searchString:'',
 			ruleForm:{},
             addDialogShow:false,
 			studentListDialog:false,
@@ -127,15 +130,6 @@ export default {
 					prop: 'name',
 					align: 'center',
 					width: 125
-				},
-				{
-					label: '球队类型',
-					prop: 'subtype',
-					align: 'center',
-					width: 125,
-					formatter({subtype}) {	 
-						return ['校队','精英梯队'][subtype]
-					}
 				},
 				{
 					label: '训练时间',
@@ -193,11 +187,20 @@ export default {
 		this.getCourseList()
 	},
 	methods: {
-		 
-		refresh() {
+		search(){
+			delete this.$refs.crud.params.studentName;
+			delete this.$refs.crud.params.coachName;
+			delete this.$refs.crud.params.classroomName;
 			this.$refs.crud.refresh({
-				...this.tableFlters
+				...(()=>{
+					if(this.searchString){
+						return {[this.searchField]:this.searchString}
+					}
+				})()
 			});
+		},
+		refresh() {
+			this.$refs.crud.refresh( );
 		},
 		//编辑
 		editDialog(id) {

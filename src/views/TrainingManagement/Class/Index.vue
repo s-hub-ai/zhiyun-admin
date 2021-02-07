@@ -22,7 +22,9 @@
 				:value="item.value">
 				</el-option>
 			</el-select>
-			<cl-search-key  :field="searchField" :placeholder="'请输入'"></cl-search-key>
+			<el-input clearable class="cl-search-key__input mx-2" size="mini" v-model="searchString" placeholder="请输入"></el-input>
+			<el-button size="mini" type="primary" @click="search">搜索</el-button>
+			<!-- <cl-search-key  :field="searchField" :placeholder="'请输入'"></cl-search-key> -->
 			<cl-flex1></cl-flex1>
 			<el-button
 				v-permission="{
@@ -111,7 +113,8 @@ export default {
 	},
 	data() {
 		return {
-			searchField:"studentName",
+			searchField:"classroomName",
+			searchString:'',
 			ruleForm:{},
             addDialogShow:false,
 			studentListDialog:false,
@@ -184,7 +187,18 @@ export default {
 		this.getCourseList()
 	},
 	methods: {
-		 
+		search(){
+			delete this.$refs.crud.params.studentName;
+			delete this.$refs.crud.params.coachName;
+			delete this.$refs.crud.params.classroomName;
+			this.$refs.crud.refresh({
+				...(()=>{
+					if(this.searchString){
+						return {[this.searchField]:this.searchString}
+					}
+				})()
+			});
+		},
 		refresh() {
 			this.$refs.crud.refresh( );
 		},

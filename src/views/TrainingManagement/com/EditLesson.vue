@@ -3,7 +3,7 @@
         <el-button size="mini" @click="show=true" type="text">
             <slot name="btnConent"></slot>
         </el-button>
-        <el-dialog title="查看课节" :visible.sync="show" width="1000px">
+        <el-dialog title="查看课节" :visible.sync="show" width="1000px" append-to-body>
             <div class="flex justify-between px-3">
                 <span class="text-xl">课节列表</span>
                 <el-button
@@ -13,7 +13,7 @@
                 @click="showAddDialog"
                 >添加课节</el-button >
             </div>
-            <cl-crud @load="onLoad" ref="crud">
+            <cl-crud v-if="show" @load="onLoad" :ref="`lesson-crud-${id}`" :key="`lesson-crud-${id}`">
                 <cl-table :columns="tableColumn" :props="{ height: '50vh' }">
                     <template #column-date="{ scope }">
                         <span>{{dateWithWeek(scope.row.lessonDate)}}</span>
@@ -163,7 +163,7 @@ export default {
 			});
         },
         refresh(){
-            this.$refs['crud'].refresh({
+            this.$refs[`lesson-crud-${id}`].refresh({
                 classroomId:this.id
             });
         },

@@ -3,7 +3,7 @@
 		<el-form-item label="班级名称" prop="name">
 			<el-input v-model="ruleForm.name"></el-input>
 		</el-form-item>
-		<el-form-item label="训练时间"  >
+		<el-form-item label="训练时间"  prop="trainingStartTime">
 			<el-date-picker
 				v-model="ruleForm.trainingStartTime"
 				type="date"
@@ -36,7 +36,7 @@
 			</div>		 
 		</el-form-item>
 		<el-form-item>
-			<el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
+			<el-button type="primary" @click="submitForm('ruleForm')">{{ruleForm.id?'修改':'新增'}}</el-button>
 			<el-button @click="resetForm('ruleForm')">重置</el-button>
 		</el-form-item>
 	</el-form>
@@ -47,9 +47,9 @@
 
 export default {
 	components:{
-		Map:()=>import('./map')
+		Map:()=>import('../com/map')
 	},
-	data() {
+	data(vm) {
 		return {
 			startTime:null,
 			endTime:null,
@@ -68,8 +68,13 @@ export default {
             },
             rules: {
 				name:[{required: true, message: '请填写'}],
-				trainingStartTime:[{required: true, message: '请填写'}],
-				trainingEndTime:[{required: true, message: '请填写'}],
+				trainingStartTime:[{required: true, message: '请填写'},{validator(rule, value, callback){
+					if(!vm.ruleForm.trainingEndTime){
+						callback(new Error('请选择结束时间'))
+					}else{
+						callback()
+					}
+				}}],
 				trainingPosition:[{required: true, message: '请填写'}], 
 				checkRadius:[{required: true, message: '请填写'}] 
             }

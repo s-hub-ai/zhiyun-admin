@@ -89,7 +89,12 @@ export default {
 				});
 				_this.map.addOverlay(_this.circle);
 				_this.map.centerAndZoom(poi.point, 16);
-				_this.map.addOverlay(new BMapGL.Marker(poi.point, { title: _this.address }));
+				const marker = new BMapGL.Marker(poi.point, { title: _this.address,enableDragging:true })
+				marker.addEventListener('dragend',function(ev){
+					_this.circle.setCenter(ev.latLng);
+					_this.$emit('setlngAndLat', ev.latLng);
+				})
+				_this.map.addOverlay(marker);
 				poi.point.addressName = _this.address;
 				_this.$emit('setlngAndLat', poi.point);
 			});

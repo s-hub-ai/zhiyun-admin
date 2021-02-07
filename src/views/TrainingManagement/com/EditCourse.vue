@@ -8,7 +8,7 @@
                 <el-button @click="appendDialog=true" size="mini" >添加课程</el-button>
                     
             </div> 
-            <el-dialog width="560px" title="添加课程" :visible.sync="appendDialog" append-to-body>
+            <el-dialog v-if="show"  width="560px" title="添加课程" :visible.sync="appendDialog" append-to-body>
                 <el-form :model="appendForm" :rules="rules" ref="appendForm" class="text-left" label-width="120px">
                     <el-form-item label="选择课程" prop="courseId" >
                         <el-select value-key="id" size="mini" v-model="appendForm.courseId" placeholder="请选择课程">
