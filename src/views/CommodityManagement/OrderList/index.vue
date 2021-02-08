@@ -75,7 +75,7 @@
 						>
 					</template>
 					<el-button
-						v-permission="$service.app.order.permission.updateOfferRefund"
+						v-permission="$service.app.order.permission.offerRefund"
 						type="text"
 						v-if="scope.row.orderStatus == 4"
 						@click="(deliveryForm.orderId = scope.row.id), (drawbackAuditShow = true), getEditInfo(scope.row.id)"
