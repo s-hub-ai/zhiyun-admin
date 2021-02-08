@@ -46,6 +46,10 @@
 				<template #column-portrait="{ scope }">
 					<cl-avatar shape="square" size="medium" :src="scope.row.portrait | default_avatar" :style="{ margin: 'auto' }"> </cl-avatar>
 				</template>
+				<template #column-joinClass="{ scope }">
+					 <JoinClass :id="scope.row.id" :list="classOrTeamList" :classroom="scope.row.classroom"
+					 @refresh="refresh"/>
+				</template>
 				<template #column-op="{ scope }">
 					<CheckinDialog :id="scope.row.id"/>
 					<el-button
@@ -90,7 +94,8 @@ export default {
 		addDialog,
 		BatchAdd:()=>import('./BathchAdd'),
 		StudentExport:()=>import('./StudentExport'),
-		CheckinDialog:()=>import('./CheckinDialog')
+		CheckinDialog:()=>import('./CheckinDialog'),
+		JoinClass:()=>import('./JoinClass')
 	},
 	data() {
 		return {
@@ -174,6 +179,11 @@ export default {
 					formatter({address}) {	 
 						return addressDict.find(el=>el.value==address)?.text || '未设置' 
 					}
+				},
+				{
+					label: '所属班级/球队',
+					prop:'joinClass',
+					align: 'center',
 				},
 				{
 					label: '操作',

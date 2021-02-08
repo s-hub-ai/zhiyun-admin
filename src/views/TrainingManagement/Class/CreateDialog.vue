@@ -13,6 +13,7 @@
 			<el-date-picker
 				v-model="ruleForm.trainingEndTime"
 				type="date"
+				:picker-options="{disabledDate:isDisabledEndDate}"
 				placeholder="结束时间">
 			</el-date-picker>
 		</el-form-item>
@@ -44,7 +45,7 @@
 
 
 <script>
-
+const moment = require('moment');
 export default {
 	components:{
 		Map:()=>import('../com/map')
@@ -81,6 +82,12 @@ export default {
 		};
 	},
 	methods: {
+		isDisabledEndDate(time){
+            let t = time.getTime();
+            let min = new Date(this.ruleForm.trainingStartTime).getTime(),
+                max = moment(this.ruleForm.trainingStartTime).add(1, 'years').valueOf()
+            return t>max || t<min
+        },
 		submitForm(formName) {
 			this.$refs[formName].validate(async (valid) => {
 				 

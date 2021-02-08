@@ -33,4 +33,12 @@ export default class extends BaseService {
         parmas
         })
     }
+    @Permission("addClassrooms")
+    addClassrooms (data) {
+        return this.request({
+        url: "/addClassrooms",
+        method: "POST",
+        data
+        })
+    }
 }   
