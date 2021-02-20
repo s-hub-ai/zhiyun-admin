@@ -42,7 +42,7 @@ export default {
 									if(/[^\d|\,]/.test(phoneNumArray)){
 										throw '手机号格式不正确'
 									}
-									return {
+									let data = {
 										name:el['姓名'],
 										sex: sexDict.find( e=>e.text==el['性别'] ).value,
 										height:el['身高'],
@@ -54,6 +54,12 @@ export default {
 										school: el['学籍'],
 										identityCardNumber:el['身份证号']
 									}
+									for(let k in data){
+										if(data[k] === undefined || data[k] === ''){
+											throw '表格数据有缺少，请检查'
+										}
+									}
+									return data
 								})]
 							}
 						}

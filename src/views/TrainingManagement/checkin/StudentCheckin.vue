@@ -28,7 +28,7 @@
 		</div>					
 
 		<el-row>
-			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
+			<cl-table :columns="tableColumn" :props="{ height: 'calc(100vh - 300px)' }">
 				<template #column-status="{ scope }">
 					<el-tooltip v-if="!scope.row.clockinTime" class="item" effect="dark" 
 					:content="scope.row.absenceReason || '暂无'" placement="top-start"> 
