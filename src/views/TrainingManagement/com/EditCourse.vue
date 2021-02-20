@@ -119,6 +119,8 @@ export default {
         show(val){
             if(val){
                 this.listCourse()
+            }else{
+                this.$emit('refresh')
             }
         },
         appendDialog(val){

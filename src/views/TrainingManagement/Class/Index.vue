@@ -40,23 +40,23 @@
 		<el-row>
 			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
 				<template #column-member="{ scope }">
-					<AppendStudent :id="scope.row.id" @freash="refresh" :crrtList="scope.row.student"  :userList="studentList" 
+					<AppendStudent :id="scope.row.id" @refresh="refresh" :crrtList="scope.row.student"  :userList="studentList" 
 					:loading="studentListLoading" />
 				</template>
 				<template #column-coach="{ scope }">
-					<AppendCoach :id="scope.row.id" @freash="refresh" :crrtList="scope.row.coach" :userList="coachList" 
+					<AppendCoach :id="scope.row.id" @refresh="refresh" :crrtList="scope.row.coach" :userList="coachList" 
 					:loading="coachListLoading"/>
 				</template>
 				<template #column-course="{ scope }">
 					<EditCourse  
 					:range="{start:scope.row.trainingStartTime,end:scope.row.trainingEndTime}" 
-					:id="scope.row.id" @freash="refresh" :crrtList="scope.row.course" :courseList="courseList" 
+					:id="scope.row.id" @refresh="refresh" :crrtList="scope.row.course" :courseList="courseList" 
 					:loading="courseListLoading"/>
 				</template>
 				<template #column-lessons="{ scope }">
 					<EditLesson  
 					:range="{start:scope.row.trainingStartTime,end:scope.row.trainingEndTime}" 
-					:id="scope.row.id" @freash="refresh" :crrtList="scope.row.lesson">
+					:id="scope.row.id" @refresh="refresh" :crrtList="scope.row.lesson">
 						<template slot="btnConent"> 
 							<span>{{scope.row.lesson>0?scope.row.lesson:'暂无课程'}}</span>
 						</template>						

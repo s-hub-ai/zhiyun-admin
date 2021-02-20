@@ -140,6 +140,13 @@ export default {
         list:[]
 
     }),
+    watch:{
+        show(val){
+            if(!val){
+                this.$emit('refresh')
+            }
+        }
+    },
     methods:{
         handleCourseChange(){
             let course = this.list.find(el=>el.classroomCourseId === this.addForm.classroomCourseId);
