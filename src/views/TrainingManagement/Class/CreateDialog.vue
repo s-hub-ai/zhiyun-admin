@@ -63,7 +63,6 @@ export default {
 				checkLongitude:"",
 				checkLatitude:"",
 				checkRadius:"300",
-				subtype:"",
 				type:0
 
             },
