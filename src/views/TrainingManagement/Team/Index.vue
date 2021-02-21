@@ -40,21 +40,23 @@
 		<el-row>
 			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
 				<template #column-member="{ scope }">
-					<AppendStudent :id="scope.row.id" @refresh="refresh" :crrtList="scope.row.student"  :userList="studentList" 
+					<AppendStudent :key="`AppendStudent${scope.row.id}`" 
+					:id="scope.row.id" @refresh="refresh" :crrtList="scope.row.student"  :userList="studentList" 
 					:loading="studentListLoading" />
 				</template>
 				<template #column-coach="{ scope }">
-					<AppendCoach :id="scope.row.id" @refresh="refresh" :crrtList="scope.row.coach" :userList="coachList" 
+					<AppendCoach :key="`AppendCoach${scope.row.id}`" 
+					:id="scope.row.id" @refresh="refresh" :crrtList="scope.row.coach" :userList="coachList" 
 					:loading="coachListLoading"/>
 				</template>
 				<template #column-course="{ scope }">
-					<EditCourse 
+					<EditCourse :key="`EditCourse${scope.row.id}`" 
 					:range="{start:scope.row.trainingStartTime,end:scope.row.trainingEndTime}" 
 					:id="scope.row.id" @refresh="refresh" :crrtList="scope.row.course" :courseList="courseList" 
 					:loading="courseListLoading"/>
 				</template>
 				<template #column-lessons="{ scope }">
-					<EditLesson  
+					<EditLesson  :key="`EditLesson${scope.row.id}`" 
 					:range="{start:scope.row.trainingStartTime,end:scope.row.trainingEndTime}" 
 					:id="scope.row.id" @refresh="refresh" :crrtList="scope.row.lesson">
 						<template slot="btnConent"> 

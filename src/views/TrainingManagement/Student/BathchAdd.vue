@@ -76,13 +76,13 @@ export default {
 						}else{
 							msg = '导入失败，请检查表格格式'
 						}
-						this.$refs.input.value="";
 						this.$alert(msg, {
 							confirmButtonText: '确定',
 							callback: (action) => {
-							}						
+								}						
 						})
 					}
+					this.$refs.input.value="";
 				};
 				reader.readAsBinaryString(files[i]);
 			}
