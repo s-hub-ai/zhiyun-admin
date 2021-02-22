@@ -18,7 +18,7 @@
             <el-dialog title="加入课程" :visible.sync="show" width="600px" append-to-body>
                 <div v-if="show">
                     <div>
-                        <div>已加入的班级：</div>
+                        <div>已加入的班级/球队：</div>
                         <div class="flex my-1">
                             <div v-if="classroom && classroom.length==0">暂无</div>
                             <div class="mr-2" :key="item.id" v-for="item in classroom || []">

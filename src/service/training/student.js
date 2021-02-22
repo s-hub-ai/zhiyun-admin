@@ -26,11 +26,11 @@ export default class extends BaseService {
         })
     }
     @Permission("detail")
-    detail (parmas) {
+    detail (params) {
         return this.request({
         url: "/detail",
         method: "get",
-        parmas
+        params
         })
     }
     @Permission("addClassrooms")

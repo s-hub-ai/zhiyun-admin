@@ -181,7 +181,7 @@ export default {
 					}
 				},
 				{
-					label: '所属班级/球队',
+					label: '班级/球队',
 					prop:'joinClass',
 					align: 'center',
 				},
