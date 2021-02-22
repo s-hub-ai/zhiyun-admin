@@ -47,11 +47,11 @@
 					<cl-avatar shape="square" size="medium" :src="scope.row.portrait | default_avatar" :style="{ margin: 'auto' }"> </cl-avatar>
 				</template>
 				<template #column-joinClass="{ scope }">
-					 <JoinClass :id="scope.row.id" :list="classOrTeamList" :classroom="scope.row.classroom"
+					 <JoinClass :key="`JoinClass-${scope.row.id}`" :id="scope.row.id" :list="classOrTeamList" :classroom="scope.row.classroom"
 					 @refresh="refresh"/>
 				</template>
 				<template #column-op="{ scope }">
-					<CheckinDialog :id="scope.row.id"/>
+					<CheckinDialog :key="`CheckinDialog-${scope.row.id}`" :id="scope.row.id"/>
 					<el-button
 						v-permission="{
 							or: [$service.training.student.permission.add]

@@ -25,7 +25,7 @@
 					<cl-avatar shape="square" size="medium" :src="scope.row.portrait | default_avatar" :style="{ margin: 'auto' }"> </cl-avatar>
 				</template>
 				 <template #column-op="{ scope }">
-					<CheckinDialog :id="scope.row.id"/>
+					<CheckinDialog :key="`CheckinDialog-${scope.row.id}`" :id="scope.row.id"/>
 					<el-button
 						size="mini"
 						v-permission="{
