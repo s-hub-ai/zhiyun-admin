@@ -49,7 +49,7 @@ export default {
         loading:false,
         detail:{},
         detailQuery:{
-            studentId:vm.id,
+            coachId:vm.id,
             year:new Date().getFullYear(),
         },
         years:years()
