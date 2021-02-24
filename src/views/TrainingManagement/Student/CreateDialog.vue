@@ -102,6 +102,7 @@
 <script>
 import { sexDict , footDict, positionDict, addressDict} from '@/dict'
 import { floatFix1 , phoneArrayRule} from '../com/rules'
+import moment from 'moment'
 export default {
 	components:{
 		MultiPhone:()=>import('./MultiPhone')
@@ -173,6 +174,8 @@ export default {
 			try {
 				let res = await this.$service.training.student.info({ id });
 				this.ruleForm = res;
+				this.ruleForm.birthday = moment(res.birthday).format('YYYY/MM/DD')
+				this.ruleForm.trainDate = moment(res.trainDate).format('YYYY/MM/DD')
 			} catch (error) {
 				this.$message.error(error);
 			}

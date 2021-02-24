@@ -3,22 +3,19 @@
 		<el-row type="flex" align="middle">
 			<cl-search-key  v-model="searchName" placeholder="请输入教练名字"></cl-search-key>
 			<cl-flex1></cl-flex1>
-			<el-button
-				v-permission="{
-					or: [$service.training.coach.permission.add]
-				}"
-				size="mini"
-				type="primary"
-				@click="addDialog()"
-				>新增教练</el-button
-			>
-		</el-row>
-		<el-row type="flex" align="middle">
-
-			<cl-flex1></cl-flex1>
+			<div class="ml-2">
+				<el-button
+					v-permission="{
+						or: [$service.training.coach.permission.add]
+					}"
+					size="mini"
+					type="primary"
+					@click="addDialog()"
+					>新增教练</el-button
+				>				
+			</div>
 			<CoachExport :searchName="searchName"/>
 		</el-row>
-
 		<el-row>
 			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
 				<template #column-portrait="{ scope }">

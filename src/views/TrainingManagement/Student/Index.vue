@@ -3,19 +3,23 @@
 		<el-row type="flex" align="middle">
 			<cl-search-key field="studentName" v-model="studentName" placeholder="请输入学员名称"></cl-search-key>
 			<cl-flex1></cl-flex1>
+			<div class="mr-2">
+				<el-button
+					v-permission="{
+						or: [$service.training.student.permission.add]
+					}"
+					size="mini"
+					type="primary"
+					
+					@click="addDialog()"
+					>新增学员</el-button
+				>
+			</div>
 			<BatchAdd class="mr-2" @freash="$refs['crud'].refresh()"/>
-			<el-button
-				v-permission="{
-					or: [$service.training.student.permission.add]
-				}"
-				size="mini"
-				type="primary"
-				@click="addDialog()"
-				>新增学员</el-button
-			>
+			<StudentExport :classOrTeamId="classOrTeamId" :studentName="studentName" :birthdayFilter="birthdayFilter"/>
 		</el-row>
 		<el-row type="flex" align="middle">
-			<span class="text-sm">班级/球队：</span>
+			<span class="ml-2 text-sm">班级/球队：</span>
 			<el-select class="ml-2" size="mini" v-model="classOrTeamId" @change="refresh" clearable placeholder="请选择">
 				<el-option
 				v-for="item in classOrTeamList"
@@ -24,7 +28,7 @@
 				:value="item.id">
 				</el-option>
 			</el-select>
-			<span class="ml-5">筛选生日：</span>
+			<span class="ml-5 text-sm">筛选生日：</span>
 			 	<el-date-picker
 				 size="mini"
 				v-model="birthdayFilter"
@@ -38,7 +42,7 @@
 				>
 				</el-date-picker>
 			<cl-flex1></cl-flex1>
-			<StudentExport :classOrTeamId="classOrTeamId" :studentName="studentName" :birthdayFilter="birthdayFilter"/>
+			
 		</el-row>
 
 		<el-row>

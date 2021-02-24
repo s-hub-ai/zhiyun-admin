@@ -116,6 +116,8 @@ export default {
 			try {
 				let res = await this.$service.training.classroom.info({ id });
 				this.ruleForm = res;
+				this.ruleForm.trainingStartTime = moment(res.trainingStartTime).format('YYYY/MM/DD')
+				this.ruleForm.trainingEndTime = moment(res.trainingEndTime).format('YYYY/MM/DD')
 			} catch (error) {
 				this.$message.error(error);
 			}
