@@ -10,7 +10,7 @@
 </template>
 <script>
 import XLSX from "xlsx"
-import { sexDict , addressDict} from '@/dict'
+import { sexDict , addressDict, footDict, positionDict } from '@/dict'
 export default {
     name: "batchAdd",
     data: () => ({
@@ -52,9 +52,13 @@ export default {
 										phoneNumArray:phoneNumArray,
 										address: addressDict.find( e=>e.text==el['归属地'] ).value,
 										school: el['学籍'],
-										identityCardNumber:el['身份证号']
+										identityCardNumber:el['身份证号'],
+										// 非必填
+										foot: footDict.find( e=>e.text==el['惯用脚'] ).value || '',
+										position: positionDict.find( e=>e.text==el['位置'] ).value || '',
 									}
-									for(let k in data){
+									const requiredKeys = ['name','sex','height','weight','birthday','trainDate','phoneNumArray','address','school','identityCardNumber']
+									for(let k of requiredKeys){
 										if(data[k] === undefined || data[k] === ''){
 											throw '表格数据有缺少，请检查'
 										}

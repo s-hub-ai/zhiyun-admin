@@ -47,23 +47,23 @@ const onerror = async ({
 	url,
 	status
 }) => {
-	// if (status == 401) {
-	// 	if (url.includes("/logout")) {
-	// 		store.dispatch("userRemove");
-	// 	} else {
-	// 		await store.dispatch("userLogout");
-	// 	}
+	if (status == 401) {
+		if (url.includes("/logout")) {
+			store.dispatch("userRemove");
+		} else {
+			await store.dispatch("userLogout");
+		}
 
-	// 	href("/login");
-	// }
+		href("/login");
+	}
 
-	// if (status == 403) {
-	// 	router.$plugin.to("/403");
-	// }
+	if (status == 403) {
+		router.$plugin.to("/403");
+	}
 
-	// if (status == 500) {
-	// 	router.$plugin.to("/500");
-	// }
+	if (status == 500) {
+		router.$plugin.to("/500");
+	}
 
 	return Promise.reject();
 };
