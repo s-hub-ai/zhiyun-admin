@@ -3,7 +3,7 @@
 		<el-row type="flex" align="middle">
 			<cl-search-key  v-model="searchName" placeholder="请输入教练名字"></cl-search-key>
 			<cl-flex1></cl-flex1>
-			<div class="ml-2">
+			<div class="mr-2">
 				<el-button
 					v-permission="{
 						or: [$service.training.coach.permission.add]

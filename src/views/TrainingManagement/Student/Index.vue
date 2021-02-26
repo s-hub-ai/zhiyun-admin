@@ -114,7 +114,7 @@ export default {
 					label: '学员ID',
 					prop:'id',
 					align: 'center',
-					width:100
+					width:80
 				},
 				{
 					label: '头像',
@@ -138,6 +138,7 @@ export default {
 					label: '出生日期',
 					prop:'birthday',
 					align: 'center',
+					width:120,
 					formatter({birthday}) {	 
 						return birthday.slice(0,10);
 					}
@@ -146,6 +147,7 @@ export default {
 					label: '开始训练时间',
 					prop:'trainDate',
 					align: 'center',
+					width:120,
 					formatter({trainDate}) {	 
 						return trainDate.slice(0,10);
 					}

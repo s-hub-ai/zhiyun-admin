@@ -29,43 +29,46 @@ export default {
 							type: typeof FileReader !== 'undefined' && (FileReader.prototype || {}).readAsBinaryString ? 'binary' : 'array'
 						});
 						let workbookSheets = workbook.Sheets;
-						let excleList = []
-						for (let sheet in workbookSheets) {
-							if (workbookSheets.hasOwnProperty(sheet)) {
-								//	fromTo = workbookSheets[sheet]['!ref'];
-								let xlsxData = XLSX.utils.sheet_to_json(workbookSheets[sheet]);
-								// 结果数组
-								console.log(sheet);
-								console.log(xlsxData);
-								excleList = [...excleList,...xlsxData.map(el=>{
-									let phoneNumArray = String( el['家长手机号码']);
-									if(/[^\d|\,]/.test(phoneNumArray)){
-										throw '手机号格式不正确'
+						let excleList = [] 
+						if (workbookSheets.hasOwnProperty('Sheet1')) { 
+							let xlsxData = XLSX.utils.sheet_to_json(workbookSheets['Sheet1']);
+							// 结果数组
+							console.log(xlsxData);
+							excleList = [...excleList,...xlsxData.map(el=>{
+								let phoneNumArray = String( el['家长手机号码']);
+								if(/[^\d|\,]/.test(phoneNumArray)){
+									throw '手机号格式不正确'
+								}
+								let data = {
+									name:el['姓名'],
+									sex: sexDict.find( e=>e.text==el['性别'] )?.value,
+									height:el['身高'],
+									weight:el['体重'],
+									birthday:el['出生日期'],
+									trainDate:el['开始训练时间'],
+									phoneNumArray:phoneNumArray,
+									address: addressDict.find( e=>e.text==el['归属地'] )?.value,
+									school: el['学籍'],
+									identityCardNumber:el['身份证号'],
+									// 非必填
+									foot: footDict.find( e => e.text==el['惯用脚'] )?.value,
+									position: positionDict.find(  e=> e.text==el['位置'] )?.value,
+								}
+								const requiredKeys = ['name','sex','height','weight','birthday','trainDate','phoneNumArray','address','school','identityCardNumber']
+								for(let k of requiredKeys){
+									if(data[k] === undefined || data[k] === ''){
+										throw '表格数据有缺少，请检查'
 									}
-									let data = {
-										name:el['姓名'],
-										sex: sexDict.find( e=>e.text==el['性别'] ).value,
-										height:el['身高'],
-										weight:el['体重'],
-										birthday:el['出生日期'],
-										trainDate:el['开始训练时间'],
-										phoneNumArray:phoneNumArray,
-										address: addressDict.find( e=>e.text==el['归属地'] ).value,
-										school: el['学籍'],
-										identityCardNumber:el['身份证号'],
-										// 非必填
-										foot: footDict.find( e=>e.text==el['惯用脚'] ).value || '',
-										position: positionDict.find( e=>e.text==el['位置'] ).value || '',
+								}
+								for(let k of ['foot','position']){
+									if(data[k] === undefined){
+										data[k] = -1
 									}
-									const requiredKeys = ['name','sex','height','weight','birthday','trainDate','phoneNumArray','address','school','identityCardNumber']
-									for(let k of requiredKeys){
-										if(data[k] === undefined || data[k] === ''){
-											throw '表格数据有缺少，请检查'
-										}
-									}
-									return data
-								})]
-							}
+								}
+								return data
+							})] 
+						}else{
+							throw '表格格式不正确，请检查'
 						}
 						console.log(excleList)
 						await this.$service.training.student.addBatch({
