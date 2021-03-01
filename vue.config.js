@@ -40,8 +40,8 @@ module.exports = {
 				}
 			},
 			"/training": {
-				target: "https://paytest.ryyes.com/training/admin",
-				// target: "http://127.0.0.1:7003",
+				//target: "https://paytest.ryyes.com/training/admin",
+				 target: "http://127.0.0.1:7003/admin",
 				changeOrigin: true,
 				pathRewrite: {
 					"^/training": "/"
