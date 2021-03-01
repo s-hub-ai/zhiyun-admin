@@ -6,7 +6,7 @@
 			<div class="mr-2">
 				<el-button
 					v-permission="{
-						or: [$service.training.student.permission.add]
+						and: [$service.training.student.permission.add]
 					}"
 					size="mini"
 					type="primary"
@@ -16,7 +16,7 @@
 				>
 			</div>
 			<BatchAdd class="mr-2" @freash="$refs['crud'].refresh()"/>
-			<StudentExport :classOrTeamId="classOrTeamId" :studentName="studentName" :birthdayFilter="birthdayFilter"/>
+			<StudentExport  :classOrTeamId="classOrTeamId" :studentName="studentName" :birthdayFilter="birthdayFilter"/>
 		</el-row>
 		<el-row type="flex" align="middle">
 			<span class="ml-2 text-sm">班级/球队：</span>
@@ -58,7 +58,7 @@
 					<CheckinDialog :key="`CheckinDialog-${scope.row.id}`" :id="scope.row.id"/>
 					<el-button
 						v-permission="{
-							or: [$service.training.student.permission.add]
+							or: [$service.training.student.permission.update]
 						}"
 						type="text" size="mini"
 						@click="editDialog(scope.row.id)"
@@ -66,7 +66,7 @@
 					>
 					<el-button
 						v-permission="{
-							or: [$service.training.student.permission.add]
+							or: [$service.training.student.permission.delete]
 						}" 
 						type="text" size="mini"
 						@click="deleteFn(scope.row.id)"
@@ -202,7 +202,8 @@ export default {
         }
 	},
 	mounted(){
-		this.getClassOrTeam()
+		this.getClassOrTeam();
+		console.log(this.$service.training.student.permission)
 	},
 	methods: {
 		//编辑
@@ -267,7 +268,7 @@ export default {
 		onLoad({ ctx, app }) {
 			ctx.service(this.$service.training.student).done();
 			app.refresh({
-				prop: 'createTime',
+				prop: 'id',
 				order: 'desc'
 			});
 		},

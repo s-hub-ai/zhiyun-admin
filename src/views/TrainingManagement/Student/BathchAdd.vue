@@ -34,10 +34,20 @@ export default {
 							let xlsxData = XLSX.utils.sheet_to_json(workbookSheets['Sheet1']);
 							// 结果数组
 							console.log(xlsxData);
+							let takedPhone = {};
 							excleList = [...excleList,...xlsxData.map(el=>{
 								let phoneNumArray = String( el['家长手机号码']);
 								if(/[^\d|\,]/.test(phoneNumArray)){
-									throw '手机号格式不正确'
+									throw '手机号格式不正确';
+								}else{
+									let arr = phoneNumArray.split(',');
+									arr.forEach(num=>{
+										if(takedPhone[num]){
+											throw "表格内手机号有重复"
+										}else{
+											takedPhone[num] = true;
+										}										
+									})
 								}
 								let data = {
 									name:el['姓名'],

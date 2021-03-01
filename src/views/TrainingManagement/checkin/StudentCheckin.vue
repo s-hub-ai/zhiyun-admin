@@ -120,7 +120,7 @@ export default {
 		onLoad({ ctx, app }) {
 			ctx.service(this.$service.training.studentAttendanceCheck).done();
 			app.refresh({
-				prop: 'createTime',
+				prop: 'id',
 				order: 'desc',
 				...this.searchQuery
 			});

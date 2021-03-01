@@ -38,7 +38,8 @@
                         </el-select>
                     </div>
                     <div>
-                        <el-button :disabled="selectedId.length==0" :loading="loading" size="mini" @click="addClassroom" type="primary">
+                        <el-button 
+                         v-permission=" $service.training.student.permission.addClassrooms " :disabled="selectedId.length==0" :loading="loading" size="mini" @click="addClassroom" type="primary">
                             确定加入
                         </el-button>
                     </div>

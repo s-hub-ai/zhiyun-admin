@@ -14,7 +14,7 @@
 					>新增教练</el-button
 				>				
 			</div>
-			<CoachExport :searchName="searchName"/>
+			<CoachExport  :searchName="searchName"/>
 		</el-row>
 		<el-row>
 			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
@@ -26,7 +26,7 @@
 					<el-button
 						size="mini"
 						v-permission="{
-							or: [$service.training.coach.permission.add]
+							or: [$service.training.coach.permission.update]
 						}"
 						type="text"
 						@click="editDialog(scope.row.id)"
@@ -35,7 +35,7 @@
 					<el-button
 					size="mini"
 						v-permission="{
-							or: [$service.training.coach.permission.add]
+							or: [$service.training.coach.permission.delete]
 						}"
 						type="text"
 						@click="deleteFn(scope.row.id)"
@@ -158,7 +158,7 @@ export default {
 		onLoad({ ctx, app }) {
 			ctx.service(this.$service.training.coach).done();
 			app.refresh({
-				prop: 'createTime',
+				prop: 'id',
 				order: 'desc'
 			});
 		}

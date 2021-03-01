@@ -73,7 +73,7 @@
 				<template #column-op="{ scope }">
 					<el-button 
 						v-permission="{
-							or: [$service.training.classroom.permission.add]
+							or: [$service.training.classroom.permission.update]
 						}"
 						type="text" size="mini"
 						@click="editDialog(scope.row.id)"
@@ -81,7 +81,7 @@
 					>
 					<el-button
 						v-permission="{
-							or: [$service.training.classroom.permission.add]
+							or: [$service.training.classroom.permission.delete]
 						}" 
 						type="text" size="mini"
 						@click="deleteFn(scope.row.id)"
@@ -274,7 +274,7 @@ export default {
 		onLoad({ ctx, app }) {
 			ctx.service(this.$service.training.classroom).done();
 			app.refresh({
-				prop: 'createTime',
+				prop: 'id',
 				order: 'desc',
 				type:0
 			});
