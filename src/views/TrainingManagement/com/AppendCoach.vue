@@ -9,7 +9,11 @@
                     <span slot-scope="{ option }">{{ option.label}}</span>
                 </el-transfer>
                 <div class="py-2 text-center">
-                    <el-button type="primary" @click="confirm()">确定</el-button>
+                    <el-button type="primary" 
+                    v-permission="{
+                        or: [$service.training.classroom.permission.addCoach]
+                    }"
+                     @click="confirm()">确定</el-button>
                     <el-button @click="show=false">取消</el-button>
                 </div>
             </el-form>

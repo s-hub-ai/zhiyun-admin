@@ -3,33 +3,30 @@
 		<el-row type="flex" align="middle">
 			<cl-search-key  v-model="searchName" placeholder="请输入教练名字"></cl-search-key>
 			<cl-flex1></cl-flex1>
-			<el-button
-				v-permission="{
-					or: [$service.training.coach.permission.add]
-				}"
-				size="mini"
-				type="primary"
-				@click="addDialog()"
-				>新增教练</el-button
-			>
+			<div class="mr-2">
+				<el-button
+					v-permission="{
+						or: [$service.training.coach.permission.add]
+					}"
+					size="mini"
+					type="primary"
+					@click="addDialog()"
+					>新增教练</el-button
+				>				
+			</div>
+			<CoachExport  :searchName="searchName"/>
 		</el-row>
-		<el-row type="flex" align="middle">
-
-			<cl-flex1></cl-flex1>
-			<CoachExport :searchName="searchName"/>
-		</el-row>
-
 		<el-row>
 			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
 				<template #column-portrait="{ scope }">
 					<cl-avatar shape="square" size="medium" :src="scope.row.portrait | default_avatar" :style="{ margin: 'auto' }"> </cl-avatar>
 				</template>
 				 <template #column-op="{ scope }">
-					<CheckinDialog :id="scope.row.id"/>
+					<CheckinDialog :key="`CheckinDialog-${scope.row.id}`" :id="scope.row.id"/>
 					<el-button
 						size="mini"
 						v-permission="{
-							or: [$service.training.coach.permission.add]
+							or: [$service.training.coach.permission.update]
 						}"
 						type="text"
 						@click="editDialog(scope.row.id)"
@@ -38,7 +35,7 @@
 					<el-button
 					size="mini"
 						v-permission="{
-							or: [$service.training.coach.permission.add]
+							or: [$service.training.coach.permission.delete]
 						}"
 						type="text"
 						@click="deleteFn(scope.row.id)"
@@ -161,7 +158,7 @@ export default {
 		onLoad({ ctx, app }) {
 			ctx.service(this.$service.training.coach).done();
 			app.refresh({
-				prop: 'createTime',
+				prop: 'id',
 				order: 'desc'
 			});
 		}

@@ -19,11 +19,11 @@
             </div>
             <el-table :data="[detail]" border style="width: 100%">
                 <el-table-column
-                    prop="absence"
+                    prop="attendance"
                     label="出勤次数" >
                 </el-table-column>
                 <el-table-column
-                    prop="attendance"
+                    prop="absence"
                     label="缺勤次数" >
                 </el-table-column>
                 <el-table-column
@@ -49,7 +49,7 @@ export default {
         loading:false,
         detail:{},
         detailQuery:{
-            studentId:vm.id,
+            coachId:vm.id,
             year:new Date().getFullYear(),
         },
         years:years()

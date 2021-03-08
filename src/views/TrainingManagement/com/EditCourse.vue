@@ -5,7 +5,10 @@
         <el-dialog title="选择课程" :visible.sync="show" width="1000px" >
             <div class="flex justify-between p-2">
                 <span class="font-bold text-xl">课程列表</span>
-                <el-button @click="appendDialog=true" size="mini" >添加课程</el-button>
+                <el-button @click="appendDialog=true" size="mini" 
+                v-permission="{
+                        or: [$service.training.classroom.permission.addCourse]
+                }" >添加课程</el-button>
                     
             </div> 
             <el-dialog v-if="show"  width="560px" title="添加课程" :visible.sync="appendDialog" append-to-body>
@@ -101,8 +104,14 @@
                     label="操作"
                     width="100">
                     <template slot-scope="scope">
-                        <el-button @click="editCourse(scope.row)" type="text" size="small">修改</el-button>
-                        <el-button @click="deleteCourse(scope.row.classroomCourseId)" type="text" size="small">删除</el-button>
+                        <el-button 
+                        v-permission="{
+                            or: [$service.training.classroom.permission.updateCourse]
+                        }" @click="editCourse(scope.row)" type="text" size="small">修改</el-button>
+                        <el-button 
+                         v-permission="{
+                            or: [$service.training.classroom.permission.deleteCourse]
+                        }" @click="deleteCourse(scope.row.classroomCourseId)" type="text" size="small">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table> 

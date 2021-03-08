@@ -1,31 +1,32 @@
 <template>
 	<cl-crud @load="onLoad" ref="crud">
 		<el-row type="flex" align="middle">
+			<div class="text-sm flex p-2">
+				<div class="mr-2"><span >班级/球队：</span>
+					<el-select size="mini" clearable v-model="searchQuery.classroomId" @change="refresh">
+						<el-option 
+							v-for="item in list.classOrTeamList"
+							:key="'class' + item.id"
+							:label="item.name"
+							:value="item.id">
+						</el-option>
+					</el-select> 
+				</div>
+				<div ><span>课程：</span>
+					<el-select size="mini" clearable v-model="searchQuery.courseId" @change="refresh">
+						<el-option
+							v-for="item in list.courseList"
+							:key="'course' + item.id"
+							:label="item.name"
+							:value="item.id">
+						</el-option>
+					</el-select> 
+				</div>
+			</div>	
 			<cl-search-key field="studentName" placeholder="请输入学生姓名"></cl-search-key>
 			<cl-flex1></cl-flex1>
 		</el-row>  
-		<div class="text-sm flex p-2">
-			<div class="mr-2"><span >班级/球队：</span>
-				<el-select size="mini" clearable v-model="searchQuery.classroomId" @change="refresh">
-					<el-option 
-						v-for="item in list.classOrTeamList"
-						:key="'class' + item.id"
-						:label="item.name"
-						:value="item.id">
-					</el-option>
-				</el-select> 
-			</div>
-			<div ><span>课程：</span>
-				<el-select size="mini" clearable v-model="searchQuery.courseId" @change="refresh">
-					<el-option
-						v-for="item in list.courseList"
-						:key="'course' + item.id"
-						:label="item.name"
-						:value="item.id">
-					</el-option>
-				</el-select> 
-			</div>
-		</div>					
+						
 
 		<el-row>
 			<cl-table :columns="tableColumn" :props="{ height: 'calc(100vh - 300px)' }">
@@ -119,7 +120,7 @@ export default {
 		onLoad({ ctx, app }) {
 			ctx.service(this.$service.training.studentAttendanceCheck).done();
 			app.refresh({
-				prop: 'createTime',
+				prop: 'id',
 				order: 'desc',
 				...this.searchQuery
 			});

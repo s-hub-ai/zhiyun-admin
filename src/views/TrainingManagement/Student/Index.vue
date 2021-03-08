@@ -3,19 +3,23 @@
 		<el-row type="flex" align="middle">
 			<cl-search-key field="studentName" v-model="studentName" placeholder="请输入学员名称"></cl-search-key>
 			<cl-flex1></cl-flex1>
+			<div class="mr-2">
+				<el-button
+					v-permission="{
+						and: [$service.training.student.permission.add]
+					}"
+					size="mini"
+					type="primary"
+					
+					@click="addDialog()"
+					>新增学员</el-button
+				>
+			</div>
 			<BatchAdd class="mr-2" @freash="$refs['crud'].refresh()"/>
-			<el-button
-				v-permission="{
-					or: [$service.training.student.permission.add]
-				}"
-				size="mini"
-				type="primary"
-				@click="addDialog()"
-				>新增学员</el-button
-			>
+			<StudentExport  :classOrTeamId="classOrTeamId" :studentName="studentName" :birthdayFilter="birthdayFilter"/>
 		</el-row>
 		<el-row type="flex" align="middle">
-			<span class="text-sm">班级/球队：</span>
+			<span class="ml-2 text-sm">班级/球队：</span>
 			<el-select class="ml-2" size="mini" v-model="classOrTeamId" @change="refresh" clearable placeholder="请选择">
 				<el-option
 				v-for="item in classOrTeamList"
@@ -24,7 +28,7 @@
 				:value="item.id">
 				</el-option>
 			</el-select>
-			<span class="ml-5">筛选生日：</span>
+			<span class="ml-5 text-sm">筛选生日：</span>
 			 	<el-date-picker
 				 size="mini"
 				v-model="birthdayFilter"
@@ -38,7 +42,7 @@
 				>
 				</el-date-picker>
 			<cl-flex1></cl-flex1>
-			<StudentExport :classOrTeamId="classOrTeamId" :studentName="studentName" :birthdayFilter="birthdayFilter"/>
+			
 		</el-row>
 
 		<el-row>
@@ -47,14 +51,14 @@
 					<cl-avatar shape="square" size="medium" :src="scope.row.portrait | default_avatar" :style="{ margin: 'auto' }"> </cl-avatar>
 				</template>
 				<template #column-joinClass="{ scope }">
-					 <JoinClass :id="scope.row.id" :list="classOrTeamList" :classroom="scope.row.classroom"
+					 <JoinClass :key="`JoinClass-${scope.row.id}`" :id="scope.row.id" :list="classOrTeamList" :classroom="scope.row.classroom"
 					 @refresh="refresh"/>
 				</template>
 				<template #column-op="{ scope }">
-					<CheckinDialog :id="scope.row.id"/>
+					<CheckinDialog :key="`CheckinDialog-${scope.row.id}`" :id="scope.row.id"/>
 					<el-button
 						v-permission="{
-							or: [$service.training.student.permission.add]
+							or: [$service.training.student.permission.update]
 						}"
 						type="text" size="mini"
 						@click="editDialog(scope.row.id)"
@@ -62,7 +66,7 @@
 					>
 					<el-button
 						v-permission="{
-							or: [$service.training.student.permission.add]
+							or: [$service.training.student.permission.delete]
 						}" 
 						type="text" size="mini"
 						@click="deleteFn(scope.row.id)"
@@ -110,7 +114,7 @@ export default {
 					label: '学员ID',
 					prop:'id',
 					align: 'center',
-					width:100
+					width:80
 				},
 				{
 					label: '头像',
@@ -134,6 +138,7 @@ export default {
 					label: '出生日期',
 					prop:'birthday',
 					align: 'center',
+					width:120,
 					formatter({birthday}) {	 
 						return birthday.slice(0,10);
 					}
@@ -142,6 +147,7 @@ export default {
 					label: '开始训练时间',
 					prop:'trainDate',
 					align: 'center',
+					width:120,
 					formatter({trainDate}) {	 
 						return trainDate.slice(0,10);
 					}
@@ -181,7 +187,7 @@ export default {
 					}
 				},
 				{
-					label: '所属班级/球队',
+					label: '班级/球队',
 					prop:'joinClass',
 					align: 'center',
 				},
@@ -196,7 +202,8 @@ export default {
         }
 	},
 	mounted(){
-		this.getClassOrTeam()
+		this.getClassOrTeam();
+		console.log(this.$service.training.student.permission)
 	},
 	methods: {
 		//编辑
@@ -261,7 +268,7 @@ export default {
 		onLoad({ ctx, app }) {
 			ctx.service(this.$service.training.student).done();
 			app.refresh({
-				prop: 'createTime',
+				prop: 'id',
 				order: 'desc'
 			});
 		},

@@ -7,6 +7,9 @@
 				size="mini"
 				type="primary"
 				@click="addDialog()"
+				v-permission="{
+					or: [$service.training.course.permission.add]
+				}"
 				>新增课程</el-button
 			>
 		</el-row>
@@ -17,7 +20,7 @@
 				<template #column-op="{ scope }">
 					<el-button size="mini"
 						v-permission="{
-							or: [$service.training.course.permission.add]
+							or: [$service.training.course.permission.update]
 						}"
 						type="text"
 						@click="editDialog(scope.row.id)"
@@ -25,7 +28,7 @@
 					>
 					<el-button size="mini"
 						v-permission="{
-							or: [$service.training.course.permission.add]
+							or: [$service.training.course.permission.delete]
 						}" 
 						type="text"
 						@click="deleteFn(scope.row.id)"
@@ -139,7 +142,7 @@ export default {
 		onLoad({ ctx, app }) {
 			ctx.service(this.$service.training.course).done();
 			app.refresh({
-				prop: 'createTime',
+				prop: 'id',
 				order: 'desc'
 			});
 		}
