@@ -40,7 +40,7 @@ module.exports = {
 				}
 			},
 			'/training': {
-				target: isProduction ? 'https://mb.ntzycm.cn/training/admin' : 'https://paytest.ryyes.com/training/admin',
+				target: isProduction ? '/training/admin' : 'https://paytest.ryyes.com/training/admin',
 				// target: "http://127.0.0.1:7003",
 				changeOrigin: true,
 				pathRewrite: {
