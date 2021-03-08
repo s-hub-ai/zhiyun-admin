@@ -113,6 +113,7 @@
 </template>
 
 <script>
+import XLSX from 'xlsx';
 import { couponTypeDict, ticketPackageUserDict, useCcertificationDict, vipLevelDict, zhiyunCardStatusDict } from '@/dict/index.js';
 export default {
 	computed: {
@@ -458,6 +459,40 @@ export default {
 					this.loading = false;
 					this.$message.error(error);
 				}
+			}
+		},
+		importXlsx(e) {
+			let _this = this;
+			console.log(e);
+			let files = e.target.files;
+			for (let i = 0; i < files.length; i++) {
+				let reader = new FileReader();
+				let name = files[i].name;
+				reader.onload = function (e) {
+					let data = e.target.result;
+					let workbook = XLSX.read(data, {
+						type: typeof FileReader !== 'undefined' && (FileReader.prototype || {}).readAsBinaryString ? 'binary' : 'array'
+					});
+					let workbookSheets = workbook.Sheets;
+					for (let sheet in workbookSheets) {
+						if (workbookSheets.hasOwnProperty(sheet)) {
+							//	fromTo = workbookSheets[sheet]['!ref'];
+							let xlsxData = XLSX.utils.sheet_to_json(workbookSheets[sheet]);
+							// 结果数组
+							console.log(sheet);
+							console.log(xlsxData);
+							let ids = [];
+							xlsxData.map((value) => {
+								let phone = String(value.手机号);
+								console.log(phone);
+								phone = phone.replace(/\s+/g, '');
+								ids.push(phone);
+							});
+							_this.getUserIds(ids);
+						}
+					}
+				};
+				reader.readAsBinaryString(files[i]);
 			}
 		}
 	}
