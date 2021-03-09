@@ -8,7 +8,10 @@ function parse(value) {
 	const permission = store.state.menu.permission;
 
 	if (typeof value == "string") {
-		return value ? permission.some((e) => e.includes(value.replace(/\s/g, ""))) : false;
+		return value ? permission.some((e) => 
+			// e.includes( value.replace(/\s/g, ""))
+			e === value.replace(/\s/g, "")
+		) : false;
 	} else {
 		return Boolean(value);
 	}

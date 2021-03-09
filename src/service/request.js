@@ -25,7 +25,7 @@ axios.interceptors.request.use(
 				config.headers["Authorization"] = store.state.user.token || "";
 			}
 
-			if (!["/sys/info/record"].some((e) => config.url.includes(e))) {
+			if (!["/sys/info/record","/app/lesson/studentAbsenceReason","/app/lesson/coachAbsenceReason"].some((e) => config.url.includes(e))) {
 				NProgress.start();
 			}
 		}

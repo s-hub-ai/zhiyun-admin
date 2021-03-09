@@ -1,16 +1,16 @@
-const path = require("path");
+const path = require('path');
 
-const isProduction = process.env.NODE_ENV === "production";
+const isProduction = process.env.NODE_ENV === 'production';
 
 function resolve(dir) {
 	return path.join(__dirname, dir);
 }
 
 module.exports = {
-	publicPath: "/",
+	publicPath: '/',
 	lintOnSave: true,
 	productionSourceMap: false,
-	parallel: require("os").cpus().length > 1,
+	parallel: require('os').cpus().length > 1,
 
 	css: {
 		extract: isProduction,
@@ -30,21 +30,28 @@ module.exports = {
 			warnings: false,
 			errors: true
 		},
-
 		proxy: {
-			"/dev": {
-				//	target: "https://paytest.ryyes.com",
-				target: "http://127.0.0.1:9007",
+			'/dev': {
+				target: 'https://paytest.ryyes.com',
+				// target: "http://127.0.0.1:9004",
 				changeOrigin: true,
 				pathRewrite: {
-					"^/dev": "/",
+					'^/dev': '/api'
 				}
 			},
-			"/pro": {
-				target: "https://mb.ntzycm.cn",
+			'/training': {
+				target: isProduction ? '/training/admin' : 'https://paytest.ryyes.com/training/admin',
+				// target: "http://127.0.0.1:7003",
 				changeOrigin: true,
 				pathRewrite: {
-					"^/pro": "/api"
+					'^/training': '/'
+				}
+			},
+			'/pro': {
+				target: 'https://mb.ntzycm.cn',
+				changeOrigin: true,
+				pathRewrite: {
+					'^/pro': '/api'
 				}
 			}
 		}
@@ -52,24 +59,24 @@ module.exports = {
 
 	chainWebpack: (config) => {
 		// svg
-		config.module.rule("svg").uses.clear();
+		config.module.rule('svg').uses.clear();
 
 		config.module
-			.rule("svg-sprite-loader")
+			.rule('svg-sprite-loader')
 			.test(/.svg$/)
 			.exclude.add(/node_modules/)
 			.end()
-			.use("svg-sprite-loader")
-			.loader("svg-sprite-loader")
+			.use('svg-sprite-loader')
+			.loader('svg-sprite-loader')
 			.options({
-				symbolId: "[name]"
+				symbolId: '[name]'
 			});
 
 		// 去掉元素之间空格
 		config.module
-			.rule("vue")
-			.use("vue-loader")
-			.loader("vue-loader")
+			.rule('vue')
+			.use('vue-loader')
+			.loader('vue-loader')
 			.tap((options) => {
 				options.compilerOptions.preserveWhitespace = true;
 				return options;
@@ -77,20 +84,20 @@ module.exports = {
 			.end();
 
 		if (isProduction) {
-			config.performance.set("hints", false);
+			config.performance.set('hints', false);
 
 			config.optimization.splitChunks({
-				chunks: "all",
+				chunks: 'all',
 				cacheGroups: {
 					libs: {
-						name: "chunk-libs",
+						name: 'chunk-libs',
 						test: /[\\/]node_modules[\\/]/,
 						priority: 10,
-						chunks: "initial"
+						chunks: 'initial'
 					},
 					commons: {
-						name: "chunk-cool",
-						test: resolve("src/cool"),
+						name: 'chunk-cool',
+						test: resolve('src/cool'),
 						minChunks: 3,
 						priority: 5,
 						reuseExistingChunk: true
