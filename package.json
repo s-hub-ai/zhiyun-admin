@@ -1,6 +1,6 @@
 {
-	"name": "cool-admin-pro",
-	"version": "0.0.7",
+	"name": "南通支云会员管理系统",
+	"version": "2.1.0",
 	"private": true,
 	"scripts": {
 		"serve": "vue-cli-service serve",
