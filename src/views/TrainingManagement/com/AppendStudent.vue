@@ -3,6 +3,14 @@
         <el-button v-if="crrtList.length==0" size="mini" type="text" @click="open">添加学员</el-button>
         <el-button v-else size="mini" @click="open" type="text">{{crrtList.length}}</el-button>
         <el-dialog title="编辑学员" :visible.sync="show" width="1000px" >
+            <div class="text-right my-2">
+                <el-button 
+                v-permission="{
+                    or: [$service.training.classroom.permission.addStudent]
+                }"
+            size="mini" @click="$refs.input.click()" type="primary"> 导入</el-button>
+            <input v-show="false"  ref="input" type="file" @change="importXlsx($event)" />
+            </div>
             <el-form class="text-left">
                 <el-transfer v-loading="loading" filterable filter-placeholder="请输入用户手机号" :titles="['学生列表', '已选学生']" 
                     v-model="list" :data="userList">
@@ -22,6 +30,7 @@
     </div>
 </template>
 <script>
+import XLSX from "xlsx"
 export default {
     name:"AppendStudent",
     props:['crrtList','userList','loading','id'],
@@ -43,7 +52,49 @@ export default {
             this.$message.success('修改成功')
             this.show = false
             this.$emit('refresh')
-        }     
+        },
+        importXlsx(e) {
+			let _this = this;
+			console.log(e);
+			let files = e.target.files;
+			for (let i = 0; i < files.length; i++) {
+				let reader = new FileReader();
+				let name = files[i].name;
+				reader.onload = (e)=> {
+					let data = e.target.result;
+					let workbook = XLSX.read(data, {
+						type: typeof FileReader !== 'undefined' && (FileReader.prototype || {}).readAsBinaryString ? 'binary' : 'array'
+					});
+					let workbookSheets = workbook.Sheets;
+                    let phoneMap = {};
+					for (let sheet in workbookSheets) {
+						if (workbookSheets.hasOwnProperty(sheet)) {
+							//	fromTo = workbookSheets[sheet]['!ref'];
+							let xlsxData = XLSX.utils.sheet_to_json(workbookSheets[sheet]);
+							
+							xlsxData.map((value) => {
+                                let phone = String(value['家长手机号码']) || String(value['家长手机号']);
+								phone = phone.replace(/\s+/g, '');
+								phoneMap[phone] = true
+							}); 
+                            
+						}
+					}
+								console.log(phoneMap);
+                   
+                    
+                    this.list = this.userList.filter(el=>{
+                        let arr = el.phoneNumArray.split(',');
+                        for(let p of arr){
+                            if(phoneMap[p])return true
+                        };
+                        return false
+                    }).map(el=>el.key)
+                    this.$refs.input.value = ''
+				};
+				reader.readAsBinaryString(files[i]);
+			}
+		}    
 
     }
 }

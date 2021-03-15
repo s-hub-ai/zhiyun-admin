@@ -17,6 +17,13 @@
 						<el-option label="已结束" :value="2"></el-option>
 					</el-select>
 				</el-form-item>
+				<el-form-item label="活动类型">
+					<el-select style="width: 120px" v-model="tableFlters.isType" placeholder="请选择" @change="$refs['crud'].refresh({ ...tableFlters })">
+						<el-option label="支云活动" :value="0">支云活动</el-option>
+						<el-option label="青训活动" :value="1">青训活动</el-option>
+						<el-option label="所有" :value="-1">所有</el-option> 
+					</el-select>
+				</el-form-item>
 				<el-form-item>
 					<cl-search-key placeholder="请输入活动名称"></cl-search-key>
 				</el-form-item>
@@ -27,6 +34,28 @@
 
 		<el-row>
 			<cl-table :columns="tableColumn">
+				<!-- 活动时间段 -->
+				<template #column-title="{ scope }"> 
+					<span >{{ scope.row.title }} </span>
+					<el-popover
+						placement="top-start"
+						title="活动二维码"
+						width="200"
+						trigger="hover"
+						effect="dark"
+						:open-delay="200"
+					>	
+						<div>
+							<div>
+
+							</div>
+							<div class="text-right">
+								<el-button size="small">下载</el-button>
+							</div>
+						</div>
+						<span slot="reference"><i class="el-icon-mobile"></i></span>
+					</el-popover>
+				</template>
 				<!-- 活动时间段 -->
 				<template #column-activityTime="{ scope }">
 					<div>{{ scope.row.activityStartTime }}</div>
@@ -70,6 +99,8 @@
 
 <script>
 import addDialog from './AddActivity';
+import { trainingStatusDict } from '@/dict/index.js';
+
 export default {
 	components: {
 		addDialog
@@ -81,7 +112,8 @@ export default {
 			addDialogTitle: '',
 			tableFlters: {
 				isClockin: '',
-				activityStatus: -1
+				activityStatus: -1,
+				isType:-1,
 			},
 			tableColumn: [
 				{
@@ -157,7 +189,9 @@ export default {
 					prop: 'op',
 					align: 'center'
 				}
-			]
+			],
+
+			...{trainingStatusDict}
 		};
 	},
 
