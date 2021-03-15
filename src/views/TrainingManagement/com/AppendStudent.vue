@@ -73,23 +73,31 @@ export default {
 							let xlsxData = XLSX.utils.sheet_to_json(workbookSheets[sheet]);
 							
 							xlsxData.map((value) => {
-                                let phone = String(value['家长手机号码']) || String(value['家长手机号']);
+                                let phone = String(value['手机号码'] || value['手机号'] || value['手机'])
 								phone = phone.replace(/\s+/g, '');
 								phoneMap[phone] = true
 							}); 
                             
 						}
-					}
-								console.log(phoneMap);
-                   
-                    
+					}  
+                    let hasMiss = false
                     this.list = this.userList.filter(el=>{
                         let arr = el.phoneNumArray.split(',');
                         for(let p of arr){
                             if(phoneMap[p])return true
                         };
+                        hasMiss = true;
                         return false
-                    }).map(el=>el.key)
+                    }).map(el=>el.key) 
+
+                    if(hasMiss){
+                        this.$alert('有手机号未录入至系统中，未能导入全部数据', {
+							confirmButtonText: '确定',
+							callback: (action) => {
+							}						
+						})
+                    }
+
                     this.$refs.input.value = ''
 				};
 				reader.readAsBinaryString(files[i]);

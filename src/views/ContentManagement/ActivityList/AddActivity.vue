@@ -599,7 +599,7 @@ export default {
 		submitForm(formName) {
 			console.log(this.ruleForm);
 			this.$refs[formName].validate(async (valid) => {
-				if (valid) {
+				if (valid) {					
 					try {
 						let params = {
 							...this.ruleForm
@@ -632,6 +632,7 @@ export default {
 						}
 						if (params.userType == 2) {
 							let isNull = true;
+								console.log(this.userArgs)
 							for (const key in this.userArgs) {
 								if (this.userArgs[key].length > 0) {
 									isNull = false;
@@ -685,7 +686,7 @@ export default {
 							type: 'success'
 						});
 					} catch (error) {
-						console.log(error);
+						console.log(error.lineNumber);
 						this.$message.error(error);
 					}
 				} else {
