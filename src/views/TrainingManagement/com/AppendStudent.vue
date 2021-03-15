@@ -79,18 +79,16 @@ export default {
 							}); 
                             
 						}
-					}  
-                    let hasMiss = false
+					}   
                     this.list = this.userList.filter(el=>{
                         let arr = el.phoneNumArray.split(',');
                         for(let p of arr){
                             if(phoneMap[p])return true
                         };
-                        hasMiss = true;
                         return false
                     }).map(el=>el.key) 
 
-                    if(hasMiss){
+                    if(this.list.length != Object.keys(phoneMap).length){
                         this.$alert('有手机号未录入至系统中，未能导入全部数据', {
 							confirmButtonText: '确定',
 							callback: (action) => {

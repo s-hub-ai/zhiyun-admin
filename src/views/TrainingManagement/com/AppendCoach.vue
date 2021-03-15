@@ -82,16 +82,9 @@ export default {
 					}                   
                     
                     let hasMiss = false
-                    this.list = this.userList.filter(el=>{
-                        if(phoneMap[el.phoneNum]){
-                            return true
-                        }else{
-                            hasMiss = true
-                            return false
-                        }
-                    }).map(el=>el.key)
+                    this.list = this.userList.filter(el=>phoneMap[el.phoneNum]).map(el=>el.key)
 
-                    if(hasMiss){
+                    if(this.list.length != Object.keys(phoneMap).length){
                         this.$alert('有手机号未录入至系统中，未能导入全部数据', {
 							confirmButtonText: '确定',
 							callback: (action) => {
