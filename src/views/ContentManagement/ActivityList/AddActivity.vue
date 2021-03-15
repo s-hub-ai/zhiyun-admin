@@ -2,13 +2,20 @@
 	<el-form :model="ruleForm" :inline="false" :rules="rules" ref="ruleForm" label-width="140px" class="demo-ruleForm">
 		<h3 class="mb-2">活动信息</h3>
 		<el-form-item label="是否付费" required>
-				<el-radio-group v-model="ruleForm.isType" @change="e=>{
-					if(e==0 && ruleForm.isPay==1){ ruleForm.applyAudit = 0 }
-					}">
-					<el-radio :label="0">支云活动</el-radio>
-					<el-radio :label="1">青训活动</el-radio>
-				</el-radio-group>
-			</el-form-item>
+			<el-radio-group
+				v-model="ruleForm.isType"
+				@change="
+					(e) => {
+						if (e == 0 && ruleForm.isPay == 1) {
+							ruleForm.applyAudit = 0;
+						}
+					}
+				"
+			>
+				<el-radio :label="0">支云活动</el-radio>
+				<el-radio :label="1">青训活动</el-radio>
+			</el-radio-group>
+		</el-form-item>
 		<el-form-item label="活动封面" prop="activityCover">
 			<cl-upload :value="ruleForm.activityCover" accept="image/*" class="avatar-uploader" :size="[150, 150]" icon="el-icon-plus" :on-success="activityCoverUploadSuccess"></cl-upload>
 			<div class="tips">限上传1张</div>
@@ -127,7 +134,7 @@
 
 		<el-form-item v-if="ruleForm.userType == 1" prop="userArgs">
 			<el-transfer v-loading="loading" filterable filter-placeholder="请输入用户手机号" :titles="['用户列表', '已选用户']" v-model="ruleForm.userArgs" :data="userList">
-				<span slot-scope="{ option }">{{ option.label }} - {{ option.nickName }}</span>
+				<span slot-scope="{option}">{{ option.label }} - {{ option.nickName }}</span>
 			</el-transfer>
 		</el-form-item>
 		<div v-if="ruleForm.userType == 2">
@@ -177,24 +184,29 @@
 			</el-checkbox-group>
 		</el-form-item>
 
-		<el-form-item label="协议文件" v-if="ruleForm.infoField.some(el=>el == 'pact')" prop="pact"> 
-			<div v-for="(item,i) in ruleForm.pact" :key="i" class="flex">
-				<div class="mr-2 w-64" >
-					<el-input size="small" placeholder="请输入协议标题" 
-					v-model="item.title"> </el-input>
+		<el-form-item label="协议文件" v-if="ruleForm.infoField.some((el) => el == 'pact')" prop="pact">
+			<div v-for="(item, i) in ruleForm.pact" :key="i" class="flex">
+				<div class="mr-2 w-64">
+					<el-input size="small" placeholder="请输入协议标题" v-model="item.title"> </el-input>
 				</div>
 				<cl-upload list-type="file" accept="*" :multiple="false" :limit="1" v-model="item.file" text="选择协议文件"></cl-upload>
-				<el-button size="small" @click="ruleForm.pact.splice(i,1)">删除</el-button>
+				<el-button size="small" @click="ruleForm.pact.splice(i, 1)">删除</el-button>
 			</div>
-			<el-button size="small" type="primary" @click="ruleForm.pact.push({
-				title:'',
-				file:''
-			})">添加协议文件 </el-button>
+			<el-button
+				size="small"
+				type="primary"
+				@click="
+					ruleForm.pact.push({
+						title: '',
+						file: ''
+					})
+				"
+				>添加协议文件
+			</el-button>
 		</el-form-item>
 
 		<el-form-item label="报名审核" required>
-			<el-radio-group style="width: 178px" v-model="ruleForm.applyAudit" 
-			:disabled="ruleForm.isPay == 1 && ruleForm.isType==0">
+			<el-radio-group style="width: 178px" v-model="ruleForm.applyAudit" :disabled="ruleForm.isPay == 1 && ruleForm.isType == 0">
 				<el-radio :label="0">否</el-radio>
 				<el-radio :label="1">是</el-radio>
 			</el-radio-group>
@@ -225,34 +237,36 @@
 				<el-form-item label="中文名称" prop="label">
 					<el-input size="medium" placeholder="请输入内容" v-model="infoForm.label"> </el-input>
 				</el-form-item>
-				<el-form-item label="采集形式"  required>
-					<el-radio-group  v-model="infoForm.formType" >
+				<el-form-item label="采集形式" required>
+					<el-radio-group v-model="infoForm.formType">
 						<el-radio label="text">文本输入</el-radio>
 						<el-radio label="radio">单选</el-radio>
 						<el-radio label="checkbox">多选</el-radio>
-						<el-radio label="file" class="mt-2" >上传文件</el-radio>
+						<el-radio label="file" class="mt-2">上传文件</el-radio>
 					</el-radio-group>
 				</el-form-item>
-				<el-form-item prop="selectList" label="选项" 
-				v-if="['radio','checkbox'].includes(infoForm.formType)" required				>
-					<div v-for="(item,i) in infoForm.selectList" :key="i" class="flex">
-						<el-input size="medium" placeholder="请输入内容" 
-						v-model="item.label"> </el-input>
-						<el-button class="mr-1" type="danger" icon="el-icon-delete"
-							@click="infoForm.selectList.splice(i,1)"
-						></el-button>
+				<el-form-item prop="selectList" label="选项" v-if="['radio', 'checkbox'].includes(infoForm.formType)" required>
+					<div v-for="(item, i) in infoForm.selectList" :key="i" class="flex">
+						<el-input size="medium" placeholder="请输入内容" v-model="item.label"> </el-input>
+						<el-button class="mr-1" type="danger" icon="el-icon-delete" @click="infoForm.selectList.splice(i, 1)"></el-button>
 					</div>
 					<div>
-						<el-button size="small" @click="infoForm.selectList.push({
-							label:''
-						})">新增选项</el-button>
+						<el-button
+							size="small"
+							@click="
+								infoForm.selectList.push({
+									label: ''
+								})
+							"
+							>新增选项</el-button
+						>
 					</div>
 				</el-form-item>
 
 				<el-form-item label="是否必填" prop="label" required>
 					<el-radio-group style="width: 178px" v-model="infoForm.required">
 						<el-radio :label="true">是</el-radio>
-						<el-radio :label="false">否</el-radio> 
+						<el-radio :label="false">否</el-radio>
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item>
@@ -266,9 +280,9 @@
 
 <script>
 import XLSX from 'xlsx';
-import { couponTypeDict, ticketPackageUserDict, useCcertificationDict, vipLevelDict, zhiyunCardStatusDict,trainingStatusDict } from '@/dict/index.js';
+import {couponTypeDict, ticketPackageUserDict, useCcertificationDict, vipLevelDict, zhiyunCardStatusDict, trainingStatusDict} from '@/dict/index.js';
 import bdMap from './map';
-import { arrDistinctByProp } from '@/utils';
+import {arrDistinctByProp} from '@/utils';
 export default {
 	components: {
 		bdMap
@@ -317,10 +331,10 @@ export default {
 				addressName: null,
 				awardIntegralZy: 0,
 
-				isType:0,
-				qrcode:1,
+				isType: 0,
+				qrcode: 1,
 
-				pact:[]
+				pact: []
 			},
 			infoFieldDialog: false,
 			infoFieldList: [
@@ -357,20 +371,17 @@ export default {
 					value: 'age'
 				},
 				{
-					label:'协议',
-					value:'pact',
-					fileList:[
-						{file:'',
-						title:'',}
-					]
+					label: '协议',
+					value: 'pact',
+					fileList: [{file: '', title: ''}]
 				}
 			],
 			infoForm: {
 				label: '',
 				value: '',
-				formType:'text',
-				selectList:[],
-				required:true,
+				formType: 'text',
+				selectList: [],
+				required: true
 			},
 			infoRules: {
 				label: [
@@ -387,14 +398,16 @@ export default {
 						trigger: 'blur'
 					}
 				],
-				selectList:[
-					{validator( rules ,value, callback){ 
-						if( value.length==0 || value.some(el=>!el.label)){
-							callback(new Error('请添加选项,并填写'))
-						}else{
-							callback()
+				selectList: [
+					{
+						validator(rules, value, callback) {
+							if (value.length == 0 || value.some((el) => !el.label)) {
+								callback(new Error('请添加选项,并填写'));
+							} else {
+								callback();
+							}
 						}
-					}}
+					}
 				]
 			},
 			rules: {
@@ -483,13 +496,15 @@ export default {
 					}
 				],
 				pact: [
-					{validator( rules ,value, callback){ 
-						if( value.length==0 || value.some(el=>!el.title)){
-							callback(new Error('请添加文件,并填写标题'))
-						}else{
-							callback()
+					{
+						validator(rules, value, callback) {
+							if (value.length == 0 || value.some((el) => !el.title)) {
+								callback(new Error('请添加文件,并填写标题'));
+							} else {
+								callback();
+							}
 						}
-					}}
+					}
 				]
 			},
 			userList: [],
@@ -499,7 +514,7 @@ export default {
 				ticketPackageUser: [],
 				vipLevel: [],
 				zhiyunCardStatus: [],
-				trainingStatus:[],
+				trainingStatus: []
 			},
 			loading: false,
 			useCcertificationCheckbox: [],
@@ -526,7 +541,7 @@ export default {
 			trainingStatusCheckbox: [],
 			trainingStatusCheckedCities: [],
 			trainingStatusIndeterminate: false,
-			trainingStatusCheckAll: false,
+			trainingStatusCheckAll: false
 		};
 	},
 	created() {
@@ -553,15 +568,14 @@ export default {
 				if (res.infoField != null) {
 					let infoField = JSON.parse(res.infoField);
 					res.infoField = infoField.map((value, index, array) => {
-						console.log(value)
-						if(value.value == 'pact'){
-							res.pact = value.fileList
+						console.log(value);
+						if (value.value == 'pact') {
+							res.pact = value.fileList;
 						}
 						return value.value;
 					});
 					infoField = this.infoFieldList.concat(infoField);
 					this.infoFieldList = arrDistinctByProp(infoField, 'value');
-					
 				} else {
 					res.infoField = [];
 				}
@@ -659,14 +673,13 @@ export default {
 						let arr = [];
 						for (let i = 0; i < this.infoFieldList.length; i++) {
 							const e = this.infoFieldList[i];
-							if(e.value == 'pact'){
-								this.infoFieldList[i].fileList = params.pact
+							if (e.value == 'pact') {
+								this.infoFieldList[i].fileList = params.pact;
 								delete params.pact;
 							}
 							if (params.infoField.indexOf(e.value) > -1) {
 								arr.push(e);
 							}
-							
 						}
 
 						params.infoField = JSON.stringify(arr);
@@ -698,10 +711,10 @@ export default {
 		addInfoField(formName) {
 			this.$refs[formName].validate(async (valid) => {
 				if (valid) {
-					if(['radio','checkbox'].includes(this.infoForm.formType)){
-						this.infoForm.selectList.forEach((el,i)=>{
-						el.value = i
-					})
+					if (['radio', 'checkbox'].includes(this.infoForm.formType)) {
+						this.infoForm.selectList.forEach((el, i) => {
+							el.value = i;
+						});
 					}
 					this.infoFieldList.push({
 						...this.infoForm
