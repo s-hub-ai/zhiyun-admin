@@ -48,11 +48,11 @@
 					>	
 						<div>
 							<div>
-								<el-avatar shape="square" :size="200" fit="fit" :src="`https://www.kaspersky.com/content/en-global/images/repository/isc/2020/9910/a-guide-to-qr-codes-and-how-to-scan-qr-codes-2.png`"></el-avatar> 
+								<el-avatar shape="square" :size="200" fit="fit" :src="scope.row.qrCode"></el-avatar> 
 							</div>
 							<div class="text-right">
 								<el-button size="small" >
-									<a href="https://www.kaspersky.com/content/en-global/images/repository/isc/2020/9910/a-guide-to-qr-codes-and-how-to-scan-qr-codes-2.png" download="f49408046dc14dbfe4317f48f840fc2d.jpg">下载图片</a>
+									<a :href="scope.row.qrCode" target="_blank" download>下载图片</a>
 								</el-button>
 							</div>
 						</div>

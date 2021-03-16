@@ -1,7 +1,7 @@
 <template>
 	<el-form :model="ruleForm" :inline="false" :rules="rules" ref="ruleForm" label-width="140px" class="demo-ruleForm">
 		<h3 class="mb-2">活动信息</h3>
-		<el-form-item label="是否付费" required>
+		<el-form-item label="活动类型" required>
 			<el-radio-group
 				v-model="ruleForm.isType"
 				@change="
@@ -189,7 +189,19 @@
 				<div class="mr-2 w-64">
 					<el-input size="small" placeholder="请输入协议标题" v-model="item.title"> </el-input>
 				</div>
-				<cl-upload list-type="file" accept="*" :multiple="false" :limit="1" v-model="item.file" text="选择协议文件"></cl-upload>
+				<cl-upload
+					list-type="file"
+					accept="*"
+					:multiple="false"
+					:limit="1"
+					v-model="item.file"
+					text="选择协议文件"
+					:on-change="
+						(file) => {
+							item.title = file.name && file.name.split('.')[0];
+						}
+					"
+				></cl-upload>
 				<el-button size="small" @click="ruleForm.pact.splice(i, 1)">删除</el-button>
 			</div>
 			<el-button
@@ -213,12 +225,6 @@
 		</el-form-item>
 		<el-form-item label="活动开启" required>
 			<el-radio-group style="width: 178px" v-model="ruleForm.activityStartStatus">
-				<el-radio :label="0">否</el-radio>
-				<el-radio :label="1">是</el-radio>
-			</el-radio-group>
-		</el-form-item>
-		<el-form-item label="活动二维码" required>
-			<el-radio-group style="width: 178px" v-model="ruleForm.qrcode">
 				<el-radio :label="0">否</el-radio>
 				<el-radio :label="1">是</el-radio>
 			</el-radio-group>
@@ -332,7 +338,6 @@ export default {
 				awardIntegralZy: 0,
 
 				isType: 0,
-				qrcode: 1,
 
 				pact: []
 			},
@@ -340,34 +345,60 @@ export default {
 			infoFieldList: [
 				{
 					label: '姓名',
+					formType: 'text',
+					required: true,
 					value: 'name'
 				},
 				{
 					label: '手机号',
+					formType: 'text',
+					required: true,
 					value: 'phone'
 				},
 				{
 					label: '微信号',
+					formType: 'text',
+					required: true,
 					value: 'wxAccount'
 				},
 				{
 					label: '身份证号',
+					formType: 'text',
+					required: true,
 					value: 'userCertificateNum'
 				},
 				{
 					label: '邮箱',
+					formType: 'text',
+					required: true,
 					value: 'email'
 				},
 				{
 					label: '地址',
+					formType: 'text',
+					required: true,
 					value: 'address'
 				},
 				{
 					label: '性别',
-					value: 'sex'
+					formType: 'radio',
+					required: true,
+					value: 'sex',
+					selectList: [
+						{
+							label: '男',
+							value: 0
+						},
+						{
+							label: '女',
+							value: 1
+						}
+					]
 				},
 				{
 					label: '年龄',
+					formType: 'text',
+					required: true,
 					value: 'age'
 				},
 				{
@@ -613,7 +644,7 @@ export default {
 		submitForm(formName) {
 			console.log(this.ruleForm);
 			this.$refs[formName].validate(async (valid) => {
-				if (valid) {					
+				if (valid) {
 					try {
 						let params = {
 							...this.ruleForm
@@ -646,7 +677,7 @@ export default {
 						}
 						if (params.userType == 2) {
 							let isNull = true;
-								console.log(this.userArgs)
+							console.log(this.userArgs);
 							for (const key in this.userArgs) {
 								if (this.userArgs[key].length > 0) {
 									isNull = false;
