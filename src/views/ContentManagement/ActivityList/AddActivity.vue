@@ -227,7 +227,8 @@
 						<el-radio label="text">文本输入</el-radio>
 						<el-radio label="radio">单选</el-radio>
 						<el-radio label="checkbox">多选</el-radio>
-						<el-radio label="file" class="mt-2" >上传文件</el-radio>
+						<el-radio label="image" class="mt-2" >上传图片</el-radio>
+						<el-radio label="video" class="mt-2" >上传视频</el-radio>
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item prop="selectList" label="选项" 
@@ -241,8 +242,8 @@
 					</div>
 					<div>
 						<el-button size="small" @click="infoForm.selectList.push({
-							label:''
-						})">新增选项</el-button>
+									label:''
+							})">新增选项</el-button>
 					</div>
 				</el-form-item>
 
@@ -385,7 +386,8 @@ export default {
 					fileList:[
 						{file:'',
 						title:'',}
-					]
+					],
+					required:true,
 				}
 			],
 			infoForm: {
@@ -573,6 +575,7 @@ export default {
 					res.clockinTime = [new Date(res.clockinStartTime.replace(/-/g, '/')), new Date(res.clockinEndTime.replace(/-/g, '/'))];
 				}
 				//res.activityBanner = res.activityBanner.split(',');
+				res.pact = []
 				if (res.infoField != null) {
 					let infoField = JSON.parse(res.infoField);
 					res.infoField = infoField.map((value, index, array) => {
@@ -721,15 +724,16 @@ export default {
 		//添加自定义字段
 		addInfoField(formName) {
 			this.$refs[formName].validate(async (valid) => {
+				let form = {...this.infoForm }
 				if (valid) {
-					if(['radio','checkbox'].includes(this.infoForm.formType)){
-						this.infoForm.selectList.forEach((el,i)=>{
+					if(['radio','checkbox'].includes(form.formType)){
+						form.selectList.forEach((el,i)=>{
 						el.value = i
 					})
+					}else{
+						delete form.selectList
 					}
-					this.infoFieldList.push({
-						...this.infoForm
-					});
+					this.infoFieldList.push(form);
 					this.infoFieldDialog = false;
 				}
 			});

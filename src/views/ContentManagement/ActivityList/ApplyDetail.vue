@@ -28,6 +28,15 @@
 
 		<el-row>
 			<cl-table :columns="tableColumn">
+				<template #column-image="{ scope }"> 
+					<ImageDialog :url="scope.row.image "/>
+				</template>
+				<template #column-video="{ scope }"> 
+					<VideoDialog :url="scope.row.video "/>
+				</template>
+				<template #column-pact="{ scope }"> 
+					{{scope.row.pact?"已同意":'未同意'}}
+				</template>
 				<!-- 操作 -->
 				<template #column-op="{ scope }">
 					<el-button v-permission="$service.app.applyActivity.permission.audit" v-if="d.applyAudit == 1 && scope.row.auditStatus == 2" size="mini" type="text" @click="auditFn(scope.row.id)"
@@ -49,6 +58,10 @@
 import FileSaver from 'file-saver';
 import XLSX from 'xlsx';
 export default {
+	components:{
+		ImageDialog:()=>import('./ImageDialog'),
+		VideoDialog:()=>import('./VideoDialog'),
+	},
 	data() {
 		let _this = this;
 		return {
@@ -224,7 +237,7 @@ export default {
 						}
 					});
 				}
-				for (let i = 0; i < infoField.length; i++) {
+				for (let i = infoField.length-1; i >=0 ; i--) {
 					const e = infoField[i];
 					let column = {
 						label: e.label,
@@ -232,14 +245,15 @@ export default {
 						align: 'center'
 					};
 					this.tableColumn.unshift(column);
+ 
 				}
 				this.tableColumn.unshift({
-					label: '姓名',
+					label: '系统姓名',
 					prop: 'userName',
 					align: 'center'
 				});
 				this.tableColumn.unshift({
-					label: '手机号',
+					label: '系统手机号',
 					prop: 'phoneNum',
 					align: 'center'
 				});
