@@ -178,10 +178,24 @@
 		</div>
 		<h3>其他信息</h3>
 		<el-form-item label="填写信息">
-			<el-checkbox-group v-model="ruleForm.infoField" size="small" @change="infoFieldChange">
-				<el-checkbox v-for="(item, index) in infoFieldList" :key="index" :label="item.value" border>{{ item.label }}</el-checkbox>
-				<el-button size="small" type="primary" style="margin-left: 25px" @click="infoFieldDialog = true">添加字段 </el-button>
+			<el-checkbox-group v-if="!editingInfoField" v-model="ruleForm.infoField" size="small" @change="infoFieldChange" > 
+				<el-checkbox v-for="(item, index) in infoFieldList" :key="index" :label="item.value" border>{{ item.label }}</el-checkbox> 
 			</el-checkbox-group>
+			<div v-else class="flex flex-wrap">
+				<div v-for="(item, index) in infoFieldList" :key="index" 
+				class="mr-3 my-2 px-2 border-2 border-gray-300 rounded border-solid"> 
+					<span class="mr-2">{{item.label}}</span>
+					<el-button size="small" type="text"  @click="editField(item)">编辑</el-button> 
+					<el-button size="small" type="text"  @click="removeField(item)">删除</el-button> 
+				</div>
+			</div>
+			<div v-if="!editingInfoField">
+				<el-button size="small" type="primary"  @click="infoFieldDialog = true">添加字段 </el-button> 
+				<el-button size="small" type="primary"  @click="editingInfoField= true">编辑字段 </el-button> 
+			</div>
+			<div v-else>
+				<el-button size="small" type="primary"  @click="editingInfoField=null">结束编辑 </el-button> 
+			</div>
 		</el-form-item>
 
 		<el-form-item label="协议文件" v-if="ruleForm.infoField.some((el) => el == 'pact')" prop="pact">
@@ -235,7 +249,8 @@
 			<el-button @click="resetForm('ruleForm')">重置</el-button>
 		</div>
 
-		<el-dialog width="30%" title="添加字段" :visible.sync="infoFieldDialog" append-to-body @close="resetForm('infoForm')">
+		<el-dialog width="30%" title="添加字段" :visible.sync="infoFieldDialog" append-to-body @close="resetInfoField('infoForm')">
+			
 			<el-form :model="infoForm" :inline="false" :rules="infoRules" ref="infoForm" label-width="100px" class="demo-ruleForm">
 				<el-form-item label="英文名称" prop="value">
 					<el-input size="medium" placeholder="请输入内容" v-model="infoForm.value"> </el-input>
@@ -244,12 +259,12 @@
 					<el-input size="medium" placeholder="请输入内容" v-model="infoForm.label"> </el-input>
 				</el-form-item>
 				<el-form-item label="采集形式" required>
-					<el-radio-group v-model="infoForm.formType">
-						<el-radio label="text">文本输入</el-radio>
-						<el-radio label="radio">单选</el-radio>
-						<el-radio label="checkbox">多选</el-radio>
-						<el-radio label="image" class="mt-2" >上传图片</el-radio>
-						<el-radio label="video" class="mt-2" >上传视频</el-radio>
+					<el-radio-group  v-model="infoForm.formType">
+						<el-radio :disabled="!!editingInfoField" label="text">文本输入</el-radio>
+						<el-radio :disabled="!!editingInfoField" label="radio">单选</el-radio>
+						<el-radio :disabled="!!editingInfoField" label="checkbox">多选</el-radio>
+						<el-radio :disabled="!!editingInfoField" label="image" class="mt-2" >上传图片</el-radio>
+						<el-radio :disabled="!!editingInfoField" label="video" class="mt-2" >上传视频</el-radio>
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item prop="selectList" label="选项" v-if="['radio', 'checkbox'].includes(infoForm.formType)" required>
@@ -271,8 +286,8 @@
 					</el-radio-group>
 				</el-form-item>
 				<el-form-item>
-					<el-button size="small" type="primary" @click="addInfoField('infoForm')">立即创建</el-button>
-					<el-button size="small" @click="resetForm('infoForm')">重置</el-button>
+					<el-button size="small" type="primary" @click="addInfoField('infoForm')">确定</el-button>
+					<el-button size="small" v-show="!editingInfoField" @click="resetInfoField('infoForm')">重置</el-button>
 				</el-form-item>
 			</el-form>
 		</el-dialog>
@@ -302,7 +317,7 @@ export default {
 			return arr;
 		}
 	},
-	data() {
+	data(vm) {
 		return {
 			couponTypeDict,
 			useCcertificationDict,
@@ -337,6 +352,7 @@ export default {
 				pact: []
 			},
 			infoFieldDialog: false,
+			editingInfoField:false,
 			infoFieldList: [
 				{
 					label: '姓名',
@@ -426,6 +442,15 @@ export default {
 						required: true,
 						message: '请填写英文名称',
 						trigger: 'blur'
+					},
+					{
+						validator(rules, value, callback) {
+							if ( !vm.editingInfoField && vm.infoFieldList.find(el=>el.value==value) ) {
+								callback(new Error('英文名称不能与已有信息重复'));
+							} else {
+								callback();
+							}
+						}
 					}
 				],
 				selectList: [
@@ -742,19 +767,41 @@ export default {
 		//添加自定义字段
 		addInfoField(formName) {
 			this.$refs[formName].validate(async (valid) => {
-				let form = {...this.infoForm }
-				if (valid) {
-					if(['radio','checkbox'].includes(form.formType)){
-						form.selectList.forEach((el,i)=>{
-						el.value = i
-					})
-					}else{
-						delete form.selectList
+				if(this.editingInfoField){
+					let i = this.infoFieldList.indexOf(this.infoForm);
+					this.infoFieldList[i] = {...this.infoForm};
+					this.infoFieldDialog = false
+				}else{
+					let form = {...this.infoForm }
+					if (valid) {
+						if(['radio','checkbox'].includes(form.formType)){
+							form.selectList.forEach((el,i)=>{
+							el.value = i
+						})
+						}else{
+							delete form.selectList
+						}
+						this.infoFieldList.push(form);
+						this.infoFieldDialog = false;
 					}
-					this.infoFieldList.push(form);
-					this.infoFieldDialog = false;
 				}
 			});
+		},
+		removeField(item){
+			let i = this.infoFieldList.indexOf(item);
+			this.infoFieldList.splice(i,1)
+		},
+		editField(item){
+			this.infoForm = item;
+			this.editingInfoField = item;
+			this.infoFieldDialog = true
+		},
+		resetInfoField(formName){
+			if(!!this.editingInfoField){
+				let i = this.infoFieldList.indexOf(this.infoForm);
+				this.infoFieldList[i] = { selectList:[],...this.infoForm }; 
+			}
+			this.$refs[formName].resetFields();
 		},
 		resetForm(formName) {
 			this.$refs[formName].resetFields();

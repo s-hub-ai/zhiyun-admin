@@ -1,11 +1,14 @@
 <template>
      <el-button  size="mini" @click="show=true" type="text">
             <span>查看视频</span>
-            <el-dialog title="视频" :visible.sync="show" width="600px" append-to-body>
+            <el-dialog title="视频" :visible.sync="show" append-to-body>
                 <div v-if="show">
-                <video controls width="600px">
+                <video controls width="100%" style="max-height:60vh">
                     <source :src="url"> 
                 </video>
+                <div class="my-2">
+                    {{url}}
+                </div>
                 </div>
             </el-dialog>
         </el-button>

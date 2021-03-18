@@ -3,7 +3,7 @@
             <span>查看图片</span>
             <el-dialog title="图片" :visible.sync="show" width="600px" append-to-body>
                 <div v-if="show">
-                     <el-image :src="url"></el-image>
+                     <el-image :src="url" style="max-height:60vh"></el-image>
                 </div>
             </el-dialog>
         </el-button>

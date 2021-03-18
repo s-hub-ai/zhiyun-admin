@@ -28,12 +28,12 @@
 
 		<el-row>
 			<cl-table :columns="tableColumn">
-				<template #column-image="{ scope }"> 
-					<ImageDialog :url="scope.row.image "/>
+
+				<template #[`column-${slot.name}`]="{ scope }" v-for="slot in customSolts"> 
+					<VideoDialog v-if="slot.type == 'video'" :url="scope.row[slot.name]" :key="slot.name"/>
+					<ImageDialog v-if="slot.type == 'image'" :url="scope.row[slot.name]" :key="slot.name"/>
 				</template>
-				<template #column-video="{ scope }"> 
-					<VideoDialog :url="scope.row.video "/>
-				</template>
+
 				<template #column-pact="{ scope }"> 
 					{{scope.row.pact?"已同意":'未同意'}}
 				</template>
@@ -81,7 +81,8 @@ export default {
 					width: 150,
 					align: 'center'
 				}
-			]
+			],
+			customSolts:[]
 		};
 	},
 
@@ -244,6 +245,12 @@ export default {
 						prop: e.value,
 						align: 'center'
 					};
+					if(['video','image'].includes(e.formType)){
+						this.customSolts.push({
+							type:e.formType,
+							name:e.value
+						})
+					}
 					this.tableColumn.unshift(column);
  
 				}
