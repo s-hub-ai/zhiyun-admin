@@ -179,33 +179,37 @@
 		<h3>其他信息</h3>
 		<el-form-item label="填写信息">
 			<el-checkbox-group v-if="!editingInfoField" v-model="ruleForm.infoField" size="small" @change="infoFieldChange" > 
-				<el-checkbox v-for="(item, index) in infoFieldList" :key="index" :label="item.value" border>{{ item.label }}</el-checkbox> 
+				<el-checkbox v-for="(item, index) in infoFieldList" :key="index" :label="item.value" border>
+					{{ infoFieldIndex(item) }}
+				</el-checkbox> 
 			</el-checkbox-group>
-			<div v-else class="flex flex-wrap">
-				<div v-for="(item, index) in infoFieldList" :key="index" 
-				class="mr-3 my-2 px-2 border-2 border-gray-300 rounded border-solid"> 
+			<div v-else class="flex flex-wrap ">
+				<div v-for="item in infoFieldList" :key="item.value" 
+					class="editing-items"> 
 					<span class="mr-2">{{item.label}}</span>
 					<el-button size="small" type="text"  @click="editField(item)">编辑</el-button> 
 					<el-button size="small" type="text"  @click="removeField(item)">删除</el-button> 
 				</div>
+
 			</div>
-			<div v-if="!editingInfoField">
-				<el-button size="small" type="primary"  @click="infoFieldDialog = true">添加字段 </el-button> 
-				<el-button size="small" type="primary"  @click="editingInfoField= true">编辑字段 </el-button> 
+			<div v-if="!!editingInfoField">
+				<el-button size="small" type="primary"  @click="editingInfoField = null">结束编辑 </el-button> 
+
 			</div>
 			<div v-else>
-				<el-button size="small" type="primary"  @click="editingInfoField=null">结束编辑 </el-button> 
-			</div>
+				<el-button size="small" type="primary"  @click="infoFieldDialog = true">添加字段 </el-button> 
+				<el-button size="small" type="primary"  @click="editingInfoField= true">编辑字段 </el-button> 
+			</div>  
 		</el-form-item>
 
 		<el-form-item label="协议文件" v-if="ruleForm.infoField.some((el) => el == 'pact')" prop="pact">
 			<div v-for="(item, i) in ruleForm.pact" :key="i" class="flex">
 				<div class="mr-2 w-64">
-					<el-input size="small" placeholder="请输入协议标题" v-model="item.title"> </el-input>
+					<el-input size="small" placeholder="请输入协议标题" v-model="item.title"> </el-input>					
 				</div>
 				<cl-upload
 					list-type="file"
-					accept="*"
+					accept="application/pdf,application/x-pdf"
 					:multiple="false"
 					:limit="1"
 					v-model="item.file"
@@ -216,7 +220,12 @@
 						}
 					"
 				></cl-upload>
-				<el-button size="small" @click="ruleForm.pact.splice(i, 1)">删除</el-button>
+				<div class="ml-2">
+					<el-button size="small" @click="ruleForm.pact.splice(i, 1)">删除</el-button>
+				</div>
+			</div>
+			<div>
+				<div class="text-sm text-gray-500">*请上传pdf文件</div>
 			</div>
 			<el-button
 				size="small"
@@ -299,6 +308,7 @@ import XLSX from 'xlsx';
 import {couponTypeDict, ticketPackageUserDict, useCcertificationDict, vipLevelDict, zhiyunCardStatusDict, trainingStatusDict} from '@/dict/index.js';
 import bdMap from './map';
 import {arrDistinctByProp} from '@/utils';
+
 export default {
 	components: {
 		bdMap
@@ -349,7 +359,10 @@ export default {
 
 				isType: 0,
 
-				pact: []
+				pact: [{
+						title: '',
+						file: ''
+					}]
 			},
 			infoFieldDialog: false,
 			editingInfoField:false,
@@ -664,6 +677,14 @@ export default {
 			console.log(e);
 			this.ruleForm.infoField = e;
 		},
+		infoFieldIndex(item){
+			let index = this.ruleForm.infoField.indexOf(item.value)
+			if(index >=0){
+				return `${index+1}.${item.label}`
+			}else{
+				return item.label
+			}
+		},
 		isClockinChange(e) {},
 		//提交
 		submitForm(formName) {
@@ -727,17 +748,17 @@ export default {
 							params.clockinEndTime = params.clockinTime[1];
 						}
 
-						let arr = [];
-						for (let i = 0; i < this.infoFieldList.length; i++) {
-							const e = this.infoFieldList[i];
-							if (e.value == 'pact') {
-								this.infoFieldList[i].fileList = params.pact;
+						let arr = params.infoField.map(v=>{
+							if(v=='pact'){
+								const pact = this.infoFieldList.find(el=>el.value == v);
+								pact.fileList = params.pact
 								delete params.pact;
+								return pact
 							}
-							if (params.infoField.indexOf(e.value) > -1) {
-								arr.push(e);
-							}
-						}
+
+							return this.infoFieldList.find(el=>el.value == v);
+
+						})
 
 						params.infoField = JSON.stringify(arr);
 
@@ -797,9 +818,20 @@ export default {
 			this.infoFieldDialog = true
 		},
 		resetInfoField(formName){
+			const inhert = {
+				label: '',
+				value: '',
+				formType: 'text',
+				selectList: [],
+				required: true
+			}
 			if(!!this.editingInfoField){
 				let i = this.infoFieldList.indexOf(this.infoForm);
-				this.infoFieldList[i] = { selectList:[],...this.infoForm }; 
+				this.infoFieldList[i] = {  selectList:[],...this.infoForm }; 
+				this.editingInfoField = inhert;
+				this.infoForm = this.editingInfoField
+			}else{
+				this.infoForm = inhert
 			}
 			this.$refs[formName].resetFields();
 		},
@@ -967,7 +999,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .tips {
 	color: #909399;
 	font-size: 12px;
@@ -1002,4 +1034,10 @@ export default {
 		line-height: 20px;
 	}
 }
+
+
+.editing-items {
+	@apply mr-3 my-2 px-2 border-2 border-gray-300 rounded border-solid;
+	cursor: grab;
+} 
 </style>
