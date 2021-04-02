@@ -48,5 +48,5 @@ Vue.filter("format_spec", value => {
 Vue.filter("fixed", (value) => {
 	console.log(value);
 	value = value ? value : 0;
-	return value.toFixed(2)
+	return parseFloat(value.toFixed(2))
 });

@@ -358,3 +358,16 @@ export const weekDict=[
     value: '6'
   }
 ]
+
+// 青训用户
+
+export const trainingStatusDict = [
+  {
+    text: "家长",
+    value: '0'
+  },
+  {
+    text: "教练",
+    value: '1'
+  }
+]

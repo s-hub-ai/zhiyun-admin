@@ -242,7 +242,8 @@ export default {
 			const res = await this.$service.training.student.list()
 			this.studentList = res.map(el=>({
 				key:el.id,
-				label:`${el.name}-${el.phoneNumArray}`
+				label:`${el.name}-${el.phoneNumArray}`,
+				phoneNumArray:el.phoneNumArray
 			}));
 			this.studentListLoading = false
 		},
@@ -252,7 +253,8 @@ export default {
 			this.coachList = res.map(el=>({
 				key:el.id,
 				label:`${el.name}-${el.phoneNum}`,
-				disabled:false	
+				disabled:false,
+				phoneNum:el.phoneNum
 			}));
 			this.coachListLoading = false
 		},

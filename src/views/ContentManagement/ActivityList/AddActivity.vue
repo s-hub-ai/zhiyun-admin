@@ -1,6 +1,21 @@
 <template>
 	<el-form :model="ruleForm" :inline="false" :rules="rules" ref="ruleForm" label-width="140px" class="demo-ruleForm">
-		<h3>活动信息</h3>
+		<h3 class="mb-2">活动信息</h3>
+		<el-form-item label="活动类型" required>
+			<el-radio-group
+				v-model="ruleForm.isType"
+				@change="
+					(e) => {
+						if (e == 0 && ruleForm.isPay == 1) {
+							ruleForm.applyAudit = 0;
+						}
+					}
+				"
+			>
+				<el-radio :label="0">支云活动</el-radio>
+				<el-radio :label="1">青训活动</el-radio>
+			</el-radio-group>
+		</el-form-item>
 		<el-form-item label="活动封面" prop="activityCover">
 			<cl-upload :value="ruleForm.activityCover" accept="image/*" class="avatar-uploader" :size="[150, 150]" icon="el-icon-plus" :on-success="activityCoverUploadSuccess"></cl-upload>
 			<div class="tips">限上传1张</div>
@@ -119,7 +134,7 @@
 
 		<el-form-item v-if="ruleForm.userType == 1" prop="userArgs">
 			<el-transfer v-loading="loading" filterable filter-placeholder="请输入用户手机号" :titles="['用户列表', '已选用户']" v-model="ruleForm.userArgs" :data="userList">
-				<span slot-scope="{ option }">{{ option.label }} - {{ option.nickName }}</span>
+				<span slot-scope="{option}">{{ option.label }} - {{ option.nickName }}</span>
 			</el-transfer>
 		</el-form-item>
 		<div v-if="ruleForm.userType == 2">
@@ -153,16 +168,80 @@
 					<el-checkbox v-for="item in zhiyunCardStatusDict" :label="item.value" :key="item.value"> {{ item.text }} </el-checkbox>
 				</el-checkbox-group>
 			</el-form-item>
+
+			<el-form-item style="width: 100%" label="青训用户">
+				<el-checkbox :indeterminate="trainingStatusIndeterminate" v-model="trainingStatusCheckAll" @change="trainingStatusCheckAllChange">全选</el-checkbox>
+				<el-checkbox-group v-model="userArgs.trainingStatus" @change="trainingStatusCheckedCitiesChange">
+					<el-checkbox v-for="item in trainingStatusDict" :label="item.value" :key="item.value"> {{ item.text }} </el-checkbox>
+				</el-checkbox-group>
+			</el-form-item>
 		</div>
 		<h3>其他信息</h3>
 		<el-form-item label="填写信息">
-			<el-checkbox-group v-model="ruleForm.infoField" size="small" @change="infoFieldChange">
-				<el-checkbox v-for="(item, index) in infoFieldList" :key="index" :label="item.value" border>{{ item.label }}</el-checkbox>
-				<el-button size="small" type="primary" style="margin-left: 25px" @click="infoFieldDialog = true">添加字段 </el-button>
+			<el-checkbox-group v-if="!editingInfoField" v-model="ruleForm.infoField" size="small" @change="infoFieldChange" > 
+				<el-checkbox v-for="(item, index) in infoFieldList" :key="index" :label="item.value" border>
+					{{ infoFieldIndex(item) }}
+				</el-checkbox> 
 			</el-checkbox-group>
+			<div v-else class="flex flex-wrap ">
+				<div v-for="item in infoFieldList" :key="item.value" 
+					class="editing-items"> 
+					<span class="mr-2">{{item.label}}</span>
+					<el-button size="small" type="text"  @click="editField(item)">编辑</el-button> 
+					<el-button size="small" type="text"  @click="removeField(item)">删除</el-button> 
+				</div>
+
+			</div>
+			<div v-if="!!editingInfoField">
+				<el-button size="small" type="primary"  @click="editingInfoField = null">结束编辑 </el-button> 
+
+			</div>
+			<div v-else>
+				<el-button size="small" type="primary"  @click="infoFieldDialog = true">添加字段 </el-button> 
+				<el-button size="small" type="primary"  @click="editingInfoField= true">编辑字段 </el-button> 
+			</div>  
 		</el-form-item>
+
+		<el-form-item label="协议文件" v-if="ruleForm.infoField.some((el) => el == 'pact')" prop="pact">
+			<div v-for="(item, i) in ruleForm.pact" :key="i" class="flex">
+				<div class="mr-2 w-64">
+					<el-input size="small" placeholder="请输入协议标题" v-model="item.title"> </el-input>					
+				</div>
+				<cl-upload
+					list-type="file"
+					accept="application/pdf,application/x-pdf"
+					:multiple="false"
+					:limit="1"
+					v-model="item.file"
+					text="选择协议文件"
+					:on-change="
+						(file) => {
+							item.title = file.name && file.name.split('.')[0];
+						}
+					"
+				></cl-upload>
+				<div class="ml-2">
+					<el-button size="small" @click="ruleForm.pact.splice(i, 1)">删除</el-button>
+				</div>
+			</div>
+			<div>
+				<div class="text-sm text-gray-500">*请上传pdf文件</div>
+			</div>
+			<el-button
+				size="small"
+				type="primary"
+				@click="
+					ruleForm.pact.push({
+						title: '',
+						file: ''
+					})
+				"
+				>添加协议文件
+			</el-button>
+		</el-form-item>
+
 		<el-form-item label="报名审核" required>
-			<el-radio-group style="width: 178px" v-model="ruleForm.applyAudit" :disabled="ruleForm.isPay == 1">
+			<el-radio-group style="width: 178px" v-model="ruleForm.applyAudit" :disabled="ruleForm.isPay == 1 && ruleForm.isType == 0">
 				<el-radio :label="0">否</el-radio>
 				<el-radio :label="1">是</el-radio>
 			</el-radio-group>
@@ -179,7 +258,8 @@
 			<el-button @click="resetForm('ruleForm')">重置</el-button>
 		</div>
 
-		<el-dialog width="30%" title="添加字段" :visible.sync="infoFieldDialog" append-to-body @close="resetForm('infoForm')">
+		<el-dialog width="30%" title="添加字段" :visible.sync="infoFieldDialog" append-to-body @close="resetInfoField('infoForm')">
+			
 			<el-form :model="infoForm" :inline="false" :rules="infoRules" ref="infoForm" label-width="100px" class="demo-ruleForm">
 				<el-form-item label="英文名称" prop="value">
 					<el-input size="medium" placeholder="请输入内容" v-model="infoForm.value"> </el-input>
@@ -187,9 +267,36 @@
 				<el-form-item label="中文名称" prop="label">
 					<el-input size="medium" placeholder="请输入内容" v-model="infoForm.label"> </el-input>
 				</el-form-item>
+				<el-form-item label="采集形式" required>
+					<el-radio-group  v-model="infoForm.formType">
+						<el-radio :disabled="!!editingInfoField" label="text">文本输入</el-radio>
+						<el-radio :disabled="!!editingInfoField" label="radio">单选</el-radio>
+						<el-radio :disabled="!!editingInfoField" label="checkbox">多选</el-radio>
+						<el-radio :disabled="!!editingInfoField" label="image" class="mt-2" >上传图片</el-radio>
+						<el-radio :disabled="!!editingInfoField" label="video" class="mt-2" >上传视频</el-radio>
+					</el-radio-group>
+				</el-form-item>
+				<el-form-item prop="selectList" label="选项" v-if="['radio', 'checkbox'].includes(infoForm.formType)" required>
+					<div v-for="(item, i) in infoForm.selectList" :key="i" class="flex">
+						<el-input size="medium" placeholder="请输入内容" v-model="item.label"> </el-input>
+						<el-button class="mr-1" type="danger" icon="el-icon-delete" @click="infoForm.selectList.splice(i, 1)"></el-button>
+					</div>
+					<div>
+						<el-button size="small" @click="infoForm.selectList.push({
+									label:''
+							})">新增选项</el-button>
+					</div>
+				</el-form-item>
+
+				<el-form-item label="是否必填" prop="label" required>
+					<el-radio-group style="width: 178px" v-model="infoForm.required">
+						<el-radio :label="true">是</el-radio>
+						<el-radio :label="false">否</el-radio>
+					</el-radio-group>
+				</el-form-item>
 				<el-form-item>
-					<el-button size="small" type="primary" @click="addInfoField('infoForm')">立即创建</el-button>
-					<el-button size="small" @click="resetForm('infoForm')">重置</el-button>
+					<el-button size="small" type="primary" @click="addInfoField('infoForm')">确定</el-button>
+					<el-button size="small" v-show="!editingInfoField" @click="resetInfoField('infoForm')">重置</el-button>
 				</el-form-item>
 			</el-form>
 		</el-dialog>
@@ -198,9 +305,10 @@
 
 <script>
 import XLSX from 'xlsx';
-import { couponTypeDict, ticketPackageUserDict, useCcertificationDict, vipLevelDict, zhiyunCardStatusDict } from '@/dict/index.js';
+import {couponTypeDict, ticketPackageUserDict, useCcertificationDict, vipLevelDict, zhiyunCardStatusDict, trainingStatusDict} from '@/dict/index.js';
 import bdMap from './map';
-import { arrDistinctByProp } from '@/utils';
+import {arrDistinctByProp} from '@/utils';
+
 export default {
 	components: {
 		bdMap
@@ -219,14 +327,14 @@ export default {
 			return arr;
 		}
 	},
-	data() {
+	data(vm) {
 		return {
 			couponTypeDict,
 			useCcertificationDict,
 			vipLevelDict,
 			ticketPackageUserDict,
 			zhiyunCardStatusDict,
-
+			trainingStatusDict,
 			ruleForm: {
 				activityCover: '',
 				activityBanner: '',
@@ -247,46 +355,92 @@ export default {
 				latitude: '',
 				infoField: [],
 				addressName: null,
-				awardIntegralZy: 0
+				awardIntegralZy: 0,
+
+				isType: 0,
+
+				pact: [{
+						title: '',
+						file: ''
+					}]
 			},
 			infoFieldDialog: false,
+			editingInfoField:false,
 			infoFieldList: [
 				{
 					label: '姓名',
+					formType: 'text',
+					required: true,
 					value: 'name'
 				},
 				{
 					label: '手机号',
+					formType: 'text',
+					required: true,
 					value: 'phone'
 				},
 				{
 					label: '微信号',
+					formType: 'text',
+					required: true,
 					value: 'wxAccount'
 				},
 				{
 					label: '身份证号',
+					formType: 'text',
+					required: true,
 					value: 'userCertificateNum'
 				},
 				{
 					label: '邮箱',
+					formType: 'text',
+					required: true,
 					value: 'email'
 				},
 				{
 					label: '地址',
+					formType: 'text',
+					required: true,
 					value: 'address'
 				},
 				{
 					label: '性别',
-					value: 'sex'
+					formType: 'radio',
+					required: true,
+					value: 'sex',
+					selectList: [
+						{
+							label: '男',
+							value: 0
+						},
+						{
+							label: '女',
+							value: 1
+						}
+					]
 				},
 				{
 					label: '年龄',
+					formType: 'text',
+					required: true,
 					value: 'age'
+				},
+				{
+					label:'协议',
+					value:'pact',
+					fileList:[
+						{file:'',
+						title:'',}
+					],
+					required:true,
 				}
 			],
 			infoForm: {
 				label: '',
-				value: ''
+				value: '',
+				formType: 'text',
+				selectList: [],
+				required: true
 			},
 			infoRules: {
 				label: [
@@ -301,6 +455,26 @@ export default {
 						required: true,
 						message: '请填写英文名称',
 						trigger: 'blur'
+					},
+					{
+						validator(rules, value, callback) {
+							if ( !vm.editingInfoField && vm.infoFieldList.find(el=>el.value==value) ) {
+								callback(new Error('英文名称不能与已有信息重复'));
+							} else {
+								callback();
+							}
+						}
+					}
+				],
+				selectList: [
+					{
+						validator(rules, value, callback) {
+							if (value.length == 0 || value.some((el) => !el.label)) {
+								callback(new Error('请添加选项,并填写'));
+							} else {
+								callback();
+							}
+						}
 					}
 				]
 			},
@@ -388,6 +562,17 @@ export default {
 						message: '请选择打卡时间',
 						trigger: 'change'
 					}
+				],
+				pact: [
+					{
+						validator(rules, value, callback) {
+							if (value.length == 0 || value.some((el) => !el.title)) {
+								callback(new Error('请添加文件,并填写标题'));
+							} else {
+								callback();
+							}
+						}
+					}
 				]
 			},
 			userList: [],
@@ -396,7 +581,8 @@ export default {
 				fanClubId: [],
 				ticketPackageUser: [],
 				vipLevel: [],
-				zhiyunCardStatus: []
+				zhiyunCardStatus: [],
+				trainingStatus: []
 			},
 			loading: false,
 			useCcertificationCheckbox: [],
@@ -418,7 +604,12 @@ export default {
 			zhiyunCardStatusCheckbox: [],
 			zhiyunCardStatusCheckedCities: [],
 			zhiyunCardStatusIndeterminate: false,
-			zhiyunCardStatusCheckAll: false
+			zhiyunCardStatusCheckAll: false,
+
+			trainingStatusCheckbox: [],
+			trainingStatusCheckedCities: [],
+			trainingStatusIndeterminate: false,
+			trainingStatusCheckAll: false
 		};
 	},
 	created() {
@@ -427,6 +618,7 @@ export default {
 		this.ticketPackageUserCheckbox = ticketPackageUserDict.map((v) => v.value);
 		this.vipLevelCheckbox = vipLevelDict.map((v) => v.value);
 		this.zhiyunCardStatusCheckbox = zhiyunCardStatusDict.map((v) => v.value);
+		this.trainingStatusCheckbox = trainingStatusDict.map((v) => v.value);
 	},
 	methods: {
 		//编辑
@@ -441,9 +633,14 @@ export default {
 					res.clockinTime = [new Date(res.clockinStartTime.replace(/-/g, '/')), new Date(res.clockinEndTime.replace(/-/g, '/'))];
 				}
 				//res.activityBanner = res.activityBanner.split(',');
+				res.pact = []
 				if (res.infoField != null) {
 					let infoField = JSON.parse(res.infoField);
 					res.infoField = infoField.map((value, index, array) => {
+						console.log(value);
+						if (value.value == 'pact') {
+							res.pact = value.fileList;
+						}
 						return value.value;
 					});
 					infoField = this.infoFieldList.concat(infoField);
@@ -479,6 +676,14 @@ export default {
 		infoFieldChange(e) {
 			console.log(e);
 			this.ruleForm.infoField = e;
+		},
+		infoFieldIndex(item){
+			let index = this.ruleForm.infoField.indexOf(item.value)
+			if(index >=0){
+				return `${index+1}.${item.label}`
+			}else{
+				return item.label
+			}
 		},
 		isClockinChange(e) {},
 		//提交
@@ -518,6 +723,7 @@ export default {
 						}
 						if (params.userType == 2) {
 							let isNull = true;
+							console.log(this.userArgs);
 							for (const key in this.userArgs) {
 								if (this.userArgs[key].length > 0) {
 									isNull = false;
@@ -541,13 +747,19 @@ export default {
 							params.clockinStartTime = params.clockinTime[0];
 							params.clockinEndTime = params.clockinTime[1];
 						}
-						let arr = [];
-						for (let i = 0; i < this.infoFieldList.length; i++) {
-							const e = this.infoFieldList[i];
-							if (params.infoField.indexOf(e.value) > -1) {
-								arr.push(e);
+
+						let arr = params.infoField.map(v=>{
+							if(v=='pact'){
+								const pact = this.infoFieldList.find(el=>el.value == v);
+								pact.fileList = params.pact
+								delete params.pact;
+								return pact
 							}
-						}
+
+							return this.infoFieldList.find(el=>el.value == v);
+
+						})
+
 						params.infoField = JSON.stringify(arr);
 
 						delete params.activityTime;
@@ -564,7 +776,7 @@ export default {
 							type: 'success'
 						});
 					} catch (error) {
-						console.log(error);
+						console.log(error.lineNumber);
 						this.$message.error(error);
 					}
 				} else {
@@ -576,13 +788,52 @@ export default {
 		//添加自定义字段
 		addInfoField(formName) {
 			this.$refs[formName].validate(async (valid) => {
-				if (valid) {
-					this.infoFieldList.push({
-						...this.infoForm
-					});
-					this.infoFieldDialog = false;
+				if(this.editingInfoField){
+					let i = this.infoFieldList.indexOf(this.infoForm);
+					this.infoFieldList[i] = {...this.infoForm};
+					this.infoFieldDialog = false
+				}else{
+					let form = {...this.infoForm }
+					if (valid) {
+						if(['radio','checkbox'].includes(form.formType)){
+							form.selectList.forEach((el,i)=>{
+							el.value = i
+						})
+						}else{
+							delete form.selectList
+						}
+						this.infoFieldList.push(form);
+						this.infoFieldDialog = false;
+					}
 				}
 			});
+		},
+		removeField(item){
+			let i = this.infoFieldList.indexOf(item);
+			this.infoFieldList.splice(i,1)
+		},
+		editField(item){
+			this.infoForm = item;
+			this.editingInfoField = item;
+			this.infoFieldDialog = true
+		},
+		resetInfoField(formName){
+			const inhert = {
+				label: '',
+				value: '',
+				formType: 'text',
+				selectList: [],
+				required: true
+			}
+			if(!!this.editingInfoField){
+				let i = this.infoFieldList.indexOf(this.infoForm);
+				this.infoFieldList[i] = {  selectList:[],...this.infoForm }; 
+				this.editingInfoField = inhert;
+				this.infoForm = this.editingInfoField
+			}else{
+				this.infoForm = inhert
+			}
+			this.$refs[formName].resetFields();
 		},
 		resetForm(formName) {
 			this.$refs[formName].resetFields();
@@ -664,6 +915,15 @@ export default {
 			this.zhiyunCardStatusCheckAll = checkedCount === this.zhiyunCardStatusCheckbox.length;
 			this.zhiyunCardStatusIndeterminate = checkedCount > 0 && checkedCount < this.zhiyunCardStatusCheckbox.length;
 		},
+		trainingStatusCheckAllChange(val) {
+			this.userArgs.trainingStatus = val ? this.trainingStatusCheckbox : [];
+			this.trainingStatusIndeterminate = false;
+		},
+		trainingStatusCheckedCitiesChange(value) {
+			let checkedCount = value.length;
+			this.trainingStatusCheckAll = checkedCount === this.trainingStatusCheckbox.length;
+			this.trainingStatusIndeterminate = checkedCount > 0 && checkedCount < this.trainingStatusCheckbox.length;
+		},
 		activityCoverUploadSuccess(res, file, fileList) {
 			console.log(res, fileList);
 			if (res) {
@@ -716,7 +976,7 @@ export default {
 		},
 		//是否付费
 		isPayChange(e) {
-			if (e == 1) {
+			if (e == 1 && this.ruleForm.isType == 0) {
 				this.ruleForm.applyAudit = 0;
 			}
 		},
@@ -739,7 +999,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="postcss" scoped>
 .tips {
 	color: #909399;
 	font-size: 12px;
@@ -774,4 +1034,10 @@ export default {
 		line-height: 20px;
 	}
 }
+
+
+.editing-items {
+	@apply mr-3 my-2 px-2 border-2 border-gray-300 rounded border-solid;
+	cursor: grab;
+} 
 </style>
