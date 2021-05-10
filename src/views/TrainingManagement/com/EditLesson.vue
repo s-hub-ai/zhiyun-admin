@@ -10,7 +10,7 @@
                 v-permission="{
                     or: [$service.training.lesson.permission.add]
                 }"  size="mini"
-                @click="showAddDialog"
+                @click="showAddDialog(null)"
                 >添加课节</el-button >
             </div>
             <cl-crud v-if="show" @load="onLoad" :ref="`lesson-crud-${id}`" :key="`lesson-crud-${id}`">
@@ -25,6 +25,13 @@
                         <AbsenceDetail :lessonId="scope.row.lessonId" :status="scope.row.studentStatus" type="student"/>
                     </template>
                     <template #column-op="{ scope }">
+                        <el-button
+                        v-permission="{
+                            or: [$service.training.lesson.permission.update]
+                        }" 
+                        type="text" size="mini"
+                        @click="showAddDialog(scope.row.lessonId)"
+                        >修改</el-button >
                         <el-button
                         v-permission="{
                             or: [$service.training.lesson.permission.delete]
@@ -66,7 +73,7 @@
                     <el-input style="width:10em" type="number" size="mini" v-model="addForm.duration"></el-input>
                 </el-form-item>
                 <div class="text-right pa-2">
-                    <el-button type="primary" @click="submitAppend()" :loading="appendLoading">确定</el-button>
+                    <el-button type="primary" @click="submitAppend(lessonId)" :loading="appendLoading">确定</el-button>
                 </div>
             </el-form>
         </el-dialog>
@@ -148,6 +155,7 @@ export default {
         }
     },
     methods:{
+        
         handleCourseChange(){
             let course = this.list.find(el=>el.classroomCourseId === this.addForm.classroomCourseId);
             this.addForm.duration = course.courseDuration
@@ -174,9 +182,10 @@ export default {
                 classroomId:this.id
             });
         },
-        showAddDialog(){
+        showAddDialog(id){
             this.listCourse()
             this.addDialog = true
+            this.lessonId = id;
         },
         async listCourse(){
             if(this.list.length>0)return;
@@ -185,9 +194,13 @@ export default {
             })
             this.list = res;
         },
-          async submitAppend(){
+        async submitAppend(id){
+            //console.log("lessonId")
+            //console.log(this.lessonId)
+            //console.log(id)
             this.$refs['editForm'].validate(async (valid) => {	
                 if (valid) { 
+                    
                     let start = moment(this.addForm.classStartTimeStr)
                     let param={
                         classroomCourseId:this.addForm.classroomCourseId,
@@ -195,16 +208,35 @@ export default {
                         classEndTimeStr:start.add(this.addForm.duration,'minutes').format('YYYY-MM-DD HH:mm')
                     }; 
                     try{
-                        await this.$service.training.lesson.add(param);
-                        this.refresh()
-                        this.appendLoading = false;
-                        this.addDialog=false
-                        this.$alert('添加成功', '提示', {
+                        if (!id) {
+                            await this.$service.training.lesson.add(param);
+                            this.refresh()
+                            this.appendLoading = false;
+                            this.addDialog=false
+                            this.$alert('添加成功', '提示', {
                             confirmButtonText: '确定',
                             callback: (action) => {
                                 
                                 }
-                        });
+                            });
+                        }
+                        else {
+                            param = {
+                                ...param,
+                                id
+                            }
+                            await this.$service.training.lesson.update(param);
+                            this.refresh()
+                            this.appendLoading = false;
+                            this.addDialog=false
+                            this.$alert('修改成功', '提示', {
+                            confirmButtonText: '确定',
+                            callback: (action) => {
+                                
+                                }
+                            });
+                        }
+                        
                     }catch(err){
                         this.appendLoading = false;
                         this.$message.error(err)
