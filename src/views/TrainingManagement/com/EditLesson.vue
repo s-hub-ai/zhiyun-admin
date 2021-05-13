@@ -7,12 +7,12 @@
             <div class="flex justify-between px-3">
                 <span class="text-xl">课节列表</span>
                 <div>
-                    <el-button
+                    <!--<el-button
                         v-permission="{
                             or: [$service.training.lesson.permission.update]
                         }"  size="mini"
                         @click="showUpdateDialog"
-                        >批量修改</el-button >
+                        >批量修改</el-button >-->
                     <el-button
                         v-permission="{
                             or: [$service.training.lesson.permission.add]
@@ -21,6 +21,7 @@
                         >添加课节</el-button >
                 </div>
             </div>
+            <!--
             <div class="align-center px-3 py-3">
                 <span>
                     课程名称
@@ -35,6 +36,7 @@
                     </el-option>
                 </el-select>
             </div>
+            -->
             <cl-crud v-if="show" @load="onLoad" :ref="`lesson-crud-${id}`" :key="`lesson-crud-${id}`">
                 <cl-table :columns="tableColumn" :props="{ height: '50vh' }">
                     <template #column-date="{ scope }">
@@ -99,27 +101,27 @@
                 </div>
             </el-form>
         </el-dialog>
-        <el-dialog title="批量修改"  append-to-body :visible.sync="updateDialog">
+        <!--<el-dialog title="批量修改"  append-to-body :visible.sync="updateDialog">
             <el-form ref="updateForm" class="text-left" :model="updateForm" :rules="updateRules" label-width="160px">
                 <el-form-item label="原上课日期" prop="oldLessonDate">
                     <el-date-picker size="mini"
                         v-model="updateForm.oldLessonDate"
-                        type="datetime"
+                        type="date"
                         placeholder="选择日期时间">
                     </el-date-picker>
                 </el-form-item>
                 <el-form-item label="新上课日期" prop="newLessonDate">
                     <el-date-picker size="mini"
                         v-model="updateForm.newLessonDate"
-                        type="datetime"
+                        type="date"
                         placeholder="选择日期时间">
                     </el-date-picker>
                 </el-form-item>
                 <div class="text-right pa-2">
-                    <el-button type="primary" @click="submitUpdate()" :loading="appendLoading">全部修改</el-button>
+                    <el-button type="primary" @click="submitUpdate()" >全部修改</el-button>
                 </div>
             </el-form>
-        </el-dialog>
+        </el-dialog>-->
     </div>
 </template>
 <script>
@@ -152,11 +154,13 @@ export default {
             prop:'lessonRange',
             align: 'center'
         },
+        /*
         {
             label: '教练考勤',
             prop:'coachStatus',
             align: 'center'
         },
+        */
         {
             label: '学员考勤',
             prop:'studentStatus',
@@ -188,19 +192,23 @@ export default {
                 }
             }}]
         },
+        /*
         updateRules: {
             oldLessonDate:[{required: true, message: '请选择日期'}],
-            newLessonDate:[{required: true, message: '请选择新日期'}],
+            newLessonDate:[{required: true, message: '请选择新日期'}]
         },
+        */
         list:[],
         tableFilter: {
             classroomCourseId: ''
-        },
+        }
+        /*
         updateDialog: false,
         updateForm: {
             oldLessonDate: '',
             newLessonDate: ''
         }
+        */
     }),
     watch:{
         show(val){
@@ -213,15 +221,19 @@ export default {
         this.listCourse();
     },
     methods:{
+        /*
         submitUpdate() {
             this.$refs['updateForm'].validate(async (valid) => {	
                 if (valid) { 
                     let {oldLessonDate, newLessonDate} = this.updateForm;
-                    //let start = moment(this.addForm.oldLessonDate)
+                    let oldDate = moment(this.updateForm.oldLessonDate).format("YYYY-MM-DD");
+                    let newDate = moment(this.updateForm.newLessonDate).format("YYYY-MM-DD");
                     let param={
-                        oldLessonDate,
-                        newLessonDate
+                        oldLessonDate: oldDate,
+                        newLessonDate: newDate
                     }; 
+                    console.log("updateDateBatch")
+                    console.log(param)
                     try{
                         await this.$service.training.lesson.updateDateBatch(param);
                         this.refresh()
@@ -243,6 +255,7 @@ export default {
 			});
             
         },
+        */
         showUpdateDialog() {
             this.updateDialog = true;
         },
@@ -290,16 +303,18 @@ export default {
             //this.listCourse()
             this.addDialog = true
             this.lessonId = row.lessonId;
-            /*
+            
             if (row){
-                let lessonTimeItems = row.lessonRange.split(" ");
+                let lessonTimeItems = row.lessonRange.split("-");
+                let duration = moment("2000-01-01 "+lessonTimeItems[1]+":00").diff(moment("2000-01-01 "+lessonTimeItems[0]+":00"), 'minutes')
+                
                 this.addForm = {
                     classroomCourseId: String(row.classroomCourseId),
                     classStartTimeStr: row.lessonDate+" "+lessonTimeItems[0],
-                    duration: row.duration
+                    duration: duration
                 }
             }
-            */
+            
         },
         async listCourse(){
             if(this.list.length>0)return;

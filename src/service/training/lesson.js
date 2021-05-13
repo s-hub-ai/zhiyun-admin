@@ -25,4 +25,15 @@ export default class extends BaseService {
         params
         })
     }
+    @Permission("updateDateBatch")
+    updateDateBatch (params) {
+        return this.request({
+        url: "/updateDateBatch",
+        method: "post",
+        data: {
+            ...params
+        }
+        
+        })
+    }
 }

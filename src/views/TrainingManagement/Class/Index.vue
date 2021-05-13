@@ -28,6 +28,12 @@
 			<cl-flex1></cl-flex1>
 			<el-button
 				v-permission="{
+					or: [$service.training.lesson.permission.update]
+				}"  size="mini"
+				@click="showUpdateDialog"
+				>批量修改</el-button >
+			<el-button
+				v-permission="{
 					or: [$service.training.classroom.permission.add]
 				}"
 				size="mini"
@@ -100,11 +106,34 @@
 		<el-dialog title="新增班级" :visible.sync="addDialogShow" width="1000px" @close="addDialogClose">
 			<add-dialog v-if="addDialogShow" ref="editDialog" :addDialogShow.sync="addDialogShow"></add-dialog>
 		</el-dialog>
+		<el-dialog title="批量修改"  append-to-body :visible.sync="updateDialog">
+            <el-form ref="updateForm" class="text-left" :model="updateForm" :rules="updateRules" label-width="160px">
+                <el-form-item label="原上课日期" prop="oldLessonDate">
+                    <el-date-picker size="mini"
+                        v-model="updateForm.oldLessonDate"
+                        type="date"
+                        placeholder="选择日期时间">
+                    </el-date-picker>
+                </el-form-item>
+                <el-form-item label="新上课日期" prop="newLessonDate">
+                    <el-date-picker size="mini"
+                        v-model="updateForm.newLessonDate"
+                        type="date"
+                        placeholder="选择日期时间">
+                    </el-date-picker>
+                </el-form-item>
+                <div class="text-right pa-2">
+                    <el-button type="primary" @click="submitUpdate()" >全部修改</el-button>
+                </div>
+            </el-form>
+        </el-dialog>
 	</cl-crud>
 </template>
 
 <script>
 import addDialog from './CreateDialog';
+const moment = require('moment');
+moment.locale('zh-cn');
 export default {
 	components: {
 		addDialog,
@@ -180,7 +209,16 @@ export default {
 			courseList:[],
 			studentListLoading:false,
 			coachListLoading:false,
-			courseListLoading:false
+			courseListLoading:false,
+			updateRules: {
+				oldLessonDate:[{required: true, message: '请选择日期'}],
+				newLessonDate:[{required: true, message: '请选择新日期'}]
+			},
+			updateDialog: false,
+			updateForm: {
+				oldLessonDate: '',
+				newLessonDate: ''
+			}
         }
 	},
 	mounted(){
@@ -189,6 +227,42 @@ export default {
 		this.getCourseList()
 	},
 	methods: {
+		submitUpdate() {
+            this.$refs['updateForm'].validate(async (valid) => {	
+                if (valid) { 
+                    let {oldLessonDate, newLessonDate} = this.updateForm;
+                    let oldDate = moment(this.updateForm.oldLessonDate).format("YYYY-MM-DD");
+                    let newDate = moment(this.updateForm.newLessonDate).format("YYYY-MM-DD");
+                    let param={
+                        oldLessonDate: oldDate,
+                        newLessonDate: newDate
+                    }; 
+                    console.log("updateDateBatch")
+                    console.log(param)
+                    try{
+                        await this.$service.training.lesson.updateDateBatch(param);
+                        this.refresh()
+                        this.appendLoading = false;
+                        this.updateDialog = false;
+                        this.$alert('修改成功', '提示', {
+                        confirmButtonText: '确定',
+                        callback: (action) => {
+                            
+                            }
+                        });
+                        
+                        
+                    }catch(err){
+                        this.appendLoading = false;
+                        this.$message.error(err)
+                    }
+				}
+			});
+            
+        },
+        showUpdateDialog() {
+            this.updateDialog = true;
+        },
 		search(){
 			delete this.$refs.crud.params.studentName;
 			delete this.$refs.crud.params.coachName;
