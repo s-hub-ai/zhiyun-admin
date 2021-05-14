@@ -721,10 +721,12 @@ export default {
 						//青训，采用默认图片
 						if (this.ruleForm.isType == 1){
 							if (this.ruleForm.activityCover=='') {
-								this.ruleForm.activityCover="http://zhiyun-static.oss-cn-shanghai.aliyuncs.com/static/admin/activity/activityCoverDefault.png";
+								//this.ruleForm.activityCover="http://zhiyun-static.oss-cn-shanghai.aliyuncs.com/static/admin/activity/activityCoverDefault.png";
+								this.ruleForm.activityCover="";
 							}
 							if (this.ruleForm.activityBanner=='') {
-								this.ruleForm.activityBanner="http://zhiyun-static.oss-cn-shanghai.aliyuncs.com/static/admin/activity/activityCoverDefault.png";
+								//this.ruleForm.activityBanner="http://zhiyun-static.oss-cn-shanghai.aliyuncs.com/static/admin/activity/activityCoverDefault.png";
+								this.ruleForm.activityBanner="";
 							}
 						}
 						let params = {
