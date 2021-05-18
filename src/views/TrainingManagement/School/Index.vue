@@ -103,29 +103,36 @@ export default({
         schoolValue: '',
         tableData: []
 	}),
+
     async mounted(){
-        this.tableData = await this.$service.app.student.listSchool();
+        this.tableData = await this.$service.training.student.listSchool();
     },
     methods: {
-        closeProvinceDialog(){
+
+        async closeProvinceDialog(){
             this.provinceVisible = false;
-            this.$refs['crud'].refresh()
+            this.tableData = await this.$service.training.student.listSchool();
+            //this.$refs['crud'].refresh()
         },
-        closeCityDialog(){
+        async closeCityDialog(){
             this.cityVisible = false;
-            this.$refs['crud'].refresh()
+            this.tableData = await this.$service.training.student.listSchool();
+            //this.$refs['crud'].refresh()
         },
-        closeCountyDialog(){
+        async closeCountyDialog(){
             this.countyVisible = false;
-            this.$refs['crud'].refresh()
+            this.tableData = await this.$service.training.student.listSchool();
+            //this.$refs['crud'].refresh()
         },
-        closeTownDialog(){
+        async closeTownDialog(){
             this.townVisible = false;
-            this.$refs['crud'].refresh()
+            this.tableData = await this.$service.training.student.listSchool();
+            //this.$refs['crud'].refresh()
         },
-        closeSchoolDialog(){
+        async closeSchoolDialog(){
             this.schoolVisible = false;
-            this.$refs['crud'].refresh()
+            this.tableData = await this.$service.training.student.listSchool();
+            //this.$refs['crud'].refresh()
         },
         addProvinceDialog() {
             this.provinceVisible = true;

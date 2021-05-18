@@ -33,14 +33,14 @@ export default {
             this.$refs[formName].validate(async (valid) => {
 				if (valid) {
                     if (this.id) {
-                        this.$service.app.school.update({
+                        this.$service.training.school.update({
                             id: this.id,
                             townId: this.townId,
                             school: this.form.value
                         })
                     }
                     else {
-                        this.$service.app.school.add({
+                        this.$service.training.school.add({
                             townId: this.townId,
                             school: this.form.value
                         })

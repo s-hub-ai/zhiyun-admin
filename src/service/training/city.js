@@ -5,8 +5,8 @@ import {
    } from "@/cool";
    //咨询管理
    @Service({
-    namespace:"app/town"
-    
+    namespace:"app/city",
+    proxy:'/training'
     })
 
    export default class extends BaseService {
