@@ -173,6 +173,9 @@
 					<el-form-item class="form-item" label="收件地址:" v-if="detail.address">
 						<span>{{ detail.address.province.label + detail.address.city.label + detail.address.country.label }}{{ detail.address.detail|default }}</span>
 					</el-form-item>
+					<el-form-item class="form-item" label="收件地址:" v-if="detail.remark">
+						<span>{{ detail.remark|default }}</span>
+					</el-form-item>
 				</div>
 				<h3 style="margin-top: 45px">商品信息</h3>
 				<div v-for="(item, index) in detail.sku" :key="index">

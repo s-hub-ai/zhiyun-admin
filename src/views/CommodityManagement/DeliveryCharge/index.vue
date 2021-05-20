@@ -36,7 +36,22 @@
 			<div class="w-32 text-right text-gray-700">支云卡用户套票购买额外奖励:</div>
 			<div class="pl-5 flex items-center"><el-input v-model="globalConfig.packageTicketscoreRewardRatioZy" class="w-10 mr-2"></el-input> %</div>
 		</div>
-
+		<el-row type="flex" justify="space-between" class="my-10">
+			<el-col :span="12">
+				<h4>折扣设置</h4>
+			</el-col>
+			<el-col :span="12">
+				<el-button size="mini" @click="addCostLine" >添加折扣</el-button>
+			</el-col>
+		</el-row>
+		<el-row type="flex" v-for="(costInfo,i) in costInfoList" :key="i" align="middle">
+			
+				<div class="w-32 text-right text-gray-700">折扣{{i+1}}:</div>
+				<div class="pl-5 flex items-center"><el-input v-model="costInfo.rate" class="w-10 mr-2" size="mini"></el-input> %</div>
+				
+				<el-button @click="showCommodityDialog(i)" size="mini" class="ml-10">选择应用商品</el-button>
+			
+		</el-row>
 		<el-row
 			v-permission="{
 				or: [$service.app.commodity.deliveryCharge.permission.add, $service.app.commodity.deliveryCharge.permission.update, $service.app.commodity.deliveryCharge.permission.delete]
@@ -128,14 +143,32 @@
 				<el-button @click="add">确定</el-button>
 			</el-form>
 		</cl-dialog>
+		<cl-dialog :visible.sync="commodityVisible">
+			<CommodityDialog @refresh="updateCommodityDiscount" :index="costInfoIndex" :discountId="costInfoId"/>
+		</cl-dialog>
 	</cl-crud>
 </template>
 
 <script>
+import CommodityDialog from "./commodityDialog.vue"
 export default {
+	components: {
+		CommodityDialog
+	},
 	name: 'deliverCharge',
 	data() {
 		return {
+			commodityVisible: false,
+			costPanel: false,
+			costInfoId: null,
+			costInfoIndex: null,
+			costInfoList: [
+				{
+					rate:0
+					//discountId:
+					//commodityId
+				}
+			],
 			dialog: false,
 			globalConfig: {
 				scoreCostRatio: '',
@@ -187,6 +220,33 @@ export default {
 		this.getGlobalConfig();
 	},
 	methods: {
+		//[{index, commodityId}]
+		updateCommodityDiscount(discountInfo) {
+			let costInfo = this.costInfoList[discountInfo.index];
+			
+			//let discountId = costInfo.discountId;
+			let commodityId = discountInfo.commodityId;
+			//let rate = costInfo.rate;
+			costInfo.commodityId = commodityId;
+			this.commodityVisible=false;
+		},
+		showCommodityDialog(i) {
+			let costInfo = this.costInfoList[i];
+			let id = costInfo.discountId;
+			this.costInfoId = id;
+			this.costInfoIndex = i;
+			this.commodityVisible=true;
+		},
+		addCostLine() {
+			if (this.costInfoList.length>0){
+				let costInfoLast = this.costInfoList[this.costInfoList.length-1];
+				if (costInfoLast.value!="" || Number(costInfoLast.value)!=0) {
+					this.costInfoList.push({
+						value:0
+					})
+				}
+			}
+		},
 		// 合并第一列
 		objectSpanMethod({ row, column, rowIndex, columnIndex }) {
 			if (columnIndex === 0) {
@@ -216,6 +276,9 @@ export default {
 			console.log(data);
 			try {
 				await this.$service.app.commodity.globalConfig.update(data);
+				await this.$service.app.discount.createDiscount({
+					discountList:this.costInfoList
+				});
 				this.$message.success('修改成功');
 			} catch (error) {
 				this.$message.error(error);
@@ -225,6 +288,7 @@ export default {
 			let res = await this.$service.app.commodity.deliveryCharge.add({
 				...this.ruleForm
 			});
+			
 			this.dialog = false;
 		},
 		async update(v) {
@@ -232,6 +296,7 @@ export default {
 			let res = await this.$service.app.commodity.deliveryCharge.update({
 				...v
 			});
+			
 			this.editing = '';
 		},
 		onLoad({ ctx, app }) {
@@ -251,5 +316,12 @@ export default {
 <style lang="scss" scoped>
 ::v-deep.cl-crud {
 	overflow-y: auto !important;
+}
+.my-10 {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+.ml-10 {
+	margin-left: 30px;
 }
 </style>
