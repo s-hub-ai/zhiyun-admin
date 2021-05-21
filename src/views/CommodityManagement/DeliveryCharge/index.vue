@@ -47,9 +47,25 @@
 		<el-row type="flex" v-for="(costInfo,i) in costInfoList" :key="i" align="middle">
 			
 				<div class="w-32 text-right text-gray-700">折扣{{i+1}}:</div>
-				<div class="pl-5 flex items-center"><el-input v-model="costInfo.rate" class="w-10 mr-2" size="mini"></el-input> %</div>
+				<div class="pl-5 flex items-center"><el-input min="1" max="100" type="number" v-model="costInfoList[i].rate" class="w-10 mr-2" size="mini"></el-input> %</div>
 				
 				<el-button @click="showCommodityDialog(i)" size="mini" class="ml-10">选择应用商品</el-button>
+			
+		</el-row>
+		<el-row type="flex" justify="space-between" class="my-10">
+			<el-col :span="12">
+				<h4>自提点设置</h4>
+			</el-col>
+			<el-col :span="12">
+				<el-button size="mini" @click="addCostLine" >添加折扣</el-button>
+			</el-col>
+		</el-row>
+		<el-row type="flex" v-for="(deliveryPosition,i) in deliveryPositionList" :key="i" align="middle">
+			
+				<div class="w-32 text-right text-gray-700">自提点{{i+1}}:</div>
+				<div class="pl-5 flex items-center"><el-input v-model="deliveryPositionList[i].position" class="w-10 mr-2" size="mini"></el-input></div>
+				
+				<el-button @click="deletePosition(i)" size="mini" class="ml-10">删除</el-button>
 			
 		</el-row>
 		<el-row
@@ -144,7 +160,11 @@
 			</el-form>
 		</cl-dialog>
 		<cl-dialog :visible.sync="commodityVisible">
-			<CommodityDialog @refresh="updateCommodityDiscount" :index="costInfoIndex" :discountId="costInfoId"/>
+			<CommodityDialog 
+				@refresh="updateCommodityDiscount" 
+				:index="costInfoIndex" 
+				:discountId="costInfoList[costInfoIndex].discountId" 
+				:commodityId="costInfoList[costInfoIndex].commodityId"/>
 		</cl-dialog>
 	</cl-crud>
 </template>
@@ -158,10 +178,17 @@ export default {
 	name: 'deliverCharge',
 	data() {
 		return {
+			
+			
+			deliveryPositionList: [
+				{
+					position: ''
+				}
+			],
 			commodityVisible: false,
 			costPanel: false,
-			costInfoId: null,
-			costInfoIndex: null,
+			//costInfoId: null,
+			costInfoIndex: 0,
 			costInfoList: [
 				{
 					rate:0
@@ -216,10 +243,16 @@ export default {
 			]
 		};
 	},
-	created() {
-		this.getGlobalConfig();
+	async created() {
+		await this.getGlobalConfig();
 	},
 	methods: {
+		deletePosition(i) {
+			if (this.deliveryPositionList.length>0){
+				delete this.deliveryPositionList[i];
+			}
+			
+		},
 		//[{index, commodityId}]
 		updateCommodityDiscount(discountInfo) {
 			let costInfo = this.costInfoList[discountInfo.index];
@@ -228,12 +261,13 @@ export default {
 			let commodityId = discountInfo.commodityId;
 			//let rate = costInfo.rate;
 			costInfo.commodityId = commodityId;
+			
 			this.commodityVisible=false;
 		},
 		showCommodityDialog(i) {
 			let costInfo = this.costInfoList[i];
-			let id = costInfo.discountId;
-			this.costInfoId = id;
+			//let id = costInfo.discountId;
+			///this.costInfoId = id;
 			this.costInfoIndex = i;
 			this.commodityVisible=true;
 		},
@@ -264,6 +298,10 @@ export default {
 				let data = await this.$service.app.commodity.globalConfig.info();
 				Object.assign(this.globalConfig, data);
 				this.deliveryMethod = data.deliveryMethod.split(',');
+				let discountInfo = await this.$service.app.discount.list();
+				console.log("discountInfo")
+				console.log(discountInfo)
+				this.costInfoList = discountInfo;
 			} catch (error) {
 				this.$message.error(error);
 			}
@@ -273,9 +311,20 @@ export default {
 			let data = Object.assign(this.globalConfig, {
 				deliveryMethod: this.deliveryMethod.join(',')
 			});
-			console.log(data);
+			
 			try {
 				await this.$service.app.commodity.globalConfig.update(data);
+				
+				for (let i in this.costInfoList) {
+					this.costInfoList[i].rate = Number(this.costInfoList[i].rate)
+				}
+				for (let i in this.costInfoList) {
+					if (this.costInfoList[i].commodityId==null) {
+						this.costInfoList[i].commodityId = "";
+					}
+				}
+				console.log("submit")
+				console.log(this.costInfoList)
 				await this.$service.app.discount.createDiscount({
 					discountList:this.costInfoList
 				});
