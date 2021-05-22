@@ -42,9 +42,12 @@
 </template>
 <script>
     export default {
-        props: ["index", "discountId","commodityId"],
+        props: ["index", "costInfoList"],
+        
         data() {
             return {
+                //allowedCommodityIdList: [],
+                forbidenCommodityIdList: [],
                 tableData: [],
                 
                 tableFilter: {
@@ -58,6 +61,7 @@
                         "reserve-selection":true,
                         'selectable': (row, index)=>{
                             let isChecked = true;
+                            /*
                             let commodityIdList =[];
                             if (this.commodityId) {
                                 commodityIdList = this.commodityId.split(",")
@@ -68,10 +72,12 @@
                             console.log(Number(row.commodityDiscountRate))
                             console.log(commodityIdList.indexOf(row.id.toString()))
                             console.log(Number(row.commodityDiscountRate))
-                            if (commodityIdList.indexOf(row.id.toString())==-1 && Number(row.commodityDiscountRate)!=0) {
+                            if (commodityIdList.indexOf(row.id.toString())==-1 && row.commodityDiscountRate && Number(row.commodityDiscountRate)!=100) {
                                 isChecked = false;
                             }
                             console.log(isChecked)
+                            */
+                            isChecked = (this.forbidenCommodityIdList.indexOf(row.id)==-1)
                             return isChecked;
                         }
                     },
@@ -100,8 +106,8 @@
                         formatter: (row)=> {
                             if (row.commodityDiscountRate==null 
                                 || row.commodityDiscountRate=="" 
-                                || row.commodityDiscountRate==0 
-                                || row.commodityDiscountRate=='0') {
+                                || row.commodityDiscountRate==100 
+                                || row.commodityDiscountRate=='100') {
                                 return "暂无"
                             }
                             else {
@@ -152,11 +158,15 @@
                         let r=await this.$service.app.commodity.shopping.page(p)
                         this.tableData = r.list;
                         let rows = this.tableData;
-                        console.log(this.tableData)
+                        //console.log(this.tableData)
+                        let commodityId = this.costInfoList[this.index].commodityId;
                         let commodityIdList =[];
-                        if (this.commodityId) {
-                            commodityIdList = this.commodityId.split(",")
+                        if (commodityId) {
+                            commodityIdList = commodityId.split(",")
                         }
+                        console.log("commodityList")
+                        console.log(this.index);
+                        console.log(commodityId)
                         console.log(commodityIdList)
                         for (let i in rows) {
                             console.log(rows[i])
@@ -168,7 +178,35 @@
                                 this.$refs["commodityTable"].toggleRowSelection(rows[i], false);
                             }
                         }
-
+                        let costInfoDict = {};
+                        for (let i in this.costInfoList){
+                            let costInfo = this.costInfoList[i];
+                            let cIdStr = costInfo.commodityId;
+                            let cIdList = cIdStr.split(",")
+                            for (let j in cIdList) {
+                                let cId = cIdList[j]
+                                costInfoDict[cId]=costInfo;
+                            }
+                        }
+                        this.forbidenCommodityIdList = []
+                        for (let i in this.costInfoList) {
+                            
+                            if (i!=this.index) {
+                                let costInfo = this.costInfoList[i];
+                                let cIdStr = costInfo.commodityId;
+                                let cIdList = cIdStr.split(",")
+                                this.forbidenCommodityIdList.push(...cIdList);
+                            }
+                        }
+                        for (let i in rows) {
+                            if (rows[i].id in costInfoDict){
+                                rows[i].commodityDiscountRate = costInfoDict[rows[i].id].rate;
+                            }
+                            else{
+                                rows[i].commodityDiscountRate = null;
+                            }
+                        }
+                        r.list = rows;
                         return r;
                     }
                 }).done()

@@ -47,7 +47,7 @@
 		<el-row type="flex" v-for="(costInfo,i) in costInfoList" :key="i" align="middle">
 			
 				<div class="w-32 text-right text-gray-700">折扣{{i+1}}:</div>
-				<div class="pl-5 flex items-center"><el-input min="1" max="100" type="number" v-model="costInfoList[i].rate" class="w-10 mr-2" size="mini"></el-input> %</div>
+				<div class="pl-5 flex items-center"><el-input min="1" max="100" type="number" v-model="costInfo.rate" class="w-10 mr-2" size="mini"></el-input> %</div>
 				
 				<el-button @click="showCommodityDialog(i)" size="mini" class="ml-10">选择应用商品</el-button>
 			
@@ -57,15 +57,15 @@
 				<h4>自提点设置</h4>
 			</el-col>
 			<el-col :span="12">
-				<el-button size="mini" @click="addCostLine" >添加折扣</el-button>
+				<el-button size="mini" @click="addPkStation" >添加自提点</el-button>
 			</el-col>
 		</el-row>
-		<el-row type="flex" v-for="(deliveryPosition,i) in deliveryPositionList" :key="i" align="middle">
+		<el-row type="flex" v-for="(pkStation,i) in pkStationList" :key="i" align="middle">
 			
 				<div class="w-32 text-right text-gray-700">自提点{{i+1}}:</div>
-				<div class="pl-5 flex items-center"><el-input v-model="deliveryPositionList[i].position" class="w-10 mr-2" size="mini"></el-input></div>
-				
-				<el-button @click="deletePosition(i)" size="mini" class="ml-10">删除</el-button>
+				<div class="pl-5 flex items-center"><el-input v-model="pkStation.fullName" placeholder="全称" class="w-10 mr-2" size="mini"></el-input></div>
+				<div class="pl-5 flex items-center"><el-input v-model="pkStation.name" placeholder="简称" class="w-10 mr-2" size="mini"></el-input></div>
+				<el-button @click="deletePkStationList(i)" size="mini" class="ml-10">删除</el-button>
 			
 		</el-row>
 		<el-row
@@ -163,8 +163,8 @@
 			<CommodityDialog 
 				@refresh="updateCommodityDiscount" 
 				:index="costInfoIndex" 
-				:discountId="costInfoList[costInfoIndex].discountId" 
-				:commodityId="costInfoList[costInfoIndex].commodityId"/>
+				:costInfoList="costInfoList"
+				/>
 		</cl-dialog>
 	</cl-crud>
 </template>
@@ -178,11 +178,10 @@ export default {
 	name: 'deliverCharge',
 	data() {
 		return {
-			
-			
-			deliveryPositionList: [
+			pkStationList: [
 				{
-					position: ''
+					fullName: '',
+					name: ''
 				}
 			],
 			commodityVisible: false,
@@ -191,7 +190,7 @@ export default {
 			costInfoIndex: 0,
 			costInfoList: [
 				{
-					rate:0
+					rate:100
 					//discountId:
 					//commodityId
 				}
@@ -247,11 +246,29 @@ export default {
 		await this.getGlobalConfig();
 	},
 	methods: {
-		deletePosition(i) {
-			if (this.deliveryPositionList.length>0){
-				delete this.deliveryPositionList[i];
+		deletePkStation(i) {
+			if (this.pkStationList.length>0){
+				
+				
 			}
 			
+		},
+		addPkStation() {
+			if (this.pkStationList.length>0) {
+				let pkStation = this.pkStationList[this.pkStationList.length-1];
+				if (!(pkStation.fullName == "" && pkStation.name == "")) {
+					this.pkStationList.push({
+						fullName: "",
+						name: ""
+					})
+				}
+			}
+			else {
+				this.pkStationList.push({
+					fullName: "",
+					name: ""
+				})
+			}
 		},
 		//[{index, commodityId}]
 		updateCommodityDiscount(discountInfo) {
@@ -274,11 +291,16 @@ export default {
 		addCostLine() {
 			if (this.costInfoList.length>0){
 				let costInfoLast = this.costInfoList[this.costInfoList.length-1];
-				if (costInfoLast.value!="" || Number(costInfoLast.value)!=0) {
+				if (costInfoLast.value!="" || Number(costInfoLast.value)!=100) {
 					this.costInfoList.push({
-						value:0
+						value:100
 					})
 				}
+			}
+			else {
+				this.costInfoList.push({
+					value:100
+				})
 			}
 		},
 		// 合并第一列
@@ -302,6 +324,9 @@ export default {
 				console.log("discountInfo")
 				console.log(discountInfo)
 				this.costInfoList = discountInfo;
+				this.pkStationList = await this.pkStation.list();
+				console.log("pkStationList")
+				console.log(this.pkStationList)
 			} catch (error) {
 				this.$message.error(error);
 			}
@@ -328,6 +353,9 @@ export default {
 				await this.$service.app.discount.createDiscount({
 					discountList:this.costInfoList
 				});
+				await this.$service.app.pkStation.createPkStation({
+					pkStationList: this.pkStationList
+				})
 				this.$message.success('修改成功');
 			} catch (error) {
 				this.$message.error(error);
