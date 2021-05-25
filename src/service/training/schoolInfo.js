@@ -57,4 +57,21 @@ export default class extends BaseService {
             data
         })
     }
+    @Permission("getSchool")
+    getSchool (params) {
+        return this.request({
+        url: "/getSchool",
+        method: "get",
+        params
+        })
+    }
+    @Permission("listSchoolTree")
+    listSchoolTree (){
+        return this.request({
+            
+            url:"/listSchoolTree",
+            method: "get"
+            
+        })
+    }
 }

@@ -4,7 +4,9 @@ import {
     Permission
    } from "@/cool";
 
-@Service("app/pkStation")
+@Service({
+	namespace:"app/pkStation"
+})
 export default class extends BaseService {
 
     @Permission("createPkStation")
@@ -14,5 +16,14 @@ export default class extends BaseService {
 			method: "post",
 			data
 		});
+	}
+	@Permission("page")
+	page(params) {
+		console.log("pappapage")
+	 return this.request({
+	  url: "/page",
+	  method: "get",
+	  params
+	 });
 	}
 }

@@ -16,8 +16,17 @@
 		 		<el-form-item label="手机号码" prop="phoneNumArray">
 					 <MultiPhone  v-model="ruleForm.phoneNumArray"/>
 				</el-form-item>
+				<!--
 				<el-form-item label="学籍" prop="school">
 					<el-input v-model="ruleForm.school"></el-input>
+				</el-form-item>
+				-->
+				<el-form-item label="学籍" prop="school">
+					<el-cascader
+						v-model="ruleForm.school"
+						:options="schoolTree"
+						class="w-50"
+					/>
 				</el-form-item>
 				<el-form-item label="身份证" prop="identityCardNumber">
 					<el-input v-model="ruleForm.identityCardNumber"></el-input>
@@ -109,6 +118,8 @@ export default {
 	},
 	data() {
 		return {
+			schoolValue: [],
+			schoolTree: [],
             ruleForm: {
 				name:"",
 				sex:"",
@@ -138,15 +149,41 @@ export default {
 				
 			},
 			...{sexDict , footDict, positionDict, addressDict}
+			
 		};
 	},
 	methods: {
 		submitForm(formName) {
 			this.$refs[formName].validate(async (valid) => {		 
 				if (valid) {
+					let values = this.ruleForm.school;
+					console.log("values")
+					console.log(values)
+					if (values.length<5){
+						alert("请选择学籍")
+						return;
+					}
+					
+					
+					try{
+						let province = this.schoolTree.find(x=>x.value==values[0])
+						let city = province.children.find(x=>x.value==values[1])
+						let county = city.children.find(x=>x.value==values[2])
+						let town = county.children.find(x=>x.value==values[3])
+						let school = town.children.find(x=>x.value==values[4])
+						this.ruleForm.school=`${province.extra},${city.extra},${county.extra},${town.extra},${school.extra}`
+					}
+					catch(e) {
+						alert("请选择学籍")
+						return;
+					}
+					
 					let params = {
 						...this.ruleForm
 					};
+					console.log("this.ruleForm")
+					console.log(this.ruleForm)
+					
 					try{
 						if (params.id) {
 							await this.$service.training.student.update(params);
@@ -176,10 +213,24 @@ export default {
 				this.ruleForm = res;
 				this.ruleForm.birthday = moment(res.birthday).format('YYYY/MM/DD')
 				this.ruleForm.trainDate = moment(res.trainDate).format('YYYY/MM/DD')
+				
+				this.schoolTree = await this.$service.training.schoolInfo.listSchoolTree();
+				let values = this.ruleForm.school.split(",")
+				console.log("this.ruleForm.school")
+				console.log(this.ruleForm)
+				console.log(values)
+				let province = this.schoolTree.find(x=>x.extra==Number(values[0]))
+				let city = province.children.find(x=>x.extra==Number(values[1]))
+				let county = city.children.find(x=>x.extra==Number(values[2]))
+				let town = county.children.find(x=>x.extra==Number(values[3]))
+				let school = town.children.find(x=>x.extra==Number(values[4]))
+				this.ruleForm.school = [province.value, city.value, county.value, town.value, school.value]
+				console.log(this.ruleForm.school)
 			} catch (error) {
 				this.$message.error(error);
 			}
 		},
+	
 		resetForm(formName) {
 			console.log('重置表单');
 			this.$refs[formName].resetFields();
@@ -195,5 +246,8 @@ export default {
 <style lang="scss" scoped>
 .demo-ruleForm {
 	height: 100%;
+}
+.w-50 {
+	width: 350px;
 }
 </style>

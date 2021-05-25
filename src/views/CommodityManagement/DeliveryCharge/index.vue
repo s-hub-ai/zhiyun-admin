@@ -65,7 +65,7 @@
 				<div class="w-32 text-right text-gray-700">自提点{{i+1}}:</div>
 				<div class="pl-5 flex items-center"><el-input v-model="pkStation.fullName" placeholder="全称" class="w-10 mr-2" size="mini"></el-input></div>
 				<div class="pl-5 flex items-center"><el-input v-model="pkStation.name" placeholder="简称" class="w-10 mr-2" size="mini"></el-input></div>
-				<el-button @click="deletePkStationList(i)" size="mini" class="ml-10">删除</el-button>
+				<el-button @click="deletePkStation(i)" size="mini" class="ml-10">删除</el-button>
 			
 		</el-row>
 		<el-row
@@ -246,8 +246,20 @@ export default {
 		await this.getGlobalConfig();
 	},
 	methods: {
-		deletePkStation(i) {
+		async deletePkStation(i) {
+			console.log("delete i")
+			console.log(i)
+			console.log(this.pkStationList)
 			if (this.pkStationList.length>0){
+				if (confirm("确定删除吗")) {
+					 
+					
+					await this.$service.app.pkStation.update({
+						id: this.pkStationList[i].pkStationId,
+						isDeleted: 1
+					})
+					this.pkStationList.splice(i,i+1);
+				}
 				
 				
 			}
@@ -324,7 +336,22 @@ export default {
 				console.log("discountInfo")
 				console.log(discountInfo)
 				this.costInfoList = discountInfo;
-				this.pkStationList = await this.pkStation.list();
+				this.pkStationList=[];
+				let _pkInfo = await this.$service.app.pkStation.page({
+					size: 99999,
+					page: 1,
+					sort: '',
+					isDeleted: 0
+				});
+				console.log(_pkInfo)
+				let _pkStationList = _pkInfo.list;
+				for (let i in _pkStationList) {
+					this.pkStationList.push({
+						pkStationId: _pkStationList[i].id,
+						fullName: _pkStationList[i].fullName,
+						name: _pkStationList[i].name
+					})
+				}
 				console.log("pkStationList")
 				console.log(this.pkStationList)
 			} catch (error) {

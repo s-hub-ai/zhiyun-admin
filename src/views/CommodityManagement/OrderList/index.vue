@@ -173,8 +173,14 @@
 					<el-form-item class="form-item" label="收件地址:" v-if="detail.address">
 						<span>{{ detail.address.province.label + detail.address.city.label + detail.address.country.label }}{{ detail.address.detail|default }}</span>
 					</el-form-item>
-					<el-form-item class="form-item" label="收件地址:" v-if="detail.remark">
+					<el-form-item class="form-item" label="订单备注:" v-if="detail.remark && detail.remark.length<=30">
 						<span>{{ detail.remark|default }}</span>
+					</el-form-item>
+					<el-form-item class="form-item" label="订单备注:" v-if="detail.remark && detail.remark.length>30 && !isDetailDisplayAll">
+						<span @click="expandDetail">{{ detail.remark.slice(0,30)+'...'|default }}</span>
+					</el-form-item>
+					<el-form-item class="form-item" label="订单备注:" v-if="detail.remark && detail.remark.length>30 && isDetailDisplayAll">
+						<span @click="expandDetail">{{ detail.remark|default }}</span>
 					</el-form-item>
 				</div>
 				<h3 style="margin-top: 45px">商品信息</h3>
@@ -220,6 +226,9 @@
 					</el-form-item>
 					<el-form-item class="form-item" label="物流单号:">
 						<span v-if="detail.delivery">{{ detail.delivery.deliverySN|default  }}</span>
+					</el-form-item>
+					<el-form-item class="form-item" label="自提点:" v-if="detail.delivery && detail.delivery.pkStation && detail.pkStation!=''">
+						<span >{{ detail.delivery.pkStation|default  }}</span>
 					</el-form-item>
 				</div>
 				<h3 style="margin-top: 45px">售后信息</h3>
@@ -283,6 +292,7 @@ export default {
 	data() {
 		let _this = this;
 		return {
+			isDetailDisplayAll: false,
 			orderTypeDict,
 			orderStatusDict,
 			dialogLogistics: false,
@@ -395,6 +405,10 @@ export default {
 	},
 
 	methods: {
+		
+		expandDetail() {
+			this.isDetailDisplayAll = true;
+		},
 		onLoad({ ctx, app }) {
 			ctx.service(this.$service.app.order).done();
 			app.refresh({
