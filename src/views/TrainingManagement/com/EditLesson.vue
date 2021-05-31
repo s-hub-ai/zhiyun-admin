@@ -278,7 +278,8 @@ export default {
             let t = time.getTime();
             let min = new Date(this.range.start).getTime(),
                 max = new Date(this.range.end).getTime();
-            return t>max || ( t<min ||  t<(Date.now()-24*60*60*1000) )
+            //return t>max || ( t<min ||  t<(Date.now()-24*60*60*1000) )
+            return t>max || t<min
         },
         dateWithWeek(d){
             return moment(d).format('YYYY-MM-DD(dddd)')

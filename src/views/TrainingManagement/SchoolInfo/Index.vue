@@ -89,6 +89,10 @@
             
         </el-row>
         <cl-table :columns="tableColumn"> </cl-table>
+        <el-row type="flex">
+			<cl-flex1></cl-flex1>
+			<cl-pagination></cl-pagination>
+		</el-row>
     </cl-crud>
 </template>
 <script>
@@ -158,7 +162,7 @@ export default {
             provinceDict:[],
             cityDict:[],
             countyDict:[],
-            townDict:[],
+            townDict:[]
             
         }
     },

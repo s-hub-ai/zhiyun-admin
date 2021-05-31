@@ -189,7 +189,7 @@ export default {
 				{
 					label: '班级/球队',
 					prop:'joinClass',
-					align: 'center',
+					align: 'center'
 				},
 				{
 					label: '操作',

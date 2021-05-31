@@ -5,7 +5,7 @@ import {
 } from "@/cool";
 
 @Service({
-    namespace:"app/student",
+    namespace:"app/student"
     
 })
 export default class extends BaseService {

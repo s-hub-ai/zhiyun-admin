@@ -60,7 +60,7 @@ import XLSX from 'xlsx';
 export default {
 	components:{
 		ImageDialog:()=>import('./ImageDialog'),
-		VideoDialog:()=>import('./VideoDialog'),
+		VideoDialog:()=>import('./VideoDialog')
 	},
 	data() {
 		let _this = this;

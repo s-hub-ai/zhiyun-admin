@@ -62,7 +62,7 @@ export default {
 									identityCardNumber:el['身份证号'],
 									// 非必填
 									foot: footDict.find( e => e.text==el['惯用脚'] )?.value,
-									position: positionDict.find(  e=> e.text==el['位置'] )?.value,
+									position: positionDict.find(  e=> e.text==el['位置'] )?.value
 								}
 								const requiredKeys = ['name','sex','height','weight','birthday','trainDate','phoneNumArray','address','school','identityCardNumber']
 								for(let k of requiredKeys){

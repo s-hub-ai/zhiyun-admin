@@ -50,7 +50,7 @@ export default {
         detail:{},
         detailQuery:{
             coachId:vm.id,
-            year:new Date().getFullYear(),
+            year:new Date().getFullYear()
         },
         years:years()
     }),

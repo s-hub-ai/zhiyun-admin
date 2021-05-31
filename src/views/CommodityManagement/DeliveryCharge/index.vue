@@ -10,6 +10,7 @@
 		</div>
 		<div class="flex items-center my-3">
 			<div class="w-32 text-right text-gray-700">商城购物：</div>
+			
 			<div class="pl-5 flex items-center"><el-input v-model="globalConfig.scoreDeductionRatio" class="w-10 mr-2"></el-input> %</div>
 		</div>
 		<div class="flex items-center my-3">
@@ -36,6 +37,7 @@
 			<div class="w-32 text-right text-gray-700">支云卡用户套票购买额外奖励:</div>
 			<div class="pl-5 flex items-center"><el-input v-model="globalConfig.packageTicketscoreRewardRatioZy" class="w-10 mr-2"></el-input> %</div>
 		</div>
+		
 		<el-row type="flex" justify="space-between" class="my-10">
 			<el-col :span="12">
 				<h4>折扣设置</h4>
@@ -47,10 +49,11 @@
 		<el-row type="flex" v-for="(costInfo,i) in costInfoList" :key="i" align="middle">
 			
 				<div class="w-32 text-right text-gray-700">折扣{{i+1}}:</div>
+				
 				<div class="pl-5 flex items-center"><el-input min="1" max="100" type="number" v-model="costInfo.rate" class="w-10 mr-2" size="mini"></el-input> %</div>
 				
 				<el-button @click="showCommodityDialog(i)" size="mini" class="ml-10">选择应用商品</el-button>
-			
+				
 		</el-row>
 		<el-row type="flex" justify="space-between" class="my-10">
 			<el-col :span="12">
@@ -63,11 +66,15 @@
 		<el-row type="flex" v-for="(pkStation,i) in pkStationList" :key="i" align="middle">
 			
 				<div class="w-32 text-right text-gray-700">自提点{{i+1}}:</div>
+				
 				<div class="pl-5 flex items-center"><el-input v-model="pkStation.fullName" placeholder="全称" class="w-10 mr-2" size="mini"></el-input></div>
+			
 				<div class="pl-5 flex items-center"><el-input v-model="pkStation.name" placeholder="简称" class="w-10 mr-2" size="mini"></el-input></div>
+				
 				<el-button @click="deletePkStation(i)" size="mini" class="ml-10">删除</el-button>
 			
 		</el-row>
+		
 		<el-row
 			v-permission="{
 				or: [$service.app.commodity.deliveryCharge.permission.add, $service.app.commodity.deliveryCharge.permission.update, $service.app.commodity.deliveryCharge.permission.delete]
@@ -178,6 +185,7 @@ export default {
 	name: 'deliverCharge',
 	data() {
 		return {
+			
 			pkStationList: [
 				{
 					fullName: '',
@@ -373,6 +381,27 @@ export default {
 				for (let i in this.costInfoList) {
 					if (this.costInfoList[i].commodityId==null) {
 						this.costInfoList[i].commodityId = "";
+					}
+				}
+				for (let i in this.costInfoList) {
+					let costInfo = this.costInfoList[i];
+					if (!costInfo.rate || costInfo.rate=="") {
+						alert("需填写折扣率")
+						return;
+					}
+				}
+				for (let i in this.pkStationList) {
+					let pkStation = this.pkStationList[i];
+					if (!pkStation.name || pkStation.name == ""){
+						alert("需填写自提点简称")
+						return;
+					}
+				}
+				for (let i in this.pkStationList) {
+					let pkStation = this.pkStationList[i];
+					if (!pkStation.fullName || pkStation.fullName == ""){
+						alert("需填写自提点全称")
+						return;
 					}
 				}
 				console.log("submit")

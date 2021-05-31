@@ -2,7 +2,7 @@
     
         <cl-crud @load="onLoad" ref="crud" >
             <el-row>
-                <h3>已选：{{selection.length}}</h3>
+                <h3>已选：{{realSelection.length}}</h3>
             </el-row>
             <el-row>
                 <el-form label-width="100px" :inline="true">
@@ -43,7 +43,15 @@
 <script>
     export default {
         props: ["index", "costInfoList"],
-        
+        computed: {
+            realSelection() {
+                let commodityIdList = this.selection.map(x=>{
+                    return x.id;
+                })
+                let selectionSet = new Set(commodityIdList)
+                return [...selectionSet]
+            }
+        },
         data() {
             return {
                 //allowedCommodityIdList: [],
@@ -52,6 +60,7 @@
                 
                 tableFilter: {
                     name: ''
+                    
                 },
                 
                 tableColumn: [
@@ -128,10 +137,12 @@
             selectedCommodityConfirm() {
                 console.log("commodityTable")
                 console.log(this.selection)
-                let commodityIdList = this.selection.map(x=>{
+                /*
+                let commodityIdList = this.realSelection.map(x=>{
                     return x.id;
                 })
-                let commodityId = commodityIdList.join(",")
+                */
+                let commodityId = this.realSelection.join(",")
                 this.$emit('refresh',{
                     index: this.index,
                     commodityId
@@ -155,6 +166,9 @@
                 //ctx.service(this.$service.app.commodity.shopping).done();
                 await ctx.service({
                     page:async (p)=>{
+                        console.log("p")
+                        console.log(p)
+                        p.sort="createTime"
                         let r=await this.$service.app.commodity.shopping.page(p)
                         this.tableData = r.list;
                         let rows = this.tableData;
@@ -178,6 +192,8 @@
                                 this.$refs["commodityTable"].toggleRowSelection(rows[i], false);
                             }
                         }
+                        console.log("ssllecction")
+                        console.log(this.selection)
                         let costInfoDict = {};
                         for (let i in this.costInfoList){
                             let costInfo = this.costInfoList[i];
@@ -210,7 +226,8 @@
                         return r;
                     }
                 }).done()
-                
+                console.log("this.tableFilter")
+                console.log(this.tableFilter)
                 await app.refresh({...this.tableFilter});
                 /*
                 let rows = this.tableData;
