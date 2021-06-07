@@ -212,6 +212,7 @@ export default {
 			this.addDialogShow = true;
 			this.$nextTick(() => {
 				this.$refs.editDialog.getEditInfo(id);
+				this.$refs.editDialog.getSchoolTree();
 			});
 		},
 		//删除
@@ -256,10 +257,13 @@ export default {
 			console.log(query)
 			this.$refs.crud.refresh({...query});
         },
-        addDialog() {
+    addDialog() {
 			this.addDialogTitle = '新增学员';
 			this.addDialogShow = true;
-        },
+			this.$nextTick(() => {
+				this.$refs.editDialog.getSchoolTree();
+			});
+    },
         addDialogClose() {
 			this.$refs.editDialog.resetForm('ruleForm');
 			this.$refs.editDialog.ruleForm = {};

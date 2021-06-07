@@ -15,4 +15,12 @@ export default class extends BaseService {
             data
         })
     }
+    @Permission("deleteDiscount")
+    deleteDiscount (data) {
+        return this.request({
+            url: "/deleteDiscount",
+            method: "POST",
+            data
+        })
+    }
 }

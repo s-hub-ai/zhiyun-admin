@@ -207,6 +207,17 @@ export default {
 				}
 			});
 		},
+		async getSchoolTree(){
+			this.schoolTree = await this.$service.training.schoolInfo.listSchoolTree();
+			let values = this.ruleForm.school.split(",")
+			let province = this.schoolTree.find(x=>x.extra==Number(values[0]))
+			let city = province.children.find(x=>x.extra==Number(values[1]))
+			let county = city.children.find(x=>x.extra==Number(values[2]))
+			let town = county.children.find(x=>x.extra==Number(values[3]))
+			let school = town.children.find(x=>x.extra==Number(values[4]))
+			this.ruleForm.school = [province.value, city.value, county.value, town.value, school.value]
+			
+		},
 		async getEditInfo(id) {
 			try {
 				let res = await this.$service.training.student.info({ id });
@@ -214,18 +225,11 @@ export default {
 				this.ruleForm.birthday = moment(res.birthday).format('YYYY/MM/DD')
 				this.ruleForm.trainDate = moment(res.trainDate).format('YYYY/MM/DD')
 				
-				this.schoolTree = await this.$service.training.schoolInfo.listSchoolTree();
-				let values = this.ruleForm.school.split(",")
-				console.log("this.ruleForm.school")
-				console.log(this.ruleForm)
-				console.log(values)
-				let province = this.schoolTree.find(x=>x.extra==Number(values[0]))
-				let city = province.children.find(x=>x.extra==Number(values[1]))
-				let county = city.children.find(x=>x.extra==Number(values[2]))
-				let town = county.children.find(x=>x.extra==Number(values[3]))
-				let school = town.children.find(x=>x.extra==Number(values[4]))
-				this.ruleForm.school = [province.value, city.value, county.value, town.value, school.value]
-				console.log(this.ruleForm.school)
+				
+				// console.log("this.ruleForm.school")
+				// console.log(this.ruleForm)
+				// console.log(values)
+				// console.log(this.ruleForm.school)
 			} catch (error) {
 				this.$message.error(error);
 			}

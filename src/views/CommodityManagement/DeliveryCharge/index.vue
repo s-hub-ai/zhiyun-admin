@@ -46,7 +46,7 @@
 				<el-button size="mini" @click="addCostLine" >添加折扣</el-button>
 			</el-col>
 		</el-row>
-		<el-row type="flex" v-for="(costInfo,i) in costInfoList" :key="i" align="middle">
+		<el-row type="flex" v-for="(costInfo,i) in costInfoList" :key="`costInfo-${i}`" align="middle">
 			
 				<div class="w-32 text-right text-gray-700">折扣{{i+1}}:</div>
 				
@@ -54,6 +54,7 @@
 				
 				<el-button @click="showCommodityDialog(i)" size="mini" class="ml-10">选择应用商品</el-button>
 				
+				<el-button @click="deleteDiscount(costInfo)" size="mini" class="ml-10">删除</el-button>
 		</el-row>
 		<el-row type="flex" justify="space-between" class="my-10">
 			<el-col :span="12">
@@ -63,7 +64,7 @@
 				<el-button size="mini" @click="addPkStation" >添加自提点</el-button>
 			</el-col>
 		</el-row>
-		<el-row type="flex" v-for="(pkStation,i) in pkStationList" :key="i" align="middle">
+		<el-row type="flex" v-for="(pkStation,i) in pkStationList" :key="`pkStation-${i}`" align="middle">
 			
 				<div class="w-32 text-right text-gray-700">自提点{{i+1}}:</div>
 				
@@ -80,7 +81,7 @@
 				or: [$service.app.commodity.deliveryCharge.permission.add, $service.app.commodity.deliveryCharge.permission.update, $service.app.commodity.deliveryCharge.permission.delete]
 			}"
 		>
-			<div style="display: flex; align-items: center；margin-bottom: 10px;margin-top: 20px;">
+			<div style="display: flex; align-items: center; margin-bottom: 10px;margin-top: 20px;">
 				<h4>运费设置</h4>
 				<cl-refresh-btn style="margin-left: 10px"></cl-refresh-btn>
 				<el-button size="mini" @click="dialog = true">新增</el-button>
@@ -254,6 +255,20 @@ export default {
 		await this.getGlobalConfig();
 	},
 	methods: {
+		async deleteDiscount({discountId}){
+			let flag = await this.$confirm('是否删除折扣？折扣商品将恢复原价。', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			})
+			if(flag){
+				await this.$service.app.discount.deleteDiscount({
+					discountId,
+				})
+				this.$message.success('删除成功');
+			  await this.getGlobalConfig()
+			}
+		},
 		async deletePkStation(i) {
 			console.log("delete i")
 			console.log(i)

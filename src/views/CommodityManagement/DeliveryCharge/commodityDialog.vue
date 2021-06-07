@@ -2,7 +2,7 @@
     
         <cl-crud @load="onLoad" ref="crud" >
             <el-row>
-                <h3>已选：{{realSelection.length}}</h3>
+                <h3>已选：{{selectIds.length}}</h3>
             </el-row>
             <el-row>
                 <el-form label-width="100px" :inline="true">
@@ -20,7 +20,11 @@
                 </el-form>
             </el-row>
             <el-row>
-                <cl-table ref="commodityTable" :columns="tableColumn" @selection-change="selectCommodity" :props="{
+                <cl-table ref="commodityTable" :columns="tableColumn" 
+                @selection-change="selectCommodity"
+                @select="selectOne"
+                @select-all="selectAll"
+                :props="{
                     'row-key': (row)=>{
                         return row.id;
                     },
@@ -50,6 +54,13 @@
                 })
                 let selectionSet = new Set(commodityIdList)
                 return [...selectionSet]
+            },
+            
+        },
+        beforeMount(){
+            let ids = this.costInfoList[this.index].commodityId;
+            if(ids){
+                this.selectIds = ids.split(',')
             }
         },
         data() {
@@ -57,7 +68,8 @@
                 //allowedCommodityIdList: [],
                 forbidenCommodityIdList: [],
                 tableData: [],
-                
+                selection: [],
+                selectIds:"",
                 tableFilter: {
                     name: ''
                     
@@ -70,22 +82,6 @@
                         "reserve-selection":true,
                         'selectable': (row, index)=>{
                             let isChecked = true;
-                            /*
-                            let commodityIdList =[];
-                            if (this.commodityId) {
-                                commodityIdList = this.commodityId.split(",")
-                            }
-                            console.log("commodityIdList11")
-                            console.log(commodityIdList)
-                            console.log(row.id.toString())
-                            console.log(Number(row.commodityDiscountRate))
-                            console.log(commodityIdList.indexOf(row.id.toString()))
-                            console.log(Number(row.commodityDiscountRate))
-                            if (commodityIdList.indexOf(row.id.toString())==-1 && row.commodityDiscountRate && Number(row.commodityDiscountRate)!=100) {
-                                isChecked = false;
-                            }
-                            console.log(isChecked)
-                            */
                             isChecked = (this.forbidenCommodityIdList.indexOf(row.id)==-1)
                             return isChecked;
                         }
@@ -126,7 +122,7 @@
                     }
                 ],
                 
-                selection: []
+                
             }
         },
         
@@ -135,65 +131,90 @@
                 this.$refs["crud"].refresh({...this.tableFilter});
             },
             selectedCommodityConfirm() {
-                console.log("commodityTable")
-                console.log(this.selection)
                 /*
                 let commodityIdList = this.realSelection.map(x=>{
                     return x.id;
                 })
                 */
-                let commodityId = this.realSelection.join(",")
+                // let commodityId = this.realSelection.join(",")
                 this.$emit('refresh',{
                     index: this.index,
-                    commodityId
+                    commodityId:this.selectIds.join(',')
                 });
             },
             selectedCommodityClear() {
-                let rows = this.tableData;
-                for (let i in rows) {
-                    console.log(rows[i])
-                    
-                    this.$refs["commodityTable"].toggleRowSelection(rows[i], false);
-                    
+                let {data} = this.$refs["commodityTable"];
+                for(let row of data){
+                    this.$refs["commodityTable"].toggleRowSelection(row, false);
                 }
+                // let rows = this.tableData;
+                // for (let i in rows) {
+                    
+                //     this.$refs["commodityTable"].toggleRowSelection(rows[i], false);
+                    
+                // };
+                this.selectIds = []
+
             },
             selectCommodity(val) {
                 this.selection=val;
             },
-            
+            selectOne(val,row){
+                console.log(row)
+                let flag = val.includes(row)
+                let id = row.id;
+                if(flag){
+                    if(this.selectIds.includes(id))return;
+                    this.selectIds.push(id)
+                }else{
+                    let _idx = this.selectIds.indexOf(id);
+                    if(_idx>=0){
+                        this.selectIds.splice(_idx,1)
+                    }
+                }
+            },
+            selectAll(val){
+                let _crrt = val.filter(el=>this.tableData.includes(el));
+                if(_crrt.length==0){
+                    for(let row of this.tableData){
+                        let idx = this.selectIds.indexOf(row.id);
+                        if(idx>=0){
+                            this.selectIds.splice(idx,1)
+                        }
+                    }
+                }else{
+                    for(let row of _crrt){
+                         if(!this.selectIds.includes(row.id)){
+                             this.selectIds.push(row.id)
+                         }
+                    }
+                }
+            },
             async onLoad({ctx, app}) {
                 
                 //ctx.service(this.$service.app.commodity.shopping).done();
                 await ctx.service({
                     page:async (p)=>{
-                        console.log("p")
-                        console.log(p)
                         p.sort="createTime"
                         let r=await this.$service.app.commodity.shopping.page(p)
                         this.tableData = r.list;
                         let rows = this.tableData;
-                        //console.log(this.tableData)
-                        let commodityId = this.costInfoList[this.index].commodityId;
-                        let commodityIdList =[];
-                        if (commodityId) {
-                            commodityIdList = commodityId.split(",")
-                        }
-                        console.log("commodityList")
-                        console.log(this.index);
-                        console.log(commodityId)
-                        console.log(commodityIdList)
-                        for (let i in rows) {
-                            console.log(rows[i])
-                            if (commodityIdList.indexOf(rows[i].id)!=-1) {
-                                console.log(i)
-                                this.$refs["commodityTable"].toggleRowSelection(rows[i], true);
-                            }
-                            else {
-                                this.$refs["commodityTable"].toggleRowSelection(rows[i], false);
-                            }
-                        }
-                        console.log("ssllecction")
-                        console.log(this.selection)
+                        let commodityIdList = this.selectIds
+                        // let commodityId = this.costInfoList[this.index].commodityId;
+                        // let commodityIdList =[];
+                        // if (commodityId) {
+                        //     commodityIdList = commodityId.split(",")
+                        // }
+                        setTimeout(()=>{
+                            for (let i in rows) {
+                                if (commodityIdList.indexOf(rows[i].id)>=0) {
+                                    this.$refs["commodityTable"].toggleRowSelection(rows[i], true);
+                                }else {
+                                    this.$refs["commodityTable"].toggleRowSelection(rows[i], false);
+                                }
+                            }                            
+                        },0)
+
                         let costInfoDict = {};
                         for (let i in this.costInfoList){
                             let costInfo = this.costInfoList[i];
@@ -226,21 +247,15 @@
                         return r;
                     }
                 }).done()
-                console.log("this.tableFilter")
-                console.log(this.tableFilter)
                 await app.refresh({...this.tableFilter});
                 /*
                 let rows = this.tableData;
-                console.log(this.tableData)
                 let commodityIdList =[];
                 if (this.commodityId) {
                     commodityIdList = this.commodityId.split(",")
                 }
-                console.log(commodityIdList)
                 for (let i in rows) {
-                    console.log(rows[i])
                     if (commodityIdList.indexOf(rows[i].id)!=-1) {
-                        console.log(i)
                         this.$refs["commodityTable"].toggleRowSelection(rows[i], true);
                     }
                     else {
