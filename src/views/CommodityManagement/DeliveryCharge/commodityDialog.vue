@@ -61,6 +61,8 @@
             let ids = this.costInfoList[this.index].commodityId;
             if(ids){
                 this.selectIds = ids.split(',')
+            }else{
+                this.selectIds = []
             }
         },
         data() {

@@ -3,7 +3,30 @@
         
         <el-dialog :visible.sync="schoolInfoDialogVisible" title="编辑学籍" width="900px">
             <el-form :inline="true" :model="form" ref="form" size="mini" class="demo-form-inline" :rules="rules">
-                <el-row>
+                 <el-form-item label="输入省份" prop="province">
+                    <el-select style="width: 120px" size="mini" v-model="form.province" placeholder="请选择" 
+                    @change="addSelectProvince">
+                        <el-option v-for="(item, index) in provinceDict" :key="index" :label="item.text" :value="item.text"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="输入市" prop="city">
+                    <el-select style="width: 120px" size="mini" v-model="form.city" placeholder="请选择" 
+                    @change="addSelectCity">
+                        <el-option v-for="(item, index) in add_cityDict" :key="index" :label="item.text" :value="item.text"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="输入区县" prop="county">
+                    <el-select style="width: 120px" size="mini" v-model="form.county" placeholder="请选择" 
+                    @change="addSelectCounty">
+                        <el-option v-for="(item, index) in add_countyDict" :key="index" :label="item.text" :value="item.text"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="输入乡镇" prop="town">
+                    <el-select style="width: 120px" size="mini" v-model="form.town" placeholder="请选择" >
+                        <el-option v-for="(item, index) in add_townDict" :key="index" :label="item.text" :value="item.text"></el-option>
+                    </el-select>
+                </el-form-item>
+                <!-- <el-row>
                     <el-form-item label="输入省份" prop="province">
                         <el-input  v-model="form.province">
                         </el-input>
@@ -26,7 +49,7 @@
                         <el-input  v-model="form.town">
                         </el-input>
                     </el-form-item>
-                </el-row>
+                </el-row> -->
                 <el-row>
                     <el-form-item label="输入学校" prop="school">
                         <el-input  v-model="form.school">
@@ -106,6 +129,13 @@ export default {
                 town: '',
                 school: ''
             },
+            rules:{
+                province:[{required: true, message: '请填写'}],
+                city:[{required: true, message: '请填写'}],
+                county:[{required: true, message: '请填写'}],
+                town:[{required: true, message: '请填写'}],
+                school:[{required: true, message: '请填写'}],
+            },
             tableColumn: [
 				
 				{
@@ -162,7 +192,11 @@ export default {
             provinceDict:[],
             cityDict:[],
             countyDict:[],
-            townDict:[]
+            townDict:[],
+            
+            add_cityDict:[],
+            add_countyDict:[],
+            add_townDict:[]
             
         }
     },
@@ -214,6 +248,31 @@ export default {
             //this.tableFilters.townId = this.selectedTownId;
             this.$refs['crud'].refresh({ ...this.tableFilters });
         },
+
+        async addSelectProvince(province) {
+            let provinceId = this.provinceDict.find(el=>el.text==province).value
+            let _citys = await this.$service.training.schoolInfo.listCity({provinceId});
+            this.add_cityDict = this.translateCity(_citys);
+            this.form.city = ''
+            this.form.county = ''
+            this.form.town = ''
+
+        },
+        async addSelectCity(city) {
+            let cityId = this.add_cityDict.find(el=>el.text==city).value
+            let _countys = await this.$service.training.schoolInfo.listCounty({cityId});
+            this.add_countyDict = this.translateCounty(_countys);
+            this.form.county = ''
+            this.form.town = ''
+
+        },
+        async addSelectCounty(county) {
+            let countyId = this.add_countyDict.find(el=>el.text==county).value
+            let _towns = await this.$service.training.schoolInfo.listTown({countyId});
+            this.add_townDict = this.translateTown(_towns);
+            this.form.town = ''
+        },
+
         translateProvince(l) {
             return l.map(x=>{
                 return {
