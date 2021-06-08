@@ -43,7 +43,7 @@
 				<h4>折扣设置</h4>
 			</el-col>
 			<el-col :span="12">
-				<el-button size="mini" @click="addCostLine" >添加折扣</el-button>
+				<el-button size="mini" @click="addCostLineDialog=true" >添加折扣</el-button>
 			</el-col>
 		</el-row>
 		<el-row type="flex" v-for="(costInfo,i) in costInfoList" :key="`costInfo-${i}`" align="middle">
@@ -54,7 +54,7 @@
 				
 				<el-button @click="showCommodityDialog(i)" size="mini" class="ml-10">选择应用商品</el-button>
 				
-				<el-button @click="deleteDiscount(costInfo)" size="mini" class="ml-10">删除</el-button>
+				<el-button @click="deleteDiscount(costInfo,i)" size="mini" class="ml-10">删除</el-button>
 		</el-row>
 		<el-row type="flex" justify="space-between" class="my-10">
 			<el-col :span="12">
@@ -167,6 +167,14 @@
 				<el-button @click="add">确定</el-button>
 			</el-form>
 		</cl-dialog>
+		<cl-dialog :visible.sync="addCostLineDialog" title="添加折扣">
+			<el-form label-width="100px">
+				<el-form-item label="折扣">
+					<el-input size="mini" style="width:120px" type="number" v-model="addCostLineDialogRate"></el-input>
+				</el-form-item>
+ 				<el-button @click="addCostLine">确定</el-button>
+			</el-form>
+		</cl-dialog>
 		<cl-dialog :visible.sync="commodityVisible">
 			<CommodityDialog 
 				@refresh="updateCommodityDiscount" 
@@ -204,6 +212,8 @@ export default {
 					//commodityId
 				}
 			],
+			addCostLineDialog:false,
+			addCostLineDialogRate:0,
 			dialog: false,
 			globalConfig: {
 				scoreCostRatio: '',
@@ -255,7 +265,7 @@ export default {
 		await this.getGlobalConfig();
 	},
 	methods: {
-		async deleteDiscount({discountId}){
+		async deleteDiscount({discountId},i){
 			let flag = await this.$confirm('是否删除折扣？折扣商品将恢复原价。', '提示', {
 				confirmButtonText: '确定',
 				cancelButtonText: '取消',
@@ -323,20 +333,35 @@ export default {
 			this.costInfoIndex = i;
 			this.commodityVisible=true;
 		},
-		addCostLine() {
-			if (this.costInfoList.length>0){
-				let costInfoLast = this.costInfoList[this.costInfoList.length-1];
-				if (costInfoLast.value!="" || Number(costInfoLast.value)!=100) {
-					this.costInfoList.push({
-						value:100
-					})
-				}
-			}
-			else {
-				this.costInfoList.push({
-					value:100
-				})
-			}
+		async addCostLine() {
+			this.costInfoList.push({
+				rate:this.addCostLineDialogRate,
+				value:100,
+				commodityId:"",
+			})
+			await this.$service.app.discount.createDiscount({
+				discountList:this.costInfoList
+			});
+			this.addCostLineDialog = false
+			let discountInfo = await this.$service.app.discount.list();
+			this.costInfoList = discountInfo;
+			// if (this.costInfoList.length>0){
+			// 	let costInfoLast = this.costInfoList[this.costInfoList.length-1];
+			// 	if (costInfoLast.value!="" || Number(costInfoLast.value)!=100) {
+			// 		this.costInfoList.push({
+			// 			value:100,
+			// 			commodityId:"",
+			// 			rate:0
+			// 		})
+			// 	}
+			// }
+			// else {
+			// 	this.costInfoList.push({
+			// 		value:100,
+			// 		commodityId:"",
+			// 			rate:0
+			// 	})
+			// }
 		},
 		// 合并第一列
 		objectSpanMethod({ row, column, rowIndex, columnIndex }) {

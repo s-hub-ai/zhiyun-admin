@@ -244,6 +244,16 @@
 						<span v-if="detail.drawback">{{ detail.drawback.updateTime |default }}</span>
 					</el-form-item>
 				</div>
+				<h3 class="my-3">备注</h3>
+				<div class="mb-3">
+					<el-input
+						type="textarea"
+						:rows="3"
+						placeholder="请输入内容"
+						v-model="detail.businessRemark">
+					</el-input>
+				</div>
+				<el-button type="primary" @click="updateRemark">修改备注</el-button>
 			</el-form>
 		</el-dialog>
 	</cl-crud>
@@ -635,6 +645,13 @@ export default {
 			}
 		},
 		//获取详情
+		async updateRemark(){
+			this.$service.app.order.update({
+				id:this.detail.id,
+				businessRemark:this.detail.businessRemark
+			})
+			this.$message.success('保存成功')
+		},
 		async getEditInfo(id) {
 			try {
 				let res = await this.$service.app.order.info({
