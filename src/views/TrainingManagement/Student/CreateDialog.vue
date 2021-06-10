@@ -144,7 +144,7 @@ export default {
 				trainDate:[{required: true, message: '请填写开始训练日期'}],
 				phoneNumArray:[{required: true, message: '请填写家长手机号'},{trigger:'blur',validator:phoneArrayRule}],
 				address:[{required: true, message: '请填写归属地'}],
-				school:[{required: true, message: '请填写学籍'}],
+				// school:[{required: true, message: '请填写学籍'}],
 				identityCardNumber:[{required: true, message: '请填写'}]
 				
 			},
@@ -157,33 +157,21 @@ export default {
 			this.$refs[formName].validate(async (valid) => {		 
 				if (valid) {
 					let values = this.ruleForm.school;
-					console.log("values")
-					console.log(values)
-					if (values.length<5){
-						alert("请选择学籍")
-						return;
+					if(values && values.length>4){
+						try{
+							let province = this.schoolTree.find(x=>x.value==values[0])
+							let city = province.children.find(x=>x.value==values[1])
+							let county = city.children.find(x=>x.value==values[2])
+							let town = county.children.find(x=>x.value==values[3])
+							let school = town.children.find(x=>x.value==values[4])
+							this.ruleForm.school=`${province.extra},${city.extra},${county.extra},${town.extra},${school.extra}`
+						}
+						catch(e) {
+						} 
 					}
-					
-					
-					try{
-						let province = this.schoolTree.find(x=>x.value==values[0])
-						let city = province.children.find(x=>x.value==values[1])
-						let county = city.children.find(x=>x.value==values[2])
-						let town = county.children.find(x=>x.value==values[3])
-						let school = town.children.find(x=>x.value==values[4])
-						this.ruleForm.school=`${province.extra},${city.extra},${county.extra},${town.extra},${school.extra}`
-					}
-					catch(e) {
-						alert("请选择学籍")
-						return;
-					}
-					
 					let params = {
 						...this.ruleForm
 					};
-					console.log("this.ruleForm")
-					console.log(this.ruleForm)
-					
 					try{
 						if (params.id) {
 							await this.$service.training.student.update(params);
@@ -207,15 +195,17 @@ export default {
 				}
 			});
 		},
-		async getSchoolTree(){
+		async getSchoolTree(id){
 			this.schoolTree = await this.$service.training.schoolInfo.listSchoolTree();
-			let values = this.ruleForm.school.split(",")
-			let province = this.schoolTree.find(x=>x.extra==Number(values[0]))
-			let city = province.children.find(x=>x.extra==Number(values[1]))
-			let county = city.children.find(x=>x.extra==Number(values[2]))
-			let town = county.children.find(x=>x.extra==Number(values[3]))
-			let school = town.children.find(x=>x.extra==Number(values[4]))
-			this.ruleForm.school = [province.value, city.value, county.value, town.value, school.value]
+			if(id){
+				let values = this.ruleForm.school.split(",")
+				let province = this.schoolTree.find(x=>x.extra==Number(values[0]))
+				let city = province.children.find(x=>x.extra==Number(values[1]))
+				let county = city.children.find(x=>x.extra==Number(values[2]))
+				let town = county.children.find(x=>x.extra==Number(values[3]))
+				let school = town.children.find(x=>x.extra==Number(values[4]))
+				this.ruleForm.school = [province.value, city.value, county.value, town.value, school.value]
+			}
 			
 		},
 		async getEditInfo(id) {
@@ -225,11 +215,7 @@ export default {
 				this.ruleForm.birthday = moment(res.birthday).format('YYYY/MM/DD')
 				this.ruleForm.trainDate = moment(res.trainDate).format('YYYY/MM/DD')
 				
-				
-				// console.log("this.ruleForm.school")
-				// console.log(this.ruleForm)
-				// console.log(values)
-				// console.log(this.ruleForm.school)
+		 		
 			} catch (error) {
 				this.$message.error(error);
 			}

@@ -54,11 +54,11 @@ export default {
 					label: '商品名称',
 					prop: 'commodityName'
 				},
-				{
-					label: '规格详情',
-					align: 'left',
-					prop: 'skus'
-				},
+				// {
+				// 	label: '规格详情',
+				// 	align: 'left',
+				// 	prop: 'skus'
+				// },
 				{
 					label: '今日销售',
 					align: 'center',
@@ -249,8 +249,10 @@ export default {
 	methods: {
 		onLoad({ ctx, app }) {
 			ctx.service(this.$service.app.count).done();
-
-			app.refresh();
+	
+			app.refresh({
+				size:100
+			});
 		}
 	}
 };

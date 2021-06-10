@@ -28,6 +28,7 @@
 			<cl-table :columns="tableColumn" :props="{ height: '70vh' }">
 				<template #column-denominationalValue="{ scope }">
 					<div v-if="scope.row.couponType == 4">满{{ scope.row.fullNum }}减{{ scope.row.reduceNum }}</div>
+					<div v-if="scope.row.couponType == 5">满{{ scope.row.fullNum }}减{{ scope.row.reduceNum }}</div>
 					<div v-if="scope.row.couponType == 1">立减{{ scope.row.denominationalValue }}</div>
 					<div v-if="scope.row.couponType == 3">商品立减{{ scope.row.denominationalValue }}</div>
 					<div v-if="scope.row.couponType == 2">{{ scope.row.costRatio }}折</div>

@@ -644,8 +644,24 @@ export default {
 		this.vipLevelCheckbox = vipLevelDict.map((v) => v.value);
 		this.zhiyunCardStatusCheckbox = zhiyunCardStatusDict.map((v) => v.value);
 		this.trainingStatusCheckbox = trainingStatusDict.map((v) => v.value);
+		this.pushClubList()
+		
 	},
 	methods: {
+		async pushClubList(){
+			let list = await this.$service.app.fanClub.list()
+			const item = {
+				label: '所属球迷会',
+				formType: 'radio',
+				required: true,
+				value: 'fanClub',
+				selectList: list.map(el=>({
+					label:el.fanClubName,
+					value:el.id
+				}))
+			};
+			this.infoFieldList.push(item)
+		},
 		//编辑
 		async getEditInfo(id) {
 			try {

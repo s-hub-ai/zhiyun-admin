@@ -203,16 +203,15 @@ export default {
 	},
 	mounted(){
 		this.getClassOrTeam();
-		console.log(this.$service.training.student.permission)
 	},
 	methods: {
 		//编辑
 		editDialog(id) {
 			this.addDialogTitle = '编辑';
 			this.addDialogShow = true;
-			this.$nextTick(() => {
-				this.$refs.editDialog.getEditInfo(id);
-				this.$refs.editDialog.getSchoolTree();
+			this.$nextTick(async () => {
+				await this.$refs.editDialog.getEditInfo(id);
+				await this.$refs.editDialog.getSchoolTree(id);
 			});
 		},
 		//删除

@@ -154,8 +154,6 @@ export default {
 		},
 
 		_accept() {
-			console.log(this.listType);
-			console.log(this.accept);
 			if (this.accept) {
 				return this.accept;
 			} else {

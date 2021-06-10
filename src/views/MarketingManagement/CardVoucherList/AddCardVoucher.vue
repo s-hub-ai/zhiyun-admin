@@ -8,7 +8,8 @@
 							{ value: 4, text: '满减券' },
 							{ value: 1, text: '立减券' },
 							{ value: 2, text: '折扣券' },
-							{ value: 3, text: '指定商品立减券' }
+							{ value: 3, text: '指定商品立减券' },
+							{ value: 5, text: '指定商品满减券' },
 						]"
 						:key="item.value"
 						:label="item.text"
@@ -20,7 +21,7 @@
 			<el-form-item label="卡券名称" prop="couponName">
 				<el-input v-model="ruleForm.couponName" placeholder="请输入卡券名称" :maxlength="30" show-word-limit> </el-input>
 			</el-form-item>
-			<div v-if="ruleForm.couponType == 4" style="display: flex">
+			<div v-if=" [4,5].includes( ruleForm.couponType ) " style="display: flex">
 				<el-form-item label="达标金额" prop="fullNum">
 					<el-input-number v-model="ruleForm.fullNum" controls-position="right" :min="0.1"></el-input-number>
 				</el-form-item>
@@ -29,14 +30,14 @@
 					<el-input-number v-model="ruleForm.reduceNum" controls-position="right" :min="0.1"></el-input-number>
 				</el-form-item>
 			</div>
-			<el-form-item v-if="ruleForm.couponType == 1 || ruleForm.couponType == 3" label="卡券面值" prop="denominationalValue">
+			<el-form-item v-if="[1,3].includes(ruleForm.couponType)" label="卡券面值" prop="denominationalValue">
 				<el-input-number v-model="ruleForm.denominationalValue" controls-position="right" :min="0.1"></el-input-number>
 			</el-form-item>
 			<el-form-item v-if="ruleForm.couponType == 2" label="折扣率" prop="costRatio">
 				<el-input-number v-model="ruleForm.costRatio" controls-position="right" :min="0.1" :max="10" :precision="1" :step="0.1"></el-input-number>
 				<span style="padding-left: 10px">折</span>
 			</el-form-item>
-			<el-form-item v-if="ruleForm.couponType == 3" label="选择商品" prop="commodityId">
+			<el-form-item v-if="[3,5].includes(ruleForm.couponType)" label="选择商品" prop="commodityId">
 				<el-select v-model="ruleForm.commodityId" placeholder="请选择" popper-class="commodity-option" filterable>
 					<el-option v-for="item in commodityList" :key="item.id" :label="item.commodityName" :value="item.id">
 						<div style="display: flex; justify-content: space-between; width: 100%; padding: 2px 0; align-items: flex-start">
@@ -334,7 +335,7 @@ export default {
 		//
 		async couponTypeChange(e) {
 			//商品立减券
-			if (e == 3) {
+			if ([3,5].includes(e)) {
 				let res = await this.$service.app.commodity.common.list();
 				this.commodityList = res;
 			}
@@ -373,6 +374,9 @@ export default {
 						let params = {
 							...this.ruleForm
 						};
+						if([2,4,5].includes(params.couponType)){
+							delete params.denominationalValue
+						}
 						if (params.userType == 2) {
 							let isNull = true;
 							for (const key in this.userArgs) {
