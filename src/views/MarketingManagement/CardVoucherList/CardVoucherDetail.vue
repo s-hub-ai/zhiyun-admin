@@ -8,7 +8,7 @@
 				<span>{{ formatCouponType(ruleForm.couponType) }}</span>
 			</el-form-item>
 			<el-form-item class="form-item" label="卡券面值:">
-				<div v-if="ruleForm.couponType == 4">满{{ ruleForm.fullNum }}减{{ ruleForm.reduceNum }}</div>
+				<div v-if="[4,5].includes(ruleForm.couponType)">满{{ ruleForm.fullNum }}减{{ ruleForm.reduceNum }}</div>
 				<div v-if="ruleForm.couponType == 1">立减{{ ruleForm.denominationalValue }}</div>
 				<div v-if="ruleForm.couponType == 3">商品立减{{ ruleForm.denominationalValue }}</div>
 				<div v-if="ruleForm.couponType == 2">{{ ruleForm.costRatio }}折</div>
