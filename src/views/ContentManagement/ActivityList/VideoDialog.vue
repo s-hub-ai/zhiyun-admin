@@ -1,6 +1,7 @@
 <template>
-     <el-button  size="mini" @click="show=true" type="text">
-            <span>查看视频</span>
+     <el-button  size="mini" :disabled="!url" @click="show=true" type="text">
+            <span v-if="url">查看视频</span>
+            <span v-else>无</span>
             <el-dialog title="视频" :visible.sync="show" append-to-body>
                 <div v-if="show">
                 <video controls width="100%" style="max-height:60vh">
