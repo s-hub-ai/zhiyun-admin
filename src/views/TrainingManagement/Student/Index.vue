@@ -189,7 +189,7 @@ export default {
 				{
 					label: '班级/球队',
 					prop:'joinClass',
-					align: 'center',
+					align: 'center'
 				},
 				{
 					label: '操作',
@@ -203,15 +203,15 @@ export default {
 	},
 	mounted(){
 		this.getClassOrTeam();
-		console.log(this.$service.training.student.permission)
 	},
 	methods: {
 		//编辑
 		editDialog(id) {
 			this.addDialogTitle = '编辑';
 			this.addDialogShow = true;
-			this.$nextTick(() => {
-				this.$refs.editDialog.getEditInfo(id);
+			this.$nextTick(async () => {
+				await this.$refs.editDialog.getEditInfo(id);
+				await this.$refs.editDialog.getSchoolTree(id);
 			});
 		},
 		//删除
@@ -256,10 +256,13 @@ export default {
 			console.log(query)
 			this.$refs.crud.refresh({...query});
         },
-        addDialog() {
+    addDialog() {
 			this.addDialogTitle = '新增学员';
 			this.addDialogShow = true;
-        },
+			this.$nextTick(() => {
+				this.$refs.editDialog.getSchoolTree();
+			});
+    },
         addDialogClose() {
 			this.$refs.editDialog.resetForm('ruleForm');
 			this.$refs.editDialog.ruleForm = {};

@@ -50,7 +50,7 @@ export default {
         detail:{},
         detailQuery:{
             studentId:vm.id,
-            year:new Date().getFullYear(),
+            year:new Date().getFullYear()
         },
         years:years()
     }),

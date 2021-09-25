@@ -22,7 +22,7 @@
 
 		<el-row type="flex">
 			<cl-flex1></cl-flex1>
-			<!-- 	<cl-pagination></cl-pagination> -->
+			<cl-pagination></cl-pagination>
 		</el-row>
 
 		<!-- 新增编辑弹出框 -->

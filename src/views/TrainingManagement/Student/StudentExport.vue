@@ -46,7 +46,8 @@ export default {
 				 '家长手机号码':el.phoneNumArray,
 				 '归属地':addressDict.find( e=>e.value==el['address'])?.text || '未设置',
 				 '学籍':el.school,
-				 '身份证号':el.identityCardNumber
+				 '身份证号':el.identityCardNumber,
+				 '班级':el.classroom.map(el=>el.name).join(',')
 			}));
 			var ws = XLSX.utils.json_to_sheet(data);
 			/* 获取二进制字符串作为输出 */

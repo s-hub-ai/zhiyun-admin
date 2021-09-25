@@ -182,11 +182,11 @@ export const orderStatusDict = [{
     value: 7,
     type: "danger"
   },
-  {
-    text: "订单关闭",
-    value: 6,
-    type: "close"
-  }
+  // {
+  //   text: "订单关闭",
+  //   value: 6,
+  //   type: "close"
+  // }
 ];
 //卡券类型
 export const couponTypeDict = [{
@@ -204,7 +204,11 @@ export const couponTypeDict = [{
 }, {
   value: 3,
   text: '商品指定立减券'
-}]
+} , {
+  value: 5,
+  text: '指定商品满减券'
+}
+]
 //用户会员等级
 export const vipLevelDict = [{
   value: 0,

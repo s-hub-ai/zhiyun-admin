@@ -10,6 +10,7 @@
 		</div>
 		<div class="flex items-center my-3">
 			<div class="w-32 text-right text-gray-700">商城购物：</div>
+			
 			<div class="pl-5 flex items-center"><el-input v-model="globalConfig.scoreDeductionRatio" class="w-10 mr-2"></el-input> %</div>
 		</div>
 		<div class="flex items-center my-3">
@@ -36,13 +37,51 @@
 			<div class="w-32 text-right text-gray-700">支云卡用户套票购买额外奖励:</div>
 			<div class="pl-5 flex items-center"><el-input v-model="globalConfig.packageTicketscoreRewardRatioZy" class="w-10 mr-2"></el-input> %</div>
 		</div>
-
+		
+		<el-row type="flex" justify="space-between" class="my-10">
+			<el-col :span="12">
+				<h4>折扣设置</h4>
+			</el-col>
+			<el-col :span="12">
+				<el-button size="mini" @click="addCostLineDialog=true" >添加折扣</el-button>
+			</el-col>
+		</el-row>
+		<el-row type="flex" v-for="(costInfo,i) in costInfoList" :key="`costInfo-${i}`" align="middle">
+			
+				<div class="w-32 text-right text-gray-700">折扣{{i+1}}:</div>
+				
+				<div class="pl-5 flex items-center"><el-input min="1" max="100" type="number" v-model="costInfo.rate" class="w-10 mr-2" size="mini"></el-input> %</div>
+				
+				<el-button @click="showCommodityDialog(i)" size="mini" class="ml-10">选择应用商品</el-button>
+				
+				<el-button @click="deleteDiscount(costInfo,i)" size="mini" class="ml-10">删除</el-button>
+		</el-row>
+		<el-row type="flex" justify="space-between" class="my-10">
+			<el-col :span="12">
+				<h4>自提点设置</h4>
+			</el-col>
+			<el-col :span="12">
+				<el-button size="mini" @click="addPkStation" >添加自提点</el-button>
+			</el-col>
+		</el-row>
+		<el-row type="flex" v-for="(pkStation,i) in pkStationList" :key="`pkStation-${i}`" align="middle">
+			
+				<div class="w-32 text-right text-gray-700">自提点{{i+1}}:</div>
+				
+				<div class="pl-5 flex items-center"><el-input v-model="pkStation.fullName" placeholder="全称" class="w-10 mr-2" size="mini"></el-input></div>
+			
+				<div class="pl-5 flex items-center"><el-input v-model="pkStation.name" placeholder="简称" class="w-10 mr-2" size="mini"></el-input></div>
+				
+				<el-button @click="deletePkStation(i)" size="mini" class="ml-10">删除</el-button>
+			
+		</el-row>
+		
 		<el-row
 			v-permission="{
 				or: [$service.app.commodity.deliveryCharge.permission.add, $service.app.commodity.deliveryCharge.permission.update, $service.app.commodity.deliveryCharge.permission.delete]
 			}"
 		>
-			<div style="display: flex; align-items: center；margin-bottom: 10px;margin-top: 20px;">
+			<div style="display: flex; align-items: center; margin-bottom: 10px;margin-top: 20px;">
 				<h4>运费设置</h4>
 				<cl-refresh-btn style="margin-left: 10px"></cl-refresh-btn>
 				<el-button size="mini" @click="dialog = true">新增</el-button>
@@ -128,14 +167,53 @@
 				<el-button @click="add">确定</el-button>
 			</el-form>
 		</cl-dialog>
+		<cl-dialog :visible.sync="addCostLineDialog" title="添加折扣">
+			<el-form label-width="100px">
+				<el-form-item label="折扣">
+					<el-input size="mini" style="width:120px" type="number" v-model="addCostLineDialogRate"></el-input>
+				</el-form-item>
+ 				<el-button @click="addCostLine">确定</el-button>
+			</el-form>
+		</cl-dialog>
+		<cl-dialog :visible.sync="commodityVisible">
+			<CommodityDialog 
+				@refresh="updateCommodityDiscount" 
+				:index="costInfoIndex" 
+				:costInfoList="costInfoList"
+				/>
+		</cl-dialog>
 	</cl-crud>
 </template>
 
 <script>
+import CommodityDialog from "./commodityDialog.vue"
 export default {
+	components: {
+		CommodityDialog
+	},
 	name: 'deliverCharge',
 	data() {
 		return {
+			
+			pkStationList: [
+				{
+					fullName: '',
+					name: ''
+				}
+			],
+			commodityVisible: false,
+			costPanel: false,
+			//costInfoId: null,
+			costInfoIndex: 0,
+			costInfoList: [
+				{
+					rate:100
+					//discountId:
+					//commodityId
+				}
+			],
+			addCostLineDialog:false,
+			addCostLineDialogRate:0,
 			dialog: false,
 			globalConfig: {
 				scoreCostRatio: '',
@@ -183,10 +261,108 @@ export default {
 			]
 		};
 	},
-	created() {
-		this.getGlobalConfig();
+	async created() {
+		await this.getGlobalConfig();
 	},
 	methods: {
+		async deleteDiscount({discountId},i){
+			let flag = await this.$confirm('是否删除折扣？折扣商品将恢复原价。', '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			})
+			if(flag){
+				await this.$service.app.discount.deleteDiscount({
+					discountId,
+				})
+				this.$message.success('删除成功');
+			  await this.getGlobalConfig()
+			}
+		},
+		async deletePkStation(i) {
+			console.log("delete i")
+			console.log(i)
+			console.log(this.pkStationList)
+			if (this.pkStationList.length>0){
+				if (confirm("确定删除吗")) {
+					 
+					
+					await this.$service.app.pkStation.update({
+						id: this.pkStationList[i].pkStationId,
+						isDeleted: 1
+					})
+					this.pkStationList.splice(i,i+1);
+				}
+				
+				
+			}
+			
+		},
+		addPkStation() {
+			if (this.pkStationList.length>0) {
+				let pkStation = this.pkStationList[this.pkStationList.length-1];
+				if (!(pkStation.fullName == "" && pkStation.name == "")) {
+					this.pkStationList.push({
+						fullName: "",
+						name: ""
+					})
+				}
+			}
+			else {
+				this.pkStationList.push({
+					fullName: "",
+					name: ""
+				})
+			}
+		},
+		//[{index, commodityId}]
+		updateCommodityDiscount(discountInfo) {
+			let costInfo = this.costInfoList[discountInfo.index];
+			
+			//let discountId = costInfo.discountId;
+			let commodityId = discountInfo.commodityId;
+			//let rate = costInfo.rate;
+			costInfo.commodityId = commodityId;
+			
+			this.commodityVisible=false;
+		},
+		showCommodityDialog(i) {
+			let costInfo = this.costInfoList[i];
+			//let id = costInfo.discountId;
+			///this.costInfoId = id;
+			this.costInfoIndex = i;
+			this.commodityVisible=true;
+		},
+		async addCostLine() {
+			this.costInfoList.push({
+				rate:this.addCostLineDialogRate,
+				value:100,
+				commodityId:"",
+			})
+			await this.$service.app.discount.createDiscount({
+				discountList:this.costInfoList
+			});
+			this.addCostLineDialog = false
+			let discountInfo = await this.$service.app.discount.list();
+			this.costInfoList = discountInfo;
+			// if (this.costInfoList.length>0){
+			// 	let costInfoLast = this.costInfoList[this.costInfoList.length-1];
+			// 	if (costInfoLast.value!="" || Number(costInfoLast.value)!=100) {
+			// 		this.costInfoList.push({
+			// 			value:100,
+			// 			commodityId:"",
+			// 			rate:0
+			// 		})
+			// 	}
+			// }
+			// else {
+			// 	this.costInfoList.push({
+			// 		value:100,
+			// 		commodityId:"",
+			// 			rate:0
+			// 	})
+			// }
+		},
 		// 合并第一列
 		objectSpanMethod({ row, column, rowIndex, columnIndex }) {
 			if (columnIndex === 0) {
@@ -204,6 +380,28 @@ export default {
 				let data = await this.$service.app.commodity.globalConfig.info();
 				Object.assign(this.globalConfig, data);
 				this.deliveryMethod = data.deliveryMethod.split(',');
+				let discountInfo = await this.$service.app.discount.list();
+				console.log("discountInfo")
+				console.log(discountInfo)
+				this.costInfoList = discountInfo;
+				this.pkStationList=[];
+				let _pkInfo = await this.$service.app.pkStation.page({
+					size: 99999,
+					page: 1,
+					sort: '',
+					isDeleted: 0
+				});
+				console.log(_pkInfo)
+				let _pkStationList = _pkInfo.list;
+				for (let i in _pkStationList) {
+					this.pkStationList.push({
+						pkStationId: _pkStationList[i].id,
+						fullName: _pkStationList[i].fullName,
+						name: _pkStationList[i].name
+					})
+				}
+				console.log("pkStationList")
+				console.log(this.pkStationList)
 			} catch (error) {
 				this.$message.error(error);
 			}
@@ -213,9 +411,47 @@ export default {
 			let data = Object.assign(this.globalConfig, {
 				deliveryMethod: this.deliveryMethod.join(',')
 			});
-			console.log(data);
+			
 			try {
 				await this.$service.app.commodity.globalConfig.update(data);
+				
+				for (let i in this.costInfoList) {
+					this.costInfoList[i].rate = Number(this.costInfoList[i].rate)
+				}
+				for (let i in this.costInfoList) {
+					if (this.costInfoList[i].commodityId==null) {
+						this.costInfoList[i].commodityId = "";
+					}
+				}
+				for (let i in this.costInfoList) {
+					let costInfo = this.costInfoList[i];
+					if (!costInfo.rate || costInfo.rate=="") {
+						alert("需填写折扣率")
+						return;
+					}
+				}
+				for (let i in this.pkStationList) {
+					let pkStation = this.pkStationList[i];
+					if (!pkStation.name || pkStation.name == ""){
+						alert("需填写自提点简称")
+						return;
+					}
+				}
+				for (let i in this.pkStationList) {
+					let pkStation = this.pkStationList[i];
+					if (!pkStation.fullName || pkStation.fullName == ""){
+						alert("需填写自提点全称")
+						return;
+					}
+				}
+				console.log("submit")
+				console.log(this.costInfoList)
+				await this.$service.app.discount.createDiscount({
+					discountList:this.costInfoList
+				});
+				await this.$service.app.pkStation.createPkStation({
+					pkStationList: this.pkStationList
+				})
 				this.$message.success('修改成功');
 			} catch (error) {
 				this.$message.error(error);
@@ -225,6 +461,7 @@ export default {
 			let res = await this.$service.app.commodity.deliveryCharge.add({
 				...this.ruleForm
 			});
+			
 			this.dialog = false;
 		},
 		async update(v) {
@@ -232,6 +469,7 @@ export default {
 			let res = await this.$service.app.commodity.deliveryCharge.update({
 				...v
 			});
+			
 			this.editing = '';
 		},
 		onLoad({ ctx, app }) {
@@ -251,5 +489,12 @@ export default {
 <style lang="scss" scoped>
 ::v-deep.cl-crud {
 	overflow-y: auto !important;
+}
+.my-10 {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+.ml-10 {
+	margin-left: 30px;
 }
 </style>

@@ -36,7 +36,7 @@
 				</el-form-item>
 				<el-form-item class="form-item" label-width="10px">
 					<el-input v-model="ruleForm.bannerLinkUrl" placeholder="请填写链接地址">
-						<template slot="prepend">https://</template>
+						<!--<template slot="prepend">https://</template>-->
 					</el-input>
 				</el-form-item>
 			</div>
@@ -108,6 +108,7 @@ export default {
 					try {
 						let params = {
 							...this.ruleForm
+							
 						};
 						if (params.id) {
 							await this.$service.app.carousel.update(params);

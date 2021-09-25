@@ -1,9 +1,10 @@
 <template>
-     <el-button  size="mini" @click="show=true" type="text">
-            <span>查看图片</span>
+     <el-button  size="mini" :disabled="!url" @click="show=true" type="text">
+            <span v-if="url">查看图片</span>
+            <span v-else>无</span>
             <el-dialog title="图片" :visible.sync="show" width="600px" append-to-body>
                 <div v-if="show">
-                     <el-image :src="url" style="max-height:60vh"></el-image>
+                     <el-image  :src="url" style="max-height:60vh"></el-image>
                 </div>
             </el-dialog>
         </el-button>

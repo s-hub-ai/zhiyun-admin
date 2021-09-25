@@ -91,9 +91,9 @@ export default {
 	methods: {
 		isDisabledEndDate(time){
             let t = time.getTime();
-            let min = new Date(this.ruleForm.trainingStartTime).getTime(),
-                max = moment(this.ruleForm.trainingStartTime).add(1, 'years').valueOf()
-            return t>max || t<min
+            let min = new Date(this.ruleForm.trainingStartTime).getTime();
+                // max = moment(this.ruleForm.trainingStartTime).add(1, 'years').valueOf()
+            return t<min
         },
 		submitForm(formName) {
 			this.$refs[formName].validate(async (valid) => {

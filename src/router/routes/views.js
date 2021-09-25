@@ -2,7 +2,7 @@
 
 export default [{
 		path: "/",
-		name: "数据统计",
+		name: "欢迎使用",
 		component: () => import("@/Home.vue")
 	},
 	{

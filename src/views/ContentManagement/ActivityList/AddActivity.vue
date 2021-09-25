@@ -16,11 +16,18 @@
 				<el-radio :label="1">青训活动</el-radio>
 			</el-radio-group>
 		</el-form-item>
-		<el-form-item label="活动封面" prop="activityCover">
-			<cl-upload :value="ruleForm.activityCover" accept="image/*" class="avatar-uploader" :size="[150, 150]" icon="el-icon-plus" :on-success="activityCoverUploadSuccess"></cl-upload>
+		<el-form-item label="活动封面" prop="activityCover" :rules="ruleForm.isType==0?ruleActivityCover:null">
+			<cl-upload 
+				:value="ruleForm.activityCover" 
+				accept="image/*" 
+				class="avatar-uploader" 
+				:size="[150, 150]" 
+				icon="el-icon-plus" 
+				:on-success="activityCoverUploadSuccess">
+			</cl-upload>
 			<div class="tips">限上传1张</div>
 		</el-form-item>
-		<el-form-item style="width: 100%" label="活动图片" prop="activityBanner">
+		<el-form-item style="width: 100%" label="活动图片" prop="activityBanner" :rules="ruleForm.isType==0?ruleActivityBanner:null">
 			<cl-upload
 				multiple
 				:limit="5"
@@ -261,9 +268,9 @@
 		<el-dialog width="30%" title="添加字段" :visible.sync="infoFieldDialog" append-to-body @close="resetInfoField('infoForm')">
 			
 			<el-form :model="infoForm" :inline="false" :rules="infoRules" ref="infoForm" label-width="100px" class="demo-ruleForm">
-				<el-form-item label="英文名称" prop="value">
+				<!--<el-form-item label="英文名称" prop="value">
 					<el-input size="medium" placeholder="请输入内容" v-model="infoForm.value"> </el-input>
-				</el-form-item>
+				</el-form-item>-->
 				<el-form-item label="中文名称" prop="label">
 					<el-input size="medium" placeholder="请输入内容" v-model="infoForm.label"> </el-input>
 				</el-form-item>
@@ -308,7 +315,7 @@ import XLSX from 'xlsx';
 import {couponTypeDict, ticketPackageUserDict, useCcertificationDict, vipLevelDict, zhiyunCardStatusDict, trainingStatusDict} from '@/dict/index.js';
 import bdMap from './map';
 import {arrDistinctByProp} from '@/utils';
-
+import {v1} from 'uuid';
 export default {
 	components: {
 		bdMap
@@ -429,10 +436,12 @@ export default {
 					label:'协议',
 					value:'pact',
 					fileList:[
-						{file:'',
-						title:'',}
+						{
+							file:'',
+							title:''
+						}
 					],
-					required:true,
+					required:true
 				}
 			],
 			infoForm: {
@@ -478,6 +487,20 @@ export default {
 					}
 				]
 			},
+			ruleActivityCover: [
+				{
+					required: true,
+					message: '请上传活动封面',
+					trigger: 'blur'
+				}
+			],
+			ruleActivityBanner: [
+				{
+					required: true,
+					message: '请上传活动图片',
+					trigger: 'blur'
+				}
+			],
 			rules: {
 				awardIntegral: [
 					{
@@ -500,6 +523,7 @@ export default {
 						trigger: 'blur'
 					}
 				],
+				/*
 				activityCover: [
 					{
 						required: true,
@@ -514,6 +538,7 @@ export default {
 						trigger: 'blur'
 					}
 				],
+				*/
 				title: [
 					{
 						required: true,
@@ -619,8 +644,24 @@ export default {
 		this.vipLevelCheckbox = vipLevelDict.map((v) => v.value);
 		this.zhiyunCardStatusCheckbox = zhiyunCardStatusDict.map((v) => v.value);
 		this.trainingStatusCheckbox = trainingStatusDict.map((v) => v.value);
+		this.pushClubList()
+		
 	},
 	methods: {
+		async pushClubList(){
+			let list = await this.$service.app.fanClub.list()
+			const item = {
+				label: '所属球迷会',
+				formType: 'radio',
+				required: true,
+				value: 'fanClub',
+				selectList: list.map(el=>({
+					label:el.fanClubName,
+					value:el.id
+				}))
+			};
+			this.infoFieldList.push(item)
+		},
 		//编辑
 		async getEditInfo(id) {
 			try {
@@ -692,6 +733,18 @@ export default {
 			this.$refs[formName].validate(async (valid) => {
 				if (valid) {
 					try {
+						
+						//青训，采用默认图片
+						if (this.ruleForm.isType == 1){
+							if (this.ruleForm.activityCover=='') {
+								//this.ruleForm.activityCover="http://zhiyun-static.oss-cn-shanghai.aliyuncs.com/static/admin/activity/activityCoverDefault.png";
+								this.ruleForm.activityCover="";
+							}
+							if (this.ruleForm.activityBanner=='') {
+								//this.ruleForm.activityBanner="http://zhiyun-static.oss-cn-shanghai.aliyuncs.com/static/admin/activity/activityCoverDefault.png";
+								this.ruleForm.activityBanner="";
+							}
+						}
 						let params = {
 							...this.ruleForm
 						};
@@ -793,6 +846,7 @@ export default {
 					this.infoFieldList[i] = {...this.infoForm};
 					this.infoFieldDialog = false
 				}else{
+					this.infoForm.value = v1();
 					let form = {...this.infoForm }
 					if (valid) {
 						if(['radio','checkbox'].includes(form.formType)){

@@ -2,7 +2,7 @@
 	<div class="system-user">
 		<div class="pane">
 			<!-- 组织架构 -->
-			<div class="dept scroller1" :class="[dept.expand ? '_expand' : '_collapse']">
+			<div v-if="false" class="dept scroller1" :class="[dept.expand ? '_expand' : '_collapse']">
 				<div class="header">
 					<div>组织架构</div>
 
@@ -49,10 +49,10 @@
 			<!-- 成员列表 -->
 			<div class="user">
 				<div class="header">
-					<div class="icon" @click="deptExpand">
+					<!-- <div class="icon" @click="deptExpand">
 						<i class="el-icon-arrow-left" v-if="dept.expand"></i>
 						<i class="el-icon-arrow-right" v-else></i>
-					</div>
+					</div> -->
 
 					<span>成员列表</span>
 				</div>

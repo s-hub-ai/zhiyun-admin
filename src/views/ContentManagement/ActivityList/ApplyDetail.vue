@@ -32,6 +32,9 @@
 				<template #[`column-${slot.name}`]="{ scope }" v-for="slot in customSolts"> 
 					<VideoDialog v-if="slot.type == 'video'" :url="scope.row[slot.name]" :key="slot.name"/>
 					<ImageDialog v-if="slot.type == 'image'" :url="scope.row[slot.name]" :key="slot.name"/>
+					<span v-if="slot.type=='checkbox'" :key="slot.name">
+						{{scope.row[slot.name].join(',')}}
+					</span>
 				</template>
 
 				<template #column-pact="{ scope }"> 
@@ -60,7 +63,7 @@ import XLSX from 'xlsx';
 export default {
 	components:{
 		ImageDialog:()=>import('./ImageDialog'),
-		VideoDialog:()=>import('./VideoDialog'),
+		VideoDialog:()=>import('./VideoDialog')
 	},
 	data() {
 		let _this = this;
@@ -112,7 +115,11 @@ export default {
 				}
 				for (let i = 0; i < tableColumn.length; i++) {
 					const e2 = tableColumn[i];
-					obj[e2.label] = e[e2.prop];
+					if(e2.formType=='checkbox'){
+						obj[e2.label] = e[e2.prop].join(',');
+					}else{
+						obj[e2.label] = e[e2.prop];
+					};
 				}
 				delete obj['操作'];
 				console.log(obj);
@@ -243,9 +250,10 @@ export default {
 					let column = {
 						label: e.label,
 						prop: e.value,
-						align: 'center'
+						align: 'center',
+						formType:e.formType
 					};
-					if(['video','image'].includes(e.formType)){
+					if(['video','image',"checkbox"].includes(e.formType)){
 						this.customSolts.push({
 							type:e.formType,
 							name:e.value

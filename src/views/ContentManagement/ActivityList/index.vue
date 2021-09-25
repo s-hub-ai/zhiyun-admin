@@ -116,7 +116,7 @@ export default {
 			tableFlters: {
 				isClockin: '',
 				activityStatus: -1,
-				isType:-1,
+				isType:-1
 			},
 			tableColumn: [
 				{

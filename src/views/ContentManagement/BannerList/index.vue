@@ -113,6 +113,7 @@ export default {
 						}
 					}
 				},
+			
 				{
 					label: '类型',
 					prop: 'bannerLinkType',
@@ -126,6 +127,7 @@ export default {
 						}
 					}
 				},
+				
 				{
 					label: '状态',
 					prop: 'enableStauts',
