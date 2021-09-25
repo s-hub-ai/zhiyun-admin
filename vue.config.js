@@ -6,6 +6,10 @@ function resolve(dir) {
 	return path.join(__dirname, dir);
 }
 
+const testUrl = 'http://192.168.0.244:9004'
+// const testUrl = 'https://paytest.ryyes.com'
+const testTraning = 'http://192.168.0.244:7003'
+// const testTraning = 'https://paytest.ryyes.com/training/admin'
 module.exports = {
 	// publicPath: '/',
 	publicPath: '/admin/',
@@ -33,15 +37,14 @@ module.exports = {
 		},
 		proxy: {
 			'/dev': {
-				target: 'https://paytest.ryyes.com',
-				// target: "http://127.0.0.1:9004",
+				target: testUrl,
 				changeOrigin: true,
 				pathRewrite: {
-					'^/dev': '/api'
+					'^/dev': '/'
 				}
 			},
 			'/training': {
-				target: isProduction ? '/training/admin' : 'https://paytest.ryyes.com/training/admin',
+				target: isProduction ? '/training/admin' : testTraning,
 				// target: "http://127.0.0.1:7003",
 				changeOrigin: true,
 				pathRewrite: {
