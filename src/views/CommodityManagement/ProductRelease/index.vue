@@ -9,6 +9,9 @@
 			<el-tab-pane label="积分商品" name="2">
 				<integral-form v-permission="$service.app.commodity.score.permission.add" v-if="activeName == 2"></integral-form>
 			</el-tab-pane>
+			<el-tab-pane label="青训课程" name="3">
+				<TrainForm v-permission="$service.app.commodity.score.permission.add" v-if="activeName == 3"></TrainForm>
+			</el-tab-pane>
 		</el-tabs>
 	</el-card>
 </template>
@@ -20,7 +23,8 @@ import IntegralForm from '@/views/CommodityManagement/ProductRelease/IntegralFor
 export default {
 	components: {
 		MallForm,
-		IntegralForm
+		IntegralForm,
+		TrainForm:()=>import('./TrainForm.vue')
 	},
 	data() {
 		return {

@@ -18,7 +18,7 @@
 
 		<!-- 工具栏 -->
 		<ul class="layout-topbar__tools">
-			<notice />
+			<!-- <notice /> -->
 		</ul>
 
 		<!-- 用户信息 -->

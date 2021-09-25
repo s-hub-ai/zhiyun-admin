@@ -92,10 +92,20 @@
 						v-permission="{
 							or: [$service.app.commodity.shopping.permission.update, $service.app.commodity.score.permission.update]
 						}"
+	
 						type="text"
 						@click="(editing = scope.row), (editDialog = true)"
 						@cacnel="editing = null"
 						>编辑</el-button
+					>
+					<el-button
+						v-permission="{
+							or: [$service.app.commodity.shopping.permission.update, $service.app.commodity.score.permission.update]
+						}"
+						type="text"
+						@click="(editing = scope.row), (editTraning = true)"
+						@cacnel="editing = null"
+						>编辑3</el-button
 					>
 					<el-button
 						v-permission="{
@@ -118,6 +128,9 @@
 		<el-dialog :visible.sync="editDialog" title="编辑商品" width="900px" @close="addDialogClose">
 			<product-edit v-if="editDialog" :item="editing" @update="refresh" :addDialogShow.sync="editDialog" ref="editDialog"></product-edit>
 		</el-dialog>
+		<el-dialog :visible.sync="editTraning" title="编辑商品" width="900px" @close="addDialogClose">
+			<TaninEdit v-if="editTraning" :item="editing" @update="refresh" :addDialogShow.sync="editTraning" ref="editTraning"></TaninEdit>
+		</el-dialog>
 	</cl-crud>
 </template>
 
@@ -127,7 +140,8 @@ import { checkPerm } from '@/cool';
 import productEdit from './ProductEdit.vue';
 export default {
 	components: {
-		productEdit
+		productEdit,
+		TaninEdit:()=>import('./TaninEdit.vue')
 	},
 	data() {
 		return {
@@ -138,6 +152,7 @@ export default {
 				order: 'desc'
 			},
 			editDialog: false,
+			editTraning:false,
 			tableColumn: [
 				{
 					type: 'index',
@@ -368,7 +383,8 @@ export default {
 			});
 		},
 		addDialogClose() {
-			this.$refs.editDialog.resetForm('ruleForm');
+			try{this.$refs.editDialog.resetForm('ruleForm');}catch{}
+			try{this.$refs.editTraning.resetForm('ruleForm');}catch{}			
 			this.$refs['crud'].refresh();
 		}
 	}

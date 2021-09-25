@@ -1,6 +1,7 @@
 import Vue from "vue";
 import App from "./App.vue";
-import ElementUI from "element-ui";
+// import ElementUI from "element-ui";
+import './element'
 import {
 	bootstrap
 } from "@/cool/core";
@@ -14,9 +15,11 @@ import "@/icons/index";
 import "@/filter/index";
 import "@/assets/css/element-variables.scss";
 
+import infiniteScroll from 'vue-infinite-scroll'
+Vue.use(infiniteScroll)
 Vue.config.productionTip = false;
 
-Vue.use(ElementUI);
+// Vue.use(ElementUI);
 
 const conf = {
 	store,

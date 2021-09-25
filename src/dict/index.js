@@ -115,6 +115,10 @@ export const goodsTypeDict = [{
   {
     value: 2,
     text: '积分商品'
+  },
+  {
+    value: 4,
+    text: '青训课程'
   }
   /* {
   value: 1,
