@@ -226,10 +226,10 @@
 						<span >{{ detail.delivery.pkStation|default  }}</span>
 					</el-form-item>
 				</div>
-				<h3 style="margin-top: 45px">报名信息</h3>
-				<div>
-					<el-form-item class="form-item" label="发货时间:">
-						<span v-if="detail.delivery">{{ detail.delivery.deliveryTime|default }}</span>
+				<h3 style="margin-top: 45px" v-if="detail.infoField">报名信息</h3>
+				<div v-if="detail.infoField">
+					<el-form-item class="form-item" v-for="item in infos" :key="item.label" :label="item.label">
+						{{item.text}}
 					</el-form-item>
 				</div>
 				<h3 style="margin-top: 45px">售后信息</h3>
@@ -666,7 +666,20 @@ export default {
 				if (res.address) {
 					res.address.province = JSON.parse(res.address.province);
 					res.address.city = JSON.parse(res.address.city);
-					res.address.country = JSON.parse(res.address.country);
+					res.address.country = JSON.parse(res.address.country);					
+				}
+				const {formInfo,infoField} = res;
+				if(formInfo && infoField){
+					const info = JSON.parse(formInfo);
+					const fields = JSON.parse(infoField);
+					const infos = [];
+					fields.forEach(el=>{
+						infos.push({
+							label:el.label,
+							text:info[el.value]
+						})
+					});
+					this.infos = infos
 				}
 
 				this.detail = res;

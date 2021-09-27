@@ -146,6 +146,9 @@ export const orderTypeDict = [{
 }, {
   value: 4,
   text: '套票订单'
+}, {
+  value: 5,
+  text: '青训课程'
 }]
 //订单状态
 export const orderStatusDict = [{

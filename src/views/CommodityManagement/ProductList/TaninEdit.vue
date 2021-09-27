@@ -161,7 +161,8 @@
 		<h3>其他信息</h3>
 		<el-form-item label="填写信息">
 			<el-checkbox-group v-if="!editingInfoField" v-model="ruleForm.infoField" size="small" @change="infoFieldChange" > 
-				<el-checkbox v-for="(item, index) in infoFieldList" :key="index" :label="item.value" border>
+				<el-checkbox v-for="(item, index) in infoFieldList" :key="index" :label="item.value" border 
+				:disabled="requireField.includes(item.value)">
 					{{ infoFieldIndex(item) }}
 				</el-checkbox> 
 			</el-checkbox-group>
@@ -169,8 +170,10 @@
 				<div v-for="item in infoFieldList" :key="item.value" 
 					class="editing-items"> 
 					<span class="mr-2">{{item.label}}</span>
-					<el-button size="small" type="text"  @click="editField(item)">编辑</el-button> 
-					<el-button size="small" type="text"  @click="removeField(item)">删除</el-button> 
+						<template v-if="!requireField.includes(item.value)">
+						<el-button size="small" type="text"  @click="editField(item)">编辑</el-button> 
+						<el-button size="small" type="text"  @click="removeField(item)">删除</el-button> 
+					</template>
 				</div>
 
 			</div>
@@ -462,12 +465,14 @@ export default {
 				
 
 
-				infoField: [],
+				infoField:['name','sex','phone','height','weight','birthday','SchoolInfo','userCertificateNum'],
 				pact: [{
 						title: '',
 						file: ''
 					}]
 			},
+			requireField:['name','sex','phone','height','weight','birthday','SchoolInfo','userCertificateNum'],
+
 			rules: {
 				commodityTypeId: [
 					{
@@ -557,42 +562,12 @@ export default {
 
 			infoFieldDialog: false,
 			editingInfoField:false,
-			infoFieldList: [
+					infoFieldList: [
 				{
 					label: '姓名',
 					formType: 'text',
 					required: true,
 					value: 'name'
-				},
-				{
-					label: '手机号',
-					formType: 'text',
-					required: true,
-					value: 'phone'
-				},
-				{
-					label: '微信号',
-					formType: 'text',
-					required: true,
-					value: 'wxAccount'
-				},
-				{
-					label: '身份证号',
-					formType: 'text',
-					required: true,
-					value: 'userCertificateNum'
-				},
-				{
-					label: '邮箱',
-					formType: 'text',
-					required: true,
-					value: 'email'
-				},
-				{
-					label: '地址',
-					formType: 'text',
-					required: true,
-					value: 'address'
 				},
 				{
 					label: '性别',
@@ -610,6 +585,61 @@ export default {
 						}
 					]
 				},
+				{
+					label: '手机号',
+					formType: 'text',
+					required: true,
+					value: 'phone'
+				},
+				{
+					label: '身高(cm)',
+					formType: 'text',
+					required: true,
+					value: 'height'
+				},
+				{
+					label: '体重(kg)',
+					formType: 'text',
+					required: true,
+					value: 'weight'
+				},
+				{
+					label: '出生年月',
+					formType: 'birthday',
+					required: true,
+					value: 'birthday'
+				},
+				{
+					label: '学籍',
+					formType: 'SchoolInfo',
+					required: true,
+					value: 'SchoolInfo'
+				},
+				{
+					label: '身份证号',
+					formType: 'text',
+					required: true,
+					value: 'userCertificateNum'
+				},
+					{
+						label: '微信号',
+						formType: 'text',
+						required: true,
+						value: 'wxAccount'
+					},
+				{
+					label: '邮箱',
+					formType: 'text',
+					required: true,
+					value: 'email'
+				},
+				{
+					label: '地址',
+					formType: 'text',
+					required: true,
+					value: 'address'
+				},
+				
 				{
 					label: '年龄',
 					formType: 'text',
