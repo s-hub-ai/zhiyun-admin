@@ -6,10 +6,10 @@ function resolve(dir) {
 	return path.join(__dirname, dir);
 }
 
-const testUrl = 'http://192.168.0.244:9004'
-// const testUrl = 'https://paytest.ryyes.com'
-const testTraning = 'http://192.168.0.244:7003'
-// const testTraning = 'https://paytest.ryyes.com/training/admin'
+// const testUrl = 'http://192.168.0.244:9004'
+const testUrl = 'https://paytest.ryyes.com'
+// const testTraning = 'http://192.168.0.244:7003'
+const testTraning = 'https://paytest.ryyes.com/training/admin'
 module.exports = {
 	// publicPath: '/',
 	publicPath: '/admin/',
@@ -40,7 +40,7 @@ module.exports = {
 				target: testUrl,
 				changeOrigin: true,
 				pathRewrite: {
-					'^/dev': '/'
+					'^/dev': '/api'
 				}
 			},
 			'/training': {

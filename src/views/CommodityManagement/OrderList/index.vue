@@ -226,6 +226,12 @@
 						<span >{{ detail.delivery.pkStation|default  }}</span>
 					</el-form-item>
 				</div>
+				<h3 style="margin-top: 45px">报名信息</h3>
+				<div>
+					<el-form-item class="form-item" label="发货时间:">
+						<span v-if="detail.delivery">{{ detail.delivery.deliveryTime|default }}</span>
+					</el-form-item>
+				</div>
 				<h3 style="margin-top: 45px">售后信息</h3>
 				<div>
 					<el-form-item class="form-item" label="退款原因:">

@@ -90,26 +90,35 @@
 				<template #column-op="{ scope }">
 					<el-button
 						v-permission="{
-							or: [$service.app.commodity.shopping.permission.update, $service.app.commodity.score.permission.update]
+							or: [
+								$service.app.commodity.shopping.permission.update,
+							 	$service.app.commodity.score.permission.update,
+							 	$service.app.commodity.train.permission.update
+								 ]
 						}"
-	
+						v-if="scope.row.goodsType!=5"
 						type="text"
 						@click="(editing = scope.row), (editDialog = true)"
 						@cacnel="editing = null"
 						>编辑</el-button
 					>
 					<el-button
+						v-else
 						v-permission="{
-							or: [$service.app.commodity.shopping.permission.update, $service.app.commodity.score.permission.update]
+							or: [$service.app.commodity.shopping.permission.update,
+							 	$service.app.commodity.score.permission.update,
+							 	$service.app.commodity.train.permission.update]
 						}"
 						type="text"
 						@click="(editing = scope.row), (editTraning = true)"
 						@cacnel="editing = null"
-						>编辑3</el-button
+						>编辑33</el-button
 					>
 					<el-button
 						v-permission="{
-							or: [$service.app.commodity.shopping.permission.delete, $service.app.commodity.score.permission.delete]
+							or:[ $service.app.commodity.shopping.permission.delete,
+							 	$service.app.commodity.score.permission.delete,
+							 	$service.app.commodity.train.permission.delete]
 						}"
 						type="text"
 						@click="deleteFn(scope.row)"
@@ -273,6 +282,10 @@ export default {
 							});
 						} else if (goodsType == 2) {
 							await this.$service.app.commodity.score.delete({
+								ids: id
+							});
+						} else if (goodsType == 5) {
+							await this.$service.app.commodity.train.delete({
 								ids: id
 							});
 						}

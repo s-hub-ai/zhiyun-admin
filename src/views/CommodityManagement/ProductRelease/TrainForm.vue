@@ -81,8 +81,8 @@
 			</el-radio-group>
 		</el-form-item>
 
-		<el-form-item label="商品详情" prop="detailImage">
-			<cl-editor-quill height="300" v-model="ruleForm.detailImage"></cl-editor-quill>
+		<el-form-item label="商品详情" prop="detailContent">
+			<cl-editor-quill height="300" v-model="ruleForm.detailContent"></cl-editor-quill>
 		</el-form-item>
 
 		<el-form-item label="商品排序" prop="commodityOrder">
@@ -93,8 +93,8 @@
 			<el-switch v-model="ruleForm.commodityStatus" active-text="上架" inactive-text="下架" :active-value="1" :inactive-value="0"></el-switch>
 		</el-form-item>
 
-		<el-form-item label="是否允许老学员购买" v-if="ruleForm.deliveryMethod == 0">
-			<el-radio-group v-model="ruleForm.isFreeShipping">
+		<el-form-item label="是否允许老学员购买">
+			<el-radio-group v-model="ruleForm.isVeteran">
 				<el-radio :label="0">否</el-radio>
 				<el-radio :label="1">是</el-radio>
 			</el-radio-group>
@@ -318,7 +318,7 @@ const specColumn = [
 	},
 	{
 		label: '课时数',
-		prop: 'schoolHour',
+		prop: 'lessonNum',
 		value: 100,
 		width: 150,
 		component: {
@@ -447,12 +447,13 @@ export default {
 				specificationType: 1,
 				specification: '',
 				commodityOrder: 1,
-				detailImage: '',
+				detailContent: '',
 				commodityStatus: 1,
 				scopeRewardShow: 0,
 
 				isScoreReward: 1,
 
+				isVeteran:1,
 				
 
 
@@ -491,7 +492,7 @@ export default {
 						trigger: 'blur'
 					}
 				],
-				detailImage: [
+				detailContent: [
 					{
 						required: true,
 						message: '请编辑商品详情',
@@ -549,7 +550,6 @@ export default {
 			trainingStatusIndeterminate: false,
 			trainingStatusCheckAll: false,
 
-			userList: [],
 			infoFieldDialog: false,
 			editingInfoField:false,
 			infoFieldList: [
@@ -672,7 +672,7 @@ export default {
 					message: '请上传活动封面',
 					trigger: 'blur'
 				}
-			],
+			]
 		};
 	},
 	computed: {
@@ -978,9 +978,47 @@ export default {
 					let params = {
 						...this.ruleForm
 					};
+					if (params.userType == 0) {
+							delete params.userArgs;
+						}
+						if (params.userType == 1) {
+							params.userArgs = params.userArgs.toString();
+						}
+						if (params.userType == 2) {
+							let isNull = true;
+							console.log(this.userArgs);
+							for (const key in this.userArgs) {
+								if (this.userArgs[key].length > 0) {
+									isNull = false;
+								}
+							}
+							if (isNull) {
+								this.$message.error('请至少勾选一种用户分类');
+								return false;
+							}
+							params.userArgs = JSON.stringify(this.userArgs);
+							let userIds = await this.$service.app.activity.userIds({
+								userArgs: this.userArgs
+							});
+							params.userIds = userIds.toString();
+							params.userArgs = JSON.stringify(this.userArgs);
+					}
+					let arr = params.infoField.map(v=>{
+						if(v=='pact'){
+							const pact = this.infoFieldList.find(el=>el.value == v);
+							pact.fileList = params.pact
+							delete params.pact;
+							return pact
+						}
+
+						return this.infoFieldList.find(el=>el.value == v);
+
+					})
+
+					params.infoField = JSON.stringify(arr);
 					params.salePromotionMethod = this.salePromotionMethod;
 					console.log(JSON.stringify(params));
-					await this.$service.app.commodity.shopping.add(params);
+					await this.$service.app.commodity.train.add(params);
 					this.$alert('商品添加成功！', '提示', {
 						confirmButtonText: '确定'
 					});
@@ -989,10 +1027,6 @@ export default {
 					return false;
 				}
 			});
-		},
-		resetForm(formName) {
-			console.log('重置表单');
-			this.$refs[formName].resetFields();
 		}
 	}
 };

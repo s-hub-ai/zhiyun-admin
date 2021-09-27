@@ -54,7 +54,7 @@
 
 		<!-- 添加规格 -->
 		<el-form-item label="规格" prop="specification">
-			<goods-spec-select ref="goods-spec-select" :type="ruleForm.specType"></goods-spec-select>
+			<goods-spec-select ref="goods-spec-select" :type="ruleForm.specType" :data="ruleForm.specData"></goods-spec-select>
 		</el-form-item>
 
 		<el-form-item label="积分奖励">
@@ -81,8 +81,8 @@
 			</el-radio-group>
 		</el-form-item>
 
-		<el-form-item label="商品详情" prop="detailImage">
-			<cl-editor-quill height="300" v-model="ruleForm.detailImage"></cl-editor-quill>
+		<el-form-item label="商品详情" prop="detailContent">
+			<cl-editor-quill height="300" v-model="ruleForm.detailContent"></cl-editor-quill>
 		</el-form-item>
 
 		<el-form-item label="商品排序" prop="commodityOrder">
@@ -223,7 +223,7 @@
 		</el-form-item>
 
 		<el-form-item>
-			<el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
+			<el-button type="primary" @click="submitForm('ruleForm')">保存</el-button>
 			<el-button @click="resetForm('ruleForm')">重置</el-button>
 		</el-form-item>
 		<el-dialog width="30%" title="添加字段" :visible.sync="infoFieldDialog" append-to-body @close="resetInfoField('infoForm')">
@@ -274,6 +274,7 @@
 <script>
 import GoodsSpecSelect from '@/components/goods/spec/select';
 import {couponTypeDict, ticketPackageUserDict, useCcertificationDict, vipLevelDict, zhiyunCardStatusDict, trainingStatusDict} from '@/dict/index.js';
+import {arrDistinctByProp} from '@/utils';
 
 const specColumn = [
 	{
@@ -318,7 +319,7 @@ const specColumn = [
 	},
 	{
 		label: '课时数',
-		prop: 'schoolHour',
+		prop: 'lessonNum',
 		value: 100,
 		width: 150,
 		component: {
@@ -431,7 +432,7 @@ export default {
 	},
 	data() {
 		return {
-			... {couponTypeDict, ticketPackageUserDict, useCcertificationDict, vipLevelDict, zhiyunCardStatusDict, trainingStatusDict},
+			couponTypeDict, ticketPackageUserDict, useCcertificationDict, vipLevelDict, zhiyunCardStatusDict, trainingStatusDict,
 			defaultColumn: [],
 			commodityTypeList: [],
 			salePromotionMethod: 0, //促销类型
@@ -445,14 +446,14 @@ export default {
 				commodityTypeId: '',
 				commodityName: '',
 				commodityCover: '',
-				commodityBannerImg: [],
+				commodityBannerImg: "",
 				salePromotionTime: '',
 				salePromotionStartTime: new Date(),
 				salePromotionEndTime: new Date(),
 				specificationType: 1,
 				specification: '',
 				commodityOrder: 1,
-				detailImage: '',
+				detailContent: '',
 				commodityStatus: 1,
 				scopeRewardShow: 0,
 
@@ -496,7 +497,7 @@ export default {
 						trigger: 'blur'
 					}
 				],
-				detailImage: [
+				detailContent: [
 					{
 						required: true,
 						message: '请编辑商品详情',
@@ -554,7 +555,6 @@ export default {
 			trainingStatusIndeterminate: false,
 			trainingStatusCheckAll: false,
 
-			userList: [],
 			infoFieldDialog: false,
 			editingInfoField:false,
 			infoFieldList: [
@@ -677,7 +677,7 @@ export default {
 					message: '请上传活动封面',
 					trigger: 'blur'
 				}
-			],
+			]
 		};
 	},
 	computed: {
@@ -729,7 +729,6 @@ export default {
 	},
 	async created() {
 	  await this.$store.dispatch('setDefaultcolumn', this.item?.goodsType == 2 ? specColumnScore : specColumn);
-		await this.getProductInfo()
 		await this.getCommodityTypeList();
     this.useCcertificationCheckbox = useCcertificationDict.map((v) => v.value);
 		this.fanClubIdCheckbox = this.fanClubList.map((v) => v.value);
@@ -737,18 +736,44 @@ export default {
 		this.vipLevelCheckbox = vipLevelDict.map((v) => v.value);
 		this.zhiyunCardStatusCheckbox = zhiyunCardStatusDict.map((v) => v.value);
 		this.trainingStatusCheckbox = trainingStatusDict.map((v) => v.value);
-		this.pushClubList()
+		await this.pushClubList()
+		await this.getProductInfo()
 	},
 	methods: {
     async getProductInfo() {
 			try {
 				let { goodsType, id } = this.item;
-				let methods = ['shopping', 'ticket', 'score', 'event'];
-				let res = await this.$service.app.commodity?.[methods[goodsType]].info({
+				let res = await this.$service.app.commodity.train.info({
 					id
 				});
         console.log(res);
 				res.commodityBannerImg = res.commodityBannerImg.toString();
+				res.pact = []
+				if (res.infoField != null) {
+					let infoField = JSON.parse(res.infoField);
+					res.infoField = infoField.map((value, index, array) => {
+						console.log(value);
+						if (value.value == 'pact') {
+							res.pact = value.fileList;
+						}
+						return value.value;
+					});
+					infoField = this.infoFieldList.concat(infoField);
+					this.infoFieldList = arrDistinctByProp(infoField, 'value');
+				} else {
+					res.infoField = [];
+				}
+				if (res.userType == 1) {
+					let userArgs = res.userArgs.split(',');
+					res.userArgs = userArgs.map((value, index, array) => {
+						return Number(array[index]);
+					});
+					await this.getUserList();
+				}
+				if (res.userType == 2) {
+					this.userArgs = JSON.parse(res.userArgs);
+					res.userArgs = [];
+				}
 				Object.assign(this.ruleForm, res);
 				this.ruleForm.salePromotionShow = res.salePromotionMethod;
 				this.ruleForm.commodityTypeId = String(res.commodityTypeId);
@@ -756,6 +781,7 @@ export default {
 				this.ruleForm.specData = JSON.parse(res.specification);
 				this.loading = false;
 			} catch (err) {
+				console.log(err);
 				this.$message.error(err);
 			}
 		},
@@ -986,36 +1012,71 @@ export default {
 			}
 			console.log(this.ruleForm.commodityBannerImg);
 		},
-		async submitForm(formName) {
+		submitForm(formName) {
 			this.$refs[formName].validate(async (valid) => {
-				const { type, spec } = this.$refs['goods-spec-select'].validate();
+				let { type, spec } = this.$refs['goods-spec-select'].validate();
 				this.ruleForm.specificationType = type;
 				this.ruleForm.specification = JSON.stringify(spec);
 				if (valid) {
 					let params = {
 						...this.ruleForm
 					};
-					console.log(params);
 					params.salePromotionMethod = this.salePromotionMethod;
 					params.commodityBannerImg = params.commodityBannerImg.split(',');
+					if (params.userType == 0) {
+							delete params.userArgs;
+						}
+						if (params.userType == 1) {
+							params.userArgs = params.userArgs.toString();
+						}
+						if (params.userType == 2) {
+							let isNull = true;
+							console.log(this.userArgs);
+							for (const key in this.userArgs) {
+								if (this.userArgs[key].length > 0) {
+									isNull = false;
+								}
+							}
+							if (isNull) {
+								this.$message.error('请至少勾选一种用户分类');
+								return false;
+							}
+							params.userArgs = JSON.stringify(this.userArgs);
+							let userIds = await this.$service.app.activity.userIds({
+								userArgs: this.userArgs
+							});
+							params.userIds = userIds.toString();
+							params.userArgs = JSON.stringify(this.userArgs);
+					}
+					let arr = params.infoField.map(v=>{
+						if(v=='pact'){
+							const pact = this.infoFieldList.find(el=>el.value == v);
+							pact.fileList = params.pact
+							delete params.pact;
+							return pact
+						}
 
+						return this.infoFieldList.find(el=>el.value == v);
+
+					})
+
+					params.infoField = JSON.stringify(arr);
+					params.salePromotionMethod = this.salePromotionMethod;
 					let { goodsType, id } = this.item;
-					let methods = ['shopping', 'ticket', 'score', 'event'];
-					let res = await this.$service.app.commodity?.[methods[goodsType]].update({
+					let res = await this.$service.app.commodity.train.update({
 						id,
 						...params
 					});
 					this.$message.success('修改成功');
 					this.$emit('update:addDialogShow', false);
+					this.$alert('商品添加成功！', '提示', {
+						confirmButtonText: '确定'
+					});
 				} else {
 					console.log('error submit!!');
 					return false;
 				}
 			});
-		},
-		resetForm(formName) {
-			console.log('重置表单');
-			this.$refs[formName].resetFields();
 		}
 	}
 };

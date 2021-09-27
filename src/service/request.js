@@ -35,7 +35,9 @@ axios.interceptors.request.use(
 			config.url,
 			config.method == "get" ? config.params : config.data
 		);
-
+		config.headers = Object.assign({
+			'Cache-Control': 'no-cache'
+		},config.headers)
 		return config;
 	},
 	(error) => {

@@ -117,7 +117,7 @@ export const goodsTypeDict = [{
     text: '积分商品'
   },
   {
-    value: 4,
+    value: 5,
     text: '青训课程'
   }
   /* {
@@ -185,7 +185,7 @@ export const orderStatusDict = [{
     text: "待提货",
     value: 7,
     type: "danger"
-  },
+  }
   // {
   //   text: "订单关闭",
   //   value: 6,
