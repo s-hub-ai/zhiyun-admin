@@ -6,7 +6,7 @@ module.exports = {
 	extends: ["plugin:vue/essential"],
 	rules: {
 		"no-console": "off",
-		"comma-dangle": [2, "never"],
+		"comma-dangle": 'off',
 		"trailing-comma":"off"
 	},
 	parserOptions: {
