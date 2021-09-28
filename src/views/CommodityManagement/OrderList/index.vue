@@ -190,7 +190,7 @@
 						<span>{{ item.commodityVolume }}</span>
 					</el-form-item>
 					<el-form-item class="form-item" v-if="detail.orderType == 5"  label="课时数:">
-						<span>{{ detail.lessonNum }}</span>
+						<span>{{ item.lessonNum }}</span>
 					</el-form-item>
 					<el-form-item v-if="detail.orderType == 4" class="form-item" label="球迷会名称:">
 						<span>{{ detail.fanClubName }}</span>

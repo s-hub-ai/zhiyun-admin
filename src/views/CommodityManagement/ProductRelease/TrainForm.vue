@@ -392,6 +392,21 @@ const specColumnOnsale = [
 		}
 	},
 	{
+		label: '课时数',
+		prop: 'lessonNum',
+		value: 100,
+		width: 150,
+		component: {
+			name: 'el-input-number',
+			props: {
+				step: 1,
+				min: 0,
+				max: 1000000,
+				precision: 0
+			}
+		}
+	},
+	{
 		label: '促销价',
 		prop: 'salePromotionPrice',
 		value: 0.01,
