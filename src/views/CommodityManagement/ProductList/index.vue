@@ -112,7 +112,7 @@
 						type="text"
 						@click="(editing = scope.row), (editTraning = true)"
 						@cacnel="editing = null"
-						>编辑33</el-button
+						>编辑</el-button
 					>
 					<el-button
 						v-permission="{

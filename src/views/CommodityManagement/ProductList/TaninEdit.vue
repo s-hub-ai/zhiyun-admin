@@ -81,8 +81,8 @@
 			</el-radio-group>
 		</el-form-item>
 
-		<el-form-item label="商品详情" prop="detailContent">
-			<cl-editor-quill height="300" v-model="ruleForm.detailContent"></cl-editor-quill>
+		<el-form-item label="商品详情" prop="detailImage">
+			<cl-editor-quill height="300" v-model="ruleForm.detailImage"></cl-editor-quill>
 		</el-form-item>
 
 		<el-form-item label="商品排序" prop="commodityOrder">
@@ -278,7 +278,7 @@
 import GoodsSpecSelect from '@/components/goods/spec/select';
 import {couponTypeDict, ticketPackageUserDict, useCcertificationDict, vipLevelDict, zhiyunCardStatusDict, trainingStatusDict} from '@/dict/index.js';
 import {arrDistinctByProp} from '@/utils';
-
+import {v1} from 'uuid';
 const specColumn = [
 	{
 		label: '图片',
@@ -456,7 +456,7 @@ export default {
 				specificationType: 1,
 				specification: '',
 				commodityOrder: 1,
-				detailContent: '',
+				detailImage: '',
 				commodityStatus: 1,
 				scopeRewardShow: 0,
 
@@ -502,7 +502,7 @@ export default {
 						trigger: 'blur'
 					}
 				],
-				detailContent: [
+				detailImage: [
 					{
 						required: true,
 						message: '请编辑商品详情',
@@ -939,6 +939,30 @@ export default {
 				this.infoForm = inhert
 			}
 			this.$refs[formName].resetFields();
+		},
+		//添加自定义字段
+		addInfoField(formName) {
+			this.$refs[formName].validate(async (valid) => {
+				if(this.editingInfoField){
+					let i = this.infoFieldList.indexOf(this.infoForm);
+					this.infoFieldList[i] = {...this.infoForm};
+					this.infoFieldDialog = false
+				}else{
+					this.infoForm.value = v1();
+					let form = {...this.infoForm }
+					if (valid) {
+						if(['radio','checkbox'].includes(form.formType)){
+							form.selectList.forEach((el,i)=>{
+							el.value = i
+						})
+						}else{
+							delete form.selectList
+						}
+						this.infoFieldList.push(form);
+						this.infoFieldDialog = false;
+					}
+				}
+			});
 		},
 		resetForm(formName) {
 			this.$refs[formName].resetFields();
