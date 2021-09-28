@@ -678,7 +678,7 @@ export default {
       salePromotionMethod: 0, //促销类型
       ruleForm: {
         userArgs: [],
-
+        userType: 0,
         salePromotionShow: 0, //是否促销
         salePromotionMethod: [], //促销类型
         deliveryMethod: 0,
@@ -1400,9 +1400,6 @@ export default {
           });
           this.$message.success("修改成功");
           this.$emit("update:addDialogShow", false);
-          this.$alert("商品添加成功！", "提示", {
-            confirmButtonText: "确定",
-          });
         } else {
           console.log("error submit!!");
           return false;

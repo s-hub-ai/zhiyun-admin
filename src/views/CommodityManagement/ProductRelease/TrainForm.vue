@@ -450,7 +450,7 @@ export default {
 			salePromotionMethod: 0, //促销类型
 			ruleForm: {
 				userArgs: [],
-
+				userType: 0,
 				salePromotionShow: 0, //是否促销
 				salePromotionMethod: [], //促销类型
 				deliveryMethod: 0,
